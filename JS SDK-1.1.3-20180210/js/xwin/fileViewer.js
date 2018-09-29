@@ -5,18 +5,22 @@ var fileViewer = appcan.fileViewer = {
 
     createFileObj: function () {
         return {
-            url: '', // 服务端文件地址
-            filePath: '', // 下载后本地的路径
+            url: '', // 文件下载地址 全路径地址
+            savePath: '', // 本地保存路径
+
+            // 编辑控制
             isOverrideMode: false,  // 下载是否覆盖, 如果不覆盖且存在文件, 就使用原来已有的文件
             isReadonly: true,
             isReviseMode: false,
 
-            fileName: '', // 文件标题
+            // 文件属性
+            filePath: '', // 服务端保存地址
+            fileName: '', // 文件名
             isDocEditable: false, // 公文当前是否可编辑
             isSharable: false, // 是否可共享或下载
-
             attachmentType: -1, // 1=正文 0=附件
 
+            // 回调
             changed: false,
             callback: function (fileObj) {
             }
@@ -26,12 +30,12 @@ var fileViewer = appcan.fileViewer = {
 
     /**
      * open
-     * @param fileObj   {{filePath:String, isReadonly:boolean, isReviseMode:boolean, callback:function(fileObj)}}
+     * @param fileObj   {{savePath:String, isReadonly:boolean, isReviseMode:boolean, callback:function(fileObj)}}
      * @param flags     {josn=}
      *
      */
     open: function (fileObj, flags) {
-        if (!fileObj.filePath) {
+        if (!fileObj.savePath) {
             this.openFromWeb(fileObj);
             return;
         }
@@ -40,7 +44,7 @@ var fileViewer = appcan.fileViewer = {
 
         if (flags.exists === undefined) {
             appcan.file.exists({
-                filePath: fileObj.filePath,
+                filePath: fileObj.savePath,
                 callback: function (err, data, dataType, optId) {
                     var thiz = appcan.fileViewer;
                     if (err) {
@@ -66,16 +70,16 @@ var fileViewer = appcan.fileViewer = {
             this._moffice_pro_installed = appcan.xwin.isAppInstalled('com.kingsoft.moffice_pro');
         }
 
-        if (fileObj.filePath.isImageFile()) {
-            uexImage.openBrowser(JSON.stringify({enableGrid: false, data: [{src: fileObj.filePath}]}));
-        } else if (appConfig.uex.uexiAppRevisionAndOffice && this._moffice_pro_installed && fileObj.filePath.isWpsFile()) {
-            appcan.iApp.openLocalFile(fileObj.filePath, fileObj.isReadonly ? 1 : 0, fileObj.isReviseMode ? 1 : 0, appcan.xwin.userName, function (data) {
+        if (fileObj.savePath.isImageFile()) {
+            uexImage.openBrowser(JSON.stringify({enableGrid: false, data: [{src: fileObj.savePath}]}));
+        } else if (appConfig.uex.uexiAppRevisionAndOffice && this._moffice_pro_installed && fileObj.savePath.isWpsFile()) {
+            appcan.iApp.openLocalFile(fileObj.savePath, fileObj.isReadonly ? 1 : 0, fileObj.isReviseMode ? 1 : 0, appcan.xwin.userName, function (data) {
                 fileObj.changed = data.result;
                 if (fileObj.changed && $.type(fileObj.callback) === "function") {
                     fileObj.callback(fileObj);
                 }
             });
-        } else if (appConfig.uex.uexWps && this._moffice_pro_installed && fileObj.filePath.isWpsFile()) {
+        } else if (appConfig.uex.uexWps && this._moffice_pro_installed && fileObj.savePath.isWpsFile()) {
             uexWps.onMessage = function (msg, data) {
                 if (msg === "saved") {
                     if (!fileObj.isReadonly) fileObj.changed = true;
@@ -85,16 +89,16 @@ var fileViewer = appcan.fileViewer = {
                     }
                 }
             };
-            uexWps.open({file: fileObj.filePath, readonly: !!fileObj.isReadonly})
-        } else if (fileObj.filePath.isWpsFile()) {
+            uexWps.open({file: fileObj.savePath, readonly: !!fileObj.isReadonly})
+        } else if (fileObj.savePath.isWpsFile()) {
             Toast.show('提示: 对文档的修改都将被忽略');
             window.setTimeout(function () {
-                uexDocumentReader.openDocumentReader(fileObj.filePath);
+                uexDocumentReader.openDocumentReader(fileObj.savePath);
             }, 1500);
-        } else if (fileObj.filePath.isTifFile()) {
-            uexDocumentReader.openDocumentReader(fileObj.filePath);
+        } else if (fileObj.savePath.isTifFile()) {
+            uexDocumentReader.openDocumentReader(fileObj.savePath);
         } else { // 其它
-            uexDocumentReader.openDocumentReader(fileObj.filePath);
+            uexDocumentReader.openDocumentReader(fileObj.savePath);
         }
     },
 
@@ -114,12 +118,12 @@ var fileViewer = appcan.fileViewer = {
             }
 
             flags = {};
-            urlObj.filePath = appcan.xwin.tempDir + appcan.xwin.mapFileName(urlObj.url);
+            urlObj.savePath = appcan.xwin.tempDir + appcan.xwin.mapFileName(urlObj.url);
         }
 
         if (flags.exists === undefined && !urlObj.isOverrideMode) {
             appcan.file.exists({
-                filePath: urlObj.filePath,
+                filePath: urlObj.savePath,
                 callback: function (err, data, dataType, optId) {
                     var thiz = appcan.fileViewer;
                     if (err) {
@@ -137,7 +141,7 @@ var fileViewer = appcan.fileViewer = {
             return;
         }
 
-        appcan.downloader.download(urlObj.url, urlObj.filePath, 1, null, function (optId, fileSize, percent, status) {
+        appcan.downloader.download(urlObj.url, urlObj.savePath, 1, null, function (optId, fileSize, percent, status) {
             switch (status) {
                 case 0: // 下载中
                     Toast.show(percent + '%');
