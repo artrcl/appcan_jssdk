@@ -8,6 +8,11 @@ var istore = {
      */
     set: function (key, value) {
         try {
+            if (value == null) {
+                this.remove(key);
+                return this;
+            }
+
             if (window.localStorage) {
                 if (Object.prototype.toString.call(value) !== '[object String]') {
                     value = JSON.stringify(value);
