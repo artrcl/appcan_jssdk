@@ -121,7 +121,7 @@ var fileViewer = appcan.fileViewer = {
             urlObj.savePath = appcan.xwin.tempDir + appcan.xwin.mapFileName(urlObj.url);
         }
 
-        if (flags.exists === undefined && !urlObj.isOverrideMode) {
+        if (flags.exists === undefined) {
             appcan.file.exists({
                 filePath: urlObj.savePath,
                 callback: function (err, data, dataType, optId) {
@@ -130,8 +130,14 @@ var fileViewer = appcan.fileViewer = {
                         //判断文件存在出错了
                         Toast.show("检查文件存在性出错了");
                     } else if (data === 1) { // 文件存在
-                        flags.exists = true;
-                        thiz.open(urlObj, flags);
+                        if (urlObj.isOverrideMode) {
+                            uexFileMgr.deleteFileByPath(urlObj.savePath); // 下载覆盖文件会出错，删除原来的文件
+                            flags.exists = false;
+                            thiz.openFromWeb(urlObj, flags);
+                        } else {
+                            flags.exists = true;
+                            thiz.open(urlObj, flags);
+                        }
                     } else { // 文件不存在
                         flags.exists = false;
                         thiz.openFromWeb(urlObj, flags);
