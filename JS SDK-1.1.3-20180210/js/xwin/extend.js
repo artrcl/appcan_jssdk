@@ -95,6 +95,22 @@ function parseFilePart(url, part) {
 }
 
 /**@preserve
+ * isValueOf 判断是否是已其中一个指定的其中一个值
+ * @param value    {String...|array}
+ * @return          {boolean}
+ * 可以任意个参数，只要字符串已任意一个结尾，就返回 true
+ * value 可以是字符串数组，是数组时，只判断这个数组里的元素，并忽略其它参数
+ */
+String.prototype.isValueOf = function (value) {
+    if (Object.prototype.toString.call(value) !== '[object Array]') value = Array.prototype.slice.apply(arguments);
+
+    for (var i = 0, len = value.length; i < len; i++) {
+        if (this.valueOf() === value[i]) return true;
+    }
+    return false;
+};
+
+/**@preserve
  * endsWith 判断是否是已其中一个指定的后缀结尾
  * @param suffix    {String...|array}
  * @return          {boolean}
@@ -102,7 +118,7 @@ function parseFilePart(url, part) {
  * suffix 可以是字符串数组，是数组时，只判断这个数组里的元素，并忽略其它参数
  */
 String.prototype.endsWith = function (suffix) {
-    if (Object.prototype.toString.call(suffix) !== '[object Array]') suffix = arguments;
+    if (Object.prototype.toString.call(suffix) !== '[object Array]') suffix = Array.prototype.slice.apply(arguments);
 
     for (var i = 0, len = suffix.length; i < len; i++) {
         if (this.length >= suffix[i].length && this.indexOf(suffix[i], this.length - suffix[i].length) >= 0) return true;
