@@ -89,7 +89,7 @@ var fileViewer = appcan.fileViewer = {
                     }
                 }
             };
-            uexWps.open({file: fileObj.savePath, readonly: !!fileObj.isReadonly})
+            uexWps.open({filePath: fileObj.savePath, isReadonly: !!fileObj.isReadonly, isReviseMode: !!fileObj.isReviseMode, userName: appcan.xwin.userName})
         } else if (fileObj.savePath.isWpsFile()) {
             Toast.show('提示: 对文档的修改都将被忽略');
             window.setTimeout(function () {

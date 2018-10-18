@@ -245,12 +245,10 @@ var xwin = appcan.xwin = {
     prepare: function () {
         var wgtPath = appcan.locStorage.getVal("xwin.wgtPath");
         if (!wgtPath) {
-            appcan.file.getRealPath(appcan.file.wgtPath, function (err, s, dataType, optId) {
-                if (err) return;
-                if (s.length > 0 && s.charAt(s.length - 1) !== "/") s += "/";
-                appcan.locStorage.setVal("xwin.wgtPath", s);
-                appcan.xwin.wgtPath = s;
-            });
+            var s = uexFileMgr.getFileRealPath(appcan.file.wgtPath);
+            if (s.length > 0 && s.charAt(s.length - 1) !== "/") s += "/";
+            appcan.locStorage.setVal("xwin.wgtPath", s);
+            this.wgtPath = s;
         } else {
             this.wgtPath = wgtPath;
         }
@@ -655,7 +653,7 @@ var xwin = appcan.xwin = {
     },
 
     /**@preserve
-     * initLocStorage 初始化 locStorage, 用于 root 窗口，最开始就调用
+     * initLocStorage 初始化 locStorage, 用于 root 窗口，最开始就调用，应该优先于 config.js 的 appcan.ready():
      */
     initLocStorage: function () {
         this.opener = "";
@@ -666,36 +664,18 @@ var xwin = appcan.xwin = {
         appcan.locStorage.setVal("xwin.nextVal", "1");
         appcan.locStorage.setVal("xwin.wndList", JSON.stringify(["root"]));
 
-        appcan.widgetOne.getCurrentWidgetInfo(function (err, data, dataType, opId) {
-            if (err === null) { // 正确返回结果
-                data = JSON.parse(data);
-                appcan.locStorage.setVal("sys.appVersion", data.version);
-            } else {
-                appcan.locStorage.setVal("sys.appVersion", "error");
-            }
-        });
+        var widgetInfo = uexWidgetOne.getCurrentWidgetInfo(); // {appId: 123456, version: "00.00.0000", name: "xxx", icon: "icon.png"}
+        var version = widgetInfo.version;
+        appcan.locStorage.setVal("sys.appVersion", version);
 
-        appcan.device.getInfo(1, function (err, data, dataType, optId) {
-            if (err === null) { // 正确返回结果
-                var device = JSON.parse(data);
-                var os = device.os.toLowerCase();
+        var platform = uexWidgetOne.getPlatform();
+        if (platform === 0) appcan.locStorage.setVal("persist.deviceOs", "ios");
+        else if (platform === 1) appcan.locStorage.setVal("persist.deviceOs", "android");
+        else appcan.locStorage.setVal("persist.deviceOs", "ide"); // 2
 
-                if (os.substring(0, 7) === "android") {
-                    appcan.locStorage.setVal("persist.deviceOs", "android");
-                } else {
-                    appcan.locStorage.setVal("persist.deviceOs", os);
-                }
-            } else {
-                appcan.locStorage.setVal("persist.deviceOs", "error");
-            }
-        });
-
-        appcan.file.getRealPath(appcan.file.wgtPath, function (err, s, dataType, optId) {
-            if (err) return;
-            if (s.length > 0 && s.charAt(s.length - 1) !== "/") s += "/";
-            appcan.locStorage.setVal("xwin.wgtPath", s);
-            appcan.xwin.wgtPath = s;
-        });
+        var s = uexFileMgr.getFileRealPath(appcan.file.wgtPath);
+        if (s.length > 0 && s.charAt(s.length - 1) !== "/") s += "/";
+        appcan.locStorage.setVal("xwin.wgtPath", s);
     },
 
     /**@preserve
@@ -736,10 +716,9 @@ var xwin = appcan.xwin = {
      * isAndroid 判断是否是 android 系统
      * @return  {boolean}
      */
-    get isAndroid() {
+    isAndroid: function() {
         if (this._isAndroid === null) {
             var deviceOs = appcan.locStorage.getVal("persist.deviceOs");
-            if (deviceOs === null) return null; // 还没有完成初始化
             this._isAndroid = deviceOs === "android";
         }
         return this._isAndroid;

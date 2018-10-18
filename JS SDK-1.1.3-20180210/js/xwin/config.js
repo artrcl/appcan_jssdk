@@ -30,10 +30,25 @@ window.appConfig = {
     uex: {
         uexGDCA: false,
         uexiAppRevisionAndOffice: true,
-        uexWps: false
+        uexWps: true
     }
 };
 
+appcan.ready(function () {
+    if (!appcan.xwin.isAndroid()) {
+        for (var key in appConfig.uex) {
+            appConfig.uex[key] = false;
+        }
+    } else {
+        if (appConfig.uex.uexiAppRevisionAndOffice) {
+            var license = istore.get("sys.iAppLicense", "");
+            appConfig.uex.uexiAppRevisionAndOffice = license !== "";
+            if (appConfig.uex.uexiAppRevisionAndOffice) {
+                appcan.iApp.copyRight = license;
+            }
+        }
+    }
+});
 
 var reqJS = {
     absUrl: function (baseUrl, url) {

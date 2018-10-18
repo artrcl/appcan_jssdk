@@ -3,8 +3,7 @@
 /* global uexiAppRevisionAndOffice */
 var iApp = appcan.iApp = {
 
-    // expires 2018-9-26
-    copyRight: 'SxD/phFsuhBWZSmMVtSjKZmm/c/3zSMrkV2Bbj5tznSkEVZmTwJv0wwMmH/+p6wLiUHbjadYueX9v51H9GgnjUhmNW1xPkB++KQqSv/VKLDsR8V6RvNmv0xyTLOrQoGzAT81iKFYb1SZ/Zera1cjGwQSq79AcI/N/6DgBIfpnlwiEiP2am/4w4+38lfUELaNFry8HbpbpTqV4sqXN1WpeJ7CHHwcDBnMVj8djMthFaapMFm/i6swvGEQ2JoygFU3W8onCO1AgMAD2SkxfJXM/ijYgmFZo8sqFMkNKOgywo7x6aD2yiupr6ji7hzsE6/QVFbnJOcPDznqYpoJ6epdnT4Y1YsZxXwh2w5W4lqa1RyVWEbHWAH22+t7LdPt+jENVuE+uBYut77v64UQW7HW3mj7ISWDgc3YLh0bz4sFvgWSgCNRP4FpYjl8hG/IVrYXl2lZdwXeCcBhFGv3J7Er9+W8fXpxdRHfEuWC1PB9ruQ=',
+    copyRight: '',
 
     init: function () {
         if (this._inited) return;
@@ -14,8 +13,10 @@ var iApp = appcan.iApp = {
         this.prepare();
     }, _inited: false,
 
-    prepare: function () {
+    prepare: function (force) {
         if (this._prepared) return;
+        if (!force && !appConfig.uex.uexiAppRevisionAndOffice) return;
+
         this._prepared = true;
 
         uexiAppRevisionAndOffice.saveFileCallback = function (data) {
@@ -126,5 +127,5 @@ var iApp = appcan.iApp = {
 };
 
 appcan.ready(function () {
-    if (appConfig.uex.uexiAppRevisionAndOffice) appcan.iApp.prepare();
+    appcan.iApp.prepare();
 });
