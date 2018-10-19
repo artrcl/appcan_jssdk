@@ -131,7 +131,10 @@ var xwin = appcan.xwin = {
                     }
                 }
                 if (appcan.isFunction(this.onClose)) {
-                    this.onClose();
+                    try {
+                        this.onClose();
+                    } catch (e) {
+                    }
                 }
             }
         } else if (wnd === "opener") {
@@ -560,16 +563,31 @@ var xwin = appcan.xwin = {
      * @param value {String}
      */
     set userName(value) {
-        appcan.locStorage.setVal("xwin.userName", value);
+        appcan.locStorage.setVal("sys.userName", value);
     },
     /**@preserve
      * userName
-     * @return  String}
+     * @return  {String}
      */
     get userName() {
-        var value = appcan.locStorage.getVal("xwin.userName");
+        var value = appcan.locStorage.getVal("sys.userName");
         if (value) return value;
         return "";
+    },
+
+    /**@preserve
+     * userId
+     * @param value {String}
+     */
+    set userId(value) {
+        appcan.locStorage.setVal("sys.userId", value);
+    },
+    /**@preserve
+     * userId
+     * @return {String}
+     */
+    get userId() {
+        return appcan.locStorage.getVal("sys.userId");
     },
 
     /**@preserve
@@ -695,20 +713,16 @@ var xwin = appcan.xwin = {
     /**@preserve
      * appVersion 获取appVerion
      * @return  {String}
-     * a) 如果返回null，说明系统获取 appVersion 还没有返回，请稍后时间再获取
-     * b) 如果返回error，说明获取失败了
      */
-    appVersion: function () {
+    get appVersion() {
         return appcan.locStorage.getVal("sys.appVersion");
     },
 
     /**@preserve
      * deviceOs 获取device OS
      * @return  {String}
-     * a) 如果返回null，说明系统获取 device OS 还没有返回，请稍后时间再获取
-     * b) 如果返回error，说明获取失败了
      */
-    deviceOs: function () {
+    get deviceOs() {
         return appcan.locStorage.getVal("persist.deviceOs");
     },
 
@@ -716,7 +730,7 @@ var xwin = appcan.xwin = {
      * isAndroid 判断是否是 android 系统
      * @return  {boolean}
      */
-    isAndroid: function() {
+    isAndroid: function () {
         if (this._isAndroid === null) {
             var deviceOs = appcan.locStorage.getVal("persist.deviceOs");
             this._isAndroid = deviceOs === "android";
