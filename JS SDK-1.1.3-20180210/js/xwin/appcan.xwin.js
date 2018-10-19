@@ -80,22 +80,20 @@ var xwin = appcan.xwin = {
         }
 
         if (wnd === "auto" || $.type(wnd) !== "string") {
-            var i = appcan.locStorage.getVal("xwin.nextVal");
-            if (i == null) i = 1; else i = eval(i);
-            appcan.locStorage.setVal("xwin.nextVal", i + 1);
+            var i = istore.get("xwin.nextVal", 1);
+            istore.set("xwin.nextVal", i + 1);
             wnd = "aw" + i;
         }
 
-        appcan.locStorage.setVal("xwin.opener", this.current);
-        appcan.locStorage.setVal("xwin.current", wnd);
+        istore.set("xwin.opener", this.current);
+        istore.set("xwin.current", wnd);
 
-        var wndList = JSON.parse(appcan.locStorage.getVal("xwin.wndList"));
-        if (wndList == null) wndList = [];
+        var wndList = istore.get("xwin.wndList", []);
 
         var j = $.inArray(wnd, wndList);
         if (j < 0) {
             wndList.push(wnd);
-            appcan.locStorage.setVal("xwin.wndList", JSON.stringify(wndList));
+            istore.set("xwin.wndList", wndList);
         }
 
         if (param !== undefined) this.param = param;
@@ -122,12 +120,11 @@ var xwin = appcan.xwin = {
             } else {
                 appcan.window.close(-1);
                 if (wnd) {
-                    wndList = JSON.parse(appcan.locStorage.getVal("xwin.wndList"));
-                    if (wndList == null) wndList = [];
+                    wndList = istore.get("xwin.wndList", []);
                     var i = $.inArray(wnd, wndList);
                     if (i >= 0) {
                         wndList.splice(i, 1);
-                        appcan.locStorage.setVal("xwin.wndList", JSON.stringify(wndList));
+                        istore.set("xwin.wndList", wndList);
                     }
                 }
                 if (appcan.isFunction(this.onClose)) {
@@ -141,8 +138,7 @@ var xwin = appcan.xwin = {
             wnd = this.opener;
             appcan.window.evaluateScript(wnd, 'appcan.xwin.close()');
         } else if (wnd === "all") {
-            wndList = JSON.parse(appcan.locStorage.getVal("xwin.wndList"));
-            if (wndList == null) wndList = [];
+            wndList = istore.get("xwin.wndList", []);
 
             for (; wndList.length > 0;) {
                 wnd = wndList.pop();
@@ -199,14 +195,14 @@ var xwin = appcan.xwin = {
      * @param value {Integer}
      */
     set serverIndex(value) {
-        appcan.locStorage.setVal("xwin.serverIndex", value);
+        istore.set("xwin.serverIndex", value);
     },
     /**@preserve
      * serverIndex 当前选用的server索引
      * @return  {Integer}
      */
     get serverIndex() {
-        var value = appcan.locStorage.getVal("xwin.serverIndex");
+        var value = istore.get("xwin.serverIndex");
         if (value == null) {
             value = window.appConfig.serverIndex;
             value = value ? eval(value) : 0;
@@ -232,7 +228,7 @@ var xwin = appcan.xwin = {
      * @param value {json}
      */
     set param(value) {
-        appcan.locStorage.setVal("xwin.param", JSON.stringify(value));
+        istore.set("xwin.param", value);
     },
     /**@preserve
      * param 窗口间传递参数
@@ -246,29 +242,26 @@ var xwin = appcan.xwin = {
      * prepare 执行窗口初始化操作
      */
     prepare: function () {
-        var wgtPath = appcan.locStorage.getVal("xwin.wgtPath");
+        var wgtPath = istore.get("xwin.wgtPath");
         if (!wgtPath) {
             var s = uexFileMgr.getFileRealPath(appcan.file.wgtPath);
             if (s.length > 0 && s.charAt(s.length - 1) !== "/") s += "/";
-            appcan.locStorage.setVal("xwin.wgtPath", s);
+            istore.set("xwin.wgtPath", s);
             this.wgtPath = s;
         } else {
             this.wgtPath = wgtPath;
         }
 
-        this.opener = appcan.locStorage.getVal("xwin.opener");
-        this.current = appcan.locStorage.getVal("xwin.current");
+        this.opener = istore.get("xwin.opener");
+        this.current = istore.get("xwin.current");
 
         if (this.opener === null && this.current === null) {
             this.opener = "";
             this.current = "root";
         }
 
-        var _param = appcan.locStorage.getVal("xwin.param");
-        appcan.locStorage.remove("xwin.param"); // 取出即删除
-        if (_param === null) _param = {};
-        else _param = JSON.parse(_param);
-        this._param = _param;
+        this._param = istore.get("xwin.param", {});
+        istore.remove("xwin.param"); // 取出即删除
 
         this.tempDir = appcan.file.wgtPath + "temp/" + this.current + "/";
 
@@ -529,16 +522,14 @@ var xwin = appcan.xwin = {
      * @param value {String}
      */
     set tokenId(value) {
-        appcan.locStorage.setVal("xwin.tokenId", value);
+        istore.set("xwin.tokenId", value);
     },
     /**@preserve
      * tokenId
      * @return  {String}
      */
     get tokenId() {
-        var value = appcan.locStorage.getVal("xwin.tokenId");
-        if (value) return value;
-        return "";
+        return istore.get("xwin.tokenId", "");
     },
 
     /**@preserve
@@ -546,16 +537,14 @@ var xwin = appcan.xwin = {
      * @param value {String}
      */
     set loginName(value) {
-        appcan.locStorage.setVal("persist.loginName", value);
+        istore.set("persist.loginName", value);
     },
     /**@preserve
      * loginName
      * @return  {String}
      */
     get loginName() {
-        var value = appcan.locStorage.getVal("persist.loginName");
-        if (value) return value;
-        return "";
+        return istore.get("persist.loginName", "");
     },
 
     /**@preserve
@@ -563,16 +552,14 @@ var xwin = appcan.xwin = {
      * @param value {String}
      */
     set userName(value) {
-        appcan.locStorage.setVal("sys.userName", value);
+        istore.set("sys.userName", value);
     },
     /**@preserve
      * userName
      * @return  {String}
      */
     get userName() {
-        var value = appcan.locStorage.getVal("sys.userName");
-        if (value) return value;
-        return "";
+        return istore.get("sys.userName", "");
     },
 
     /**@preserve
@@ -580,14 +567,14 @@ var xwin = appcan.xwin = {
      * @param value {String}
      */
     set userId(value) {
-        appcan.locStorage.setVal("sys.userId", value);
+        istore.set("sys.userId", value);
     },
     /**@preserve
      * userId
      * @return {String}
      */
     get userId() {
-        return appcan.locStorage.getVal("sys.userId");
+        return istore.get("sys.userId", "");
     },
 
     /**@preserve
@@ -677,23 +664,23 @@ var xwin = appcan.xwin = {
         this.opener = "";
         this.current = "root";
 
-        appcan.locStorage.setVal("xwin.opener", this.opener);
-        appcan.locStorage.setVal("xwin.current", this.current);
-        appcan.locStorage.setVal("xwin.nextVal", "1");
-        appcan.locStorage.setVal("xwin.wndList", JSON.stringify(["root"]));
+        istore.set("xwin.opener", this.opener);
+        istore.set("xwin.current", this.current);
+        istore.set("xwin.nextVal", "1");
+        istore.set("xwin.wndList", ["root"]);
 
         var widgetInfo = uexWidgetOne.getCurrentWidgetInfo(); // {appId: 123456, version: "00.00.0000", name: "xxx", icon: "icon.png"}
         var version = widgetInfo.version;
-        appcan.locStorage.setVal("sys.appVersion", version);
+        istore.set("sys.appVersion", version);
 
         var platform = uexWidgetOne.getPlatform();
-        if (platform === 0) appcan.locStorage.setVal("persist.deviceOs", "ios");
-        else if (platform === 1) appcan.locStorage.setVal("persist.deviceOs", "android");
-        else appcan.locStorage.setVal("persist.deviceOs", "ide"); // 2
+        if (platform === 0) istore.set("persist.deviceOs", "ios");
+        else if (platform === 1) istore.set("persist.deviceOs", "android");
+        else istore.set("persist.deviceOs", "ide"); // 2
 
         var s = uexFileMgr.getFileRealPath(appcan.file.wgtPath);
         if (s.length > 0 && s.charAt(s.length - 1) !== "/") s += "/";
-        appcan.locStorage.setVal("xwin.wgtPath", s);
+        istore.set("xwin.wgtPath", s);
     },
 
     /**@preserve
@@ -702,11 +689,11 @@ var xwin = appcan.xwin = {
     clearLocStorageAndTempFiles: function () {
         uexFileMgr.deleteFileByPath(appcan.file.wgtPath + "temp/");
 
-        var keys = appcan.locStorage.keys();
+        var keys = istore.keys();
         if (keys) for (var i = 0; i < keys.length; i++) {
             // 保留 persist.*
             if (!/^persist\..*$/.test(keys[i]))
-                appcan.locStorage.remove(keys[i]);
+                istore.remove(keys[i]);
         }
     },
 
@@ -715,7 +702,7 @@ var xwin = appcan.xwin = {
      * @return  {String}
      */
     get appVersion() {
-        return appcan.locStorage.getVal("sys.appVersion");
+        return istore.get("sys.appVersion", "");
     },
 
     /**@preserve
@@ -723,7 +710,7 @@ var xwin = appcan.xwin = {
      * @return  {String}
      */
     get deviceOs() {
-        return appcan.locStorage.getVal("persist.deviceOs");
+        return istore.get("persist.deviceOs", "");
     },
 
     /**@preserve
@@ -732,7 +719,7 @@ var xwin = appcan.xwin = {
      */
     isAndroid: function () {
         if (this._isAndroid === null) {
-            var deviceOs = appcan.locStorage.getVal("persist.deviceOs");
+            var deviceOs = istore.get("persist.deviceOs", "");
             this._isAndroid = deviceOs === "android";
         }
         return this._isAndroid;

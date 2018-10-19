@@ -33,10 +33,10 @@ var iApp = appcan.iApp = {
     }, _prepared: false,
 
     set wndName(value) {
-        appcan.locStorage.setVal("xwin.iApp.wnd", value);
+        istore.set("iApp.wnd", value);
     },
     get wndName() {
-        return appcan.locStorage.getVal("xwin.iApp.wnd");
+        return istore.get("iApp.wnd", "");
     },
 
     callsaveFileCallback: function () {
