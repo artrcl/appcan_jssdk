@@ -684,7 +684,7 @@ var xwin = appcan.xwin = {
     },
 
     /**@preserve
-     * clearLocStorageAndTempFiles 清除 locStorage 和临时文件，在 logout 时调用
+     * clearLocStorageAndTempFiles 清除 locStorage 和临时文件，在 root 页面 和 logout 时调用
      */
     clearLocStorageAndTempFiles: function () {
         uexFileMgr.deleteFileByPath(appcan.file.wgtPath + "temp/");
@@ -702,7 +702,8 @@ var xwin = appcan.xwin = {
      * @return  {String}
      */
     get appVersion() {
-        return istore.get("sys.appVersion", "");
+        var widgetInfo = uexWidgetOne.getCurrentWidgetInfo();
+        return widgetInfo.version;
     },
 
     /**@preserve
@@ -710,7 +711,10 @@ var xwin = appcan.xwin = {
      * @return  {String}
      */
     get deviceOs() {
-        return istore.get("persist.deviceOs", "");
+        var platform = uexWidgetOne.getPlatform();
+        if (platform === 0) return "ios";
+        else if (platform === 1) return "android";
+        else return "ide"; // 2
     },
 
     /**@preserve
@@ -719,8 +723,7 @@ var xwin = appcan.xwin = {
      */
     isAndroid: function () {
         if (this._isAndroid === null) {
-            var deviceOs = istore.get("persist.deviceOs", "");
-            this._isAndroid = deviceOs === "android";
+            this._isAndroid = uexWidgetOne.getPlatform() === 1;
         }
         return this._isAndroid;
     }, _isAndroid: null,
