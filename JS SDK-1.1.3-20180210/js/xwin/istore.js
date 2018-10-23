@@ -3,21 +3,37 @@
 var istore = {
     /**
      * set  保存值
-     * @param key   {String}
-     * @param value {*}
+     * @param key    {String}
+     * @param value  {*}
+     * @param keyN   {String}
+     * @param valueN {*}
      */
-    set: function (key, value) {
+    set: function (key, value, keyN, valueN) {
         try {
-            if (value == null) {
-                this.remove(key);
-                return this;
-            }
-
             if (window.localStorage) {
-                if (Object.prototype.toString.call(value) !== '[object String]') {
-                    value = JSON.stringify(value);
+                if (value == null) {
+                    window.localStorage.removeItem(key);
+                } else {
+                    if (Object.prototype.toString.call(value) !== '[object String]') {
+                        value = JSON.stringify(value);
+                    }
+                    window.localStorage.setItem(key, value);
                 }
-                window.localStorage.setItem(key, value);
+
+                //////////////////////////
+                for (var i = 2, len = arguments.length; i + 1 < len; i += 2) {
+                    key = arguments[i];
+                    value = arguments[i + 1];
+
+                    if (value == null) {
+                        window.localStorage.removeItem(key);
+                    } else {
+                        if (Object.prototype.toString.call(value) !== '[object String]') {
+                            value = JSON.stringify(value);
+                        }
+                        window.localStorage.setItem(key, value);
+                    }
+                }
             } else {
 
             }
@@ -36,14 +52,15 @@ var istore = {
      */
     get: function (key, defaultValue) {
         var s = null;
-        if (key && (Object.prototype.toString.call(key) === '[object String]')) {
-            try {
-                if (window.localStorage) {
+
+        try {
+            if (window.localStorage) {
+                if (key && (Object.prototype.toString.call(key) === '[object String]')) {
                     s = window.localStorage.getItem(key);
                 }
-            } catch (e) {
-
             }
+        } catch (e) {
+
         }
 
         if (arguments.length > 1) {
@@ -61,11 +78,23 @@ var istore = {
     /**
      * remove 删除键值
      * @param key   {String}
+     * @param keyN  {String}
      */
-    remove: function (key) {
+    remove: function (key, keyN) {
         try {
-            if (window.localStorage && key && (Object.prototype.toString.call(key) === '[object String]')) {
-                window.localStorage.removeItem(key);
+            if (window.localStorage) {
+                if (key && (Object.prototype.toString.call(key) === '[object String]')) {
+                    window.localStorage.removeItem(key);
+                }
+
+                //////////////////////////
+                for (var i = 1, len = arguments.length; i < len; i++) {
+                    key = arguments[i];
+
+                    if (key && (Object.prototype.toString.call(key) === '[object String]')) {
+                        window.localStorage.removeItem(key);
+                    }
+                }
             }
         } catch (e) {
 
@@ -94,11 +123,15 @@ var istore = {
      */
     keepAndClear: function (reg) {
         try {
-            if (window.localStorage && arguments.length >= 1) {
-                var keys = this.keys();
-                for (var i = 0, len = keys.length; i < len; i++) {
-                    var key = keys[i];
-                    if (!key.match(reg)) window.localStorage.removeItem(key);
+            if (window.localStorage) {
+                if (arguments.length === 0) {
+                    window.localStorage.clear();
+                } else {
+                    for (var i = 0, len = window.localStorage.length; i < len; i++) {
+                        var key = '';
+                        key = window.localStorage.key(i);
+                        if (key && !key.match(reg)) window.localStorage.removeItem(key);
+                    }
                 }
             }
         } catch (e) {
