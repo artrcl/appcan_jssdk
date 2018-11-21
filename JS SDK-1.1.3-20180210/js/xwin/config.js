@@ -11,7 +11,7 @@ window.appConfig = {
     debugTokenId: '',  //  用于appcan编辑调试    {String=}
 
     ///////////////////////////
-    js: ['fontsize.js', 'istore.js', 'extend.js', 'array.js', 'laytpl.js',
+    js: ['fontsize.js', 'istore.js', 'appLog.js', 'extend.js', 'array.js', 'laytpl.js',
         'cxdate.js', 'appcan.downloader.js', 'appcan.xwin.js', 'toast.js',
         'iApp.js', 'iGDCA.js', 'fileViewer.js', 'appcan.fileMgr.js',
         'calendar.js'],
@@ -25,6 +25,7 @@ window.appConfig = {
         defvalue: "f2"
     },
     fontSizeIsSet: false,
+    appLogEnabled: true,
 
     // uex插件 是否可用
     uex: {
