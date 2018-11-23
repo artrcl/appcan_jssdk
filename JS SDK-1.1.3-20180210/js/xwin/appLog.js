@@ -6,7 +6,7 @@ var appLog = {
      * @param s     String...
      */
     log: function (s) {
-        if (!this._enabled) return;
+        if (!this._enabled || (this._isReady && !window.uexLog)) return;
         this._send("log", Array.prototype.slice.apply(arguments));
     },
 
@@ -15,7 +15,7 @@ var appLog = {
      * @param s     String...
      */
     warn: function (s) {
-        if (!this._enabled) return;
+        if (!this._enabled || (this._isReady && !window.uexLog)) return;
         this._send("warn", Array.prototype.slice.apply(arguments));
     },
 
@@ -24,7 +24,7 @@ var appLog = {
      * @param s     String...
      */
     error: function (s) {
-        if (!this._enabled) return;
+        if (!this._enabled || (this._isReady && !window.uexLog)) return;
         this._send("error", Array.prototype.slice.apply(arguments));
     },
 
