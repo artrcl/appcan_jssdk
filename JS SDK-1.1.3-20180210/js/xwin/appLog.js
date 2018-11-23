@@ -29,7 +29,6 @@ var appLog = {
     },
 
     _send: function (t, sa) {
-        if (!this._enabled) return;
         var err;
         try {
             eval("KuwGRowI8;")
@@ -57,24 +56,39 @@ var appLog = {
 
     _sendlog: function (s) {
         try {
-            if (window.uexLog) {
-                uexLog.sendLog(s);
+            if (!this._isReady && window.uexLog) this._isReady = true;
+
+            if (this._isReady) {
+                try {
+                    if (window.uexLog) uexLog.sendLog(s); // uexLog 可用才处理
+                } catch (e) {
+                    //
+                }
             } else {
                 if (this._logs.length === 0) {
                     appcan.ready(function () {
                         var thiz = appLog;
-                        for (var i = 0; i < thiz._logs.length; i++) {
-                            uexLog.sendLog(thiz._logs[i]);
+                        thiz._isReady = true;
+
+                        try {
+                            if (window.uexLog) { // uexLog 是否可用?
+                                for (var i = 0; i < thiz._logs.length; i++) {
+                                    uexLog.sendLog(thiz._logs[i]);
+                                }
+                            }
+                        } catch (e) {
+                            //
                         }
+
                         thiz._logs = [];
                     });
                 }
                 this._logs.push(s);
             }
-        } catch (e) {
-            //return e;
+        } catch (ex) {
+            //return ex;
         }
-    }, _logs: [],
+    }, _logs: [], _isReady: false,
 
     get _enabled() {
         return window.appConfig.appLogEnabled;
