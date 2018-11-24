@@ -3,29 +3,26 @@
 var appLog = {
     /**
      * log
-     * @param s     String...
+     * @param s  {Any...}
      */
     log: function (s) {
-        if (!this._enabled || (this._isReady && !window.uexLog)) return;
-        this._send("log", Array.prototype.slice.apply(arguments));
+        if (this._isEnabled) this._send("log", Array.prototype.slice.apply(arguments));
     },
 
     /**
      * warn
-     * @param s     String...
+     * @param s  {Any...}
      */
     warn: function (s) {
-        if (!this._enabled || (this._isReady && !window.uexLog)) return;
-        this._send("warn", Array.prototype.slice.apply(arguments));
+        if (this._isEnabled) this._send("warn", Array.prototype.slice.apply(arguments));
     },
 
     /**
      * error
-     * @param s     String...
+     * @param s  {Any...}
      */
     error: function (s) {
-        if (!this._enabled || (this._isReady && !window.uexLog)) return;
-        this._send("error", Array.prototype.slice.apply(arguments));
+        if (this._isEnabled) this._send("error", Array.prototype.slice.apply(arguments));
     },
 
     _send: function (t, sa) {
@@ -43,7 +40,7 @@ var appLog = {
             for (var i = 0; i < sa.length; i++) {
                 var s = sa[i];
                 if (s !== undefined) {
-                    if ($.type(s) === "string") ret += ", " + s;
+                    if (Object.prototype.toString.call(s) === '[object String]') ret += ", " + s;
                     else ret += ", " + JSON.stringify(s);
                 }
             }
@@ -55,42 +52,62 @@ var appLog = {
     },
 
     _sendlog: function (s) {
-        try {
-            if (!this._isReady && window.uexLog) this._isReady = true;
-
-            if (this._isReady) {
-                try {
-                    if (window.uexLog) uexLog.sendLog(s); // uexLog 可用才处理
-                } catch (e) {
-                    //
-                }
-            } else {
-                if (this._logs.length === 0) {
-                    appcan.ready(function () {
-                        var thiz = appLog;
-                        thiz._isReady = true;
-
-                        try {
-                            if (window.uexLog) { // uexLog 是否可用?
-                                for (var i = 0; i < thiz._logs.length; i++) {
-                                    uexLog.sendLog(thiz._logs[i]);
-                                }
-                            }
-                        } catch (e) {
-                            //
-                        }
-
-                        thiz._logs = [];
-                    });
-                }
-                this._logs.push(s);
+        if (this._appcanIsReady || window.uexLog) {
+            try {
+                if (window.uexLog) uexLog.sendLog(s);
+            } catch (e) {
+                //
             }
-        } catch (ex) {
-            //return ex;
-        }
-    }, _logs: [], _isReady: false,
+        } else {
+            this._logs.push(s);
 
-    get _enabled() {
-        return window.appConfig.appLogEnabled;
-    }
+            if (!this._readyIsSet) {
+                this._readyIsSet = true;
+
+                appcan.ready(function () {
+                    var thiz = appLog;
+                    thiz._appcanIsReady = true;
+
+                    try {
+                        if (window.uexLog) {
+                            for (var i = 0; i < thiz._logs.length; i++) {
+                                uexLog.sendLog(thiz._logs[i]);
+                            }
+                        }
+                    } catch (e) {
+                        //
+                    }
+
+                    thiz._logs = [];
+                });
+            }
+        }
+    },
+    _logs: [],
+    _readyIsSet: false,
+    _appcanIsReady: false,
+
+    get _isEnabled() {
+        if ((this._enablefunc === false) || (this._appcanIsReady && !window.uexLog)) return false;
+        if ((this._enablefunc === undefined) || (this._enablefunc === true)) return true;
+
+        if (Object.prototype.toString.call(this._enablefunc) === '[object Function]') {
+            try {
+                return !!this._enablefunc();
+            } catch (e) {
+                return false;
+            }
+        } else {
+            return !!this._enablefunc;
+        }
+    },
+
+    /**
+     * enable
+     * @param func  {boolean | function : boolean}, default true
+     */
+    enable: function (func) {
+        this._enablefunc = func;
+    },
+    _enablefunc: undefined
 };
