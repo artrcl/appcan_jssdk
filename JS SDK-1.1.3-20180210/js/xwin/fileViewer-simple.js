@@ -1,56 +1,27 @@
 "use strict";
 
 var fileViewer = appcan.fileViewer = {
-    _moffice_pro_installed: undefined,
 
     /**
      * createFileObj
      * @param url               {String=}
      * @param savePath          {String=}
      * @param isOverrideMode    {boolean=}
-     * @param isReadonly        {boolean=}
-     * @param isReviseMode      {boolean=}
-     * @param callback          {function(fileObj)=}
-     * @param filePath          {String=}
-     * @param fileName          {String=}
-     * @param isDocEditable     {boolean=}
-     * @param isSharable        {boolean=}
-     * @param attachmentType    {number=}
-     * @return {{url: string, savePath: string, isOverrideMode: boolean, isReadonly: boolean, isReviseMode: boolean,
-     *           filePath: string, fileName: string, isDocEditable: boolean, isSharable: boolean,
-     *           attachmentType: number, callback: function(fileObj), changed: boolean}}
+     * @return {{url: string, savePath: string, isOverrideMode: boolean}}
      */
-    createFileObj: function (url, savePath, isOverrideMode, isReadonly, isReviseMode, callback,
-                             filePath, fileName, isDocEditable, isSharable, attachmentType) {
+    createFileObj: function (url, savePath, isOverrideMode) {
         return {
             url: url || '', // 文件下载地址 全路径地址
             savePath: savePath || '', // 本地保存路径
 
             // 下载控制
-            isOverrideMode: !!isOverrideMode,  // 下载是否覆盖, 如果不覆盖且存在文件, 就使用原来已有的文件
-
-            // 编辑控制
-            isReadonly: (isReadonly === undefined) ? true : !!isReadonly,
-            isReviseMode: !!isReviseMode,
-
-            // 文件属性
-            filePath: filePath || '', // 服务端保存地址
-            fileName: fileName || '', // 文件名
-            isDocEditable: !!isDocEditable, // 公文当前是否可编辑
-            isSharable: !!isSharable, // 是否可共享或下载
-            attachmentType: (attachmentType === undefined) ? -1 : attachmentType, // 1=正文 0=附件
-
-            // 回调
-            callback: function (fileObj) {
-            },
-            changed: false
+            isOverrideMode: !!isOverrideMode  // 下载是否覆盖, 如果不覆盖且存在文件, 就使用原来已有的文件
         };
     },
 
-
     /**
      * open
-     * @param fileObj   {{savePath:String, isReadonly:boolean, isReviseMode:boolean, callback:function(fileObj)}}
+     * @param fileObj   {{savePath:String}}
      * @param flags     {josn=}
      *
      */
@@ -86,35 +57,8 @@ var fileViewer = appcan.fileViewer = {
             return;
         }
 
-        if (this._moffice_pro_installed === undefined) {
-            this._moffice_pro_installed = appcan.xwin.isAppInstalled('com.kingsoft.moffice_pro');
-        }
-
         if (fileObj.savePath.isImageFile()) {
             uexImage.openBrowser(JSON.stringify({enableGrid: false, data: [{src: fileObj.savePath}]}));
-        } else if (appConfig.uex.uexiAppRevisionAndOffice && this._moffice_pro_installed && fileObj.savePath.isWpsFile()) {
-            appcan.iApp.openLocalFile(fileObj.savePath, fileObj.isReadonly ? 1 : 0, fileObj.isReviseMode ? 1 : 0, appcan.xwin.userName, function (data) {
-                fileObj.changed = data.result;
-                if (fileObj.changed && $.type(fileObj.callback) === "function") {
-                    fileObj.callback(fileObj);
-                }
-            });
-        } else if (appConfig.uex.uexWps && this._moffice_pro_installed && fileObj.savePath.isWpsFile()) {
-            uexWps.onMessage = function (msg, data) {
-                if (msg === "saved") {
-                    if (!fileObj.isReadonly) fileObj.changed = true;
-                } else if (msg === "closed") {
-                    if (fileObj.changed && $.type(fileObj.callback) === "function") {
-                        fileObj.callback(fileObj);
-                    }
-                }
-            };
-            uexWps.open({
-                filePath: fileObj.savePath,
-                isReadonly: !!fileObj.isReadonly,
-                isReviseMode: !!fileObj.isReviseMode,
-                userName: appcan.xwin.userName
-            })
         } else if (fileObj.savePath.isWpsFile()) {
             Toast.show('提示: 对文档的修改都将被忽略');
             window.setTimeout(function () {
@@ -129,7 +73,7 @@ var fileViewer = appcan.fileViewer = {
 
     /**
      * openFromWeb
-     * @param urlObj   {{url:String, isOverrideMode:boolean, isReadonly:boolean, isReviseMode:boolean, callback:function(fileObj)}}
+     * @param urlObj   {{url:String, isOverrideMode:boolean}}
      * @param flags   {josn=}
      *
      */
