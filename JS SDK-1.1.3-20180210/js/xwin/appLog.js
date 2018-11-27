@@ -52,44 +52,18 @@ var appLog = {
     },
 
     _sendlog: function (s) {
-        if (this._appcanIsReady || window.uexLog) {
-            try {
-                if (window.uexLog) uexLog.sendLog(s);
-            } catch (e) {
-                //
-            }
+        if (this._appcanIsReady) {
+            if (window.uexLog) uexLog.sendLog(s);
         } else {
             this._logs.push(s);
-
-            if (!this._readyIsSet) {
-                this._readyIsSet = true;
-
-                appcan.ready(function () {
-                    var thiz = appLog;
-                    thiz._appcanIsReady = true;
-
-                    try {
-                        if (window.uexLog) {
-                            for (var i = 0; i < thiz._logs.length; i++) {
-                                uexLog.sendLog(thiz._logs[i]);
-                            }
-                        }
-                    } catch (e) {
-                        //
-                    }
-
-                    thiz._logs = [];
-                });
-            }
         }
     },
     _logs: [],
-    _readyIsSet: false,
     _appcanIsReady: false,
 
     get _isEnabled() {
         if ((this._enablefunc === false) || (this._appcanIsReady && !window.uexLog)) return false;
-        if ((this._enablefunc === undefined) || (this._enablefunc === true)) return true;
+        if (this._enablefunc === true) return true;
 
         if (Object.prototype.toString.call(this._enablefunc) === '[object Function]') {
             try {
@@ -104,10 +78,23 @@ var appLog = {
 
     /**
      * enable
-     * @param func  {boolean | function : boolean}, default true
+     * @param b   {boolean | function : boolean}, default true
      */
-    enable: function (func) {
-        this._enablefunc = func;
+    enable: function (b) {
+        this._enablefunc = b;
     },
-    _enablefunc: undefined
+    _enablefunc: true
 };
+
+appcan.ready(function () {
+    var thiz = appLog;
+    thiz._appcanIsReady = true;
+
+    if (window.uexLog) {
+        for (var i = 0; i < thiz._logs.length; i++) {
+            uexLog.sendLog(thiz._logs[i]);
+        }
+    }
+
+    thiz._logs = [];
+});
