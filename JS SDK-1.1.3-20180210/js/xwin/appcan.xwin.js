@@ -658,7 +658,7 @@ var xwin = appcan.xwin = {
      * @return          {String}
      */
     realPath: function (wgtUrl) {
-        if (wgtUrl.match(new RegExp("^" + appcan.file.wgtPath))) {
+        if (wgtUrl.substr(0, appcan.file.wgtPath.length) === appcan.file.wgtPath) {
             return this.wgtPath + wgtUrl.substring(appcan.file.wgtPath.length);
         } else {
             return wgtUrl;

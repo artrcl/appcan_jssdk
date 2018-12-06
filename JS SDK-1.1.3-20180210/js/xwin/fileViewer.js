@@ -108,7 +108,6 @@ var fileViewer = appcan.fileViewer = {
                         data = JSON.parse(data);
                     }
                     var fileId = data.CurrentPath;
-                    if (fileId.substr(0, appcan.xwin.wgtPath.length) === appcan.xwin.wgtPath) fileId = fileId.substring(appcan.xwin.wgtPath.length);
 
                     var thiz = appcan.fileViewer;
                     var fileObj = thiz.wpspro_queue[fileId].fileObj;
@@ -124,13 +123,7 @@ var fileViewer = appcan.fileViewer = {
                 };
             }
 
-            var fileId = fileObj.savePath;
-            if (fileId.substr(0, appcan.file.wgtPath.length) === appcan.file.wgtPath) fileId = fileId.substring(appcan.file.wgtPath.length);
-            else if (fileId.substr(0, appcan.xwin.wgtPath.length) === appcan.xwin.wgtPath) fileId = fileId.substring(appcan.xwin.wgtPath.length);
-            else {
-                fileId = uexFileMgr.getFileRealPath(fileId);
-                if (fileId.substr(0, appcan.xwin.wgtPath.length) === appcan.xwin.wgtPath) fileId = fileId.substring(appcan.xwin.wgtPath.length);
-            }
+            var fileId = appcan.xwin.realPath(fileObj.savePath);
 
             this.wpspro_queue[fileId] = {
                 fileObj: fileObj
