@@ -100,15 +100,42 @@ var fileViewer = appcan.fileViewer = {
                 }
             });
         } else if (window.uexWps && this._moffice_pro_installed && fileObj.savePath.isWpsFile()) {
-            uexWps.onMessage = function (msg, data) {
-                if (msg === "saved") {
-                    if (!fileObj.isReadonly) fileObj.changed = true;
-                } else if (msg === "closed") {
-                    if (fileObj.changed && $.type(fileObj.callback) === "function") {
-                        fileObj.callback(fileObj);
+            if (!this.wpspro_queue) {
+                this.wpspro_queue = {};
+
+                uexWps.onMessage = function (msg, data) {
+                    if (typeof data === "string") {
+                        data = JSON.parse(data);
                     }
-                }
+                    var fileId = data.CurrentPath;
+                    fileId = fileId.replace(/.*\/widgetone\/apps\/[0-9]+\//, "");
+
+                    var thiz = appcan.fileViewer;
+                    var fileObj = thiz.wpspro_queue[fileId].fileObj;
+
+                    if (msg === "saved") {
+                        if (!fileObj.isReadonly) fileObj.changed = true;
+                    } else if (msg === "closed") {
+                        if (fileObj.changed && $.type(fileObj.callback) === "function") {
+                            fileObj.callback(fileObj);
+                        }
+                        delete thiz.wpspro_queue[fileId];
+                    }
+                };
+            }
+
+            var fileId = fileObj.savePath;
+            if (fileId.substr(0, appcan.file.wgtPath.length) === appcan.file.wgtPath) fileId = fileId.substring(appcan.file.wgtPath.length);
+            else if (fileId.substr(0, appcan.xwin.wgtPath.length) === appcan.xwin.wgtPath) fileId = fileId.substring(appcan.xwin.wgtPath.length);
+            else {
+                fileId = uexFileMgr.getFileRealPath(fileId);
+                fileId = fileId.replace(/.*\/widgetone\/apps\/[0-9]+\//, "");
+            }
+
+            this.wpspro_queue[fileId] = {
+                fileObj: fileObj
             };
+
             uexWps.open({
                 filePath: fileObj.savePath,
                 isReadonly: !!fileObj.isReadonly,
