@@ -1,28 +1,32 @@
 "use strict";
 
 var appLog = {
+    _logs: [],
+    _appcanIsReady: false,
+    _enablefunc: true,
+
     /**
      * log
-     * @param s  {Any...}
+     * @param s  {*...}
      */
     log: function (s) {
-        if (this._isEnabled) this._send("log", Array.prototype.slice.apply(arguments));
+        if (this._isEnabled()) this._send("log", Array.prototype.slice.apply(arguments));
     },
 
     /**
      * warn
-     * @param s  {Any...}
+     * @param s  {*...}
      */
     warn: function (s) {
-        if (this._isEnabled) this._send("warn", Array.prototype.slice.apply(arguments));
+        if (this._isEnabled()) this._send("warn", Array.prototype.slice.apply(arguments));
     },
 
     /**
      * error
-     * @param s  {Any...}
+     * @param s  {*...}
      */
     error: function (s) {
-        if (this._isEnabled) this._send("error", Array.prototype.slice.apply(arguments));
+        if (this._isEnabled()) this._send("error", Array.prototype.slice.apply(arguments));
     },
 
     _send: function (t, sa) {
@@ -58,10 +62,8 @@ var appLog = {
             this._logs.push(s);
         }
     },
-    _logs: [],
-    _appcanIsReady: false,
 
-    get _isEnabled() {
+    _isEnabled: function () {
         if ((this._enablefunc === false) || (this._appcanIsReady && !window.uexLog)) return false;
         if (this._enablefunc === true) return true;
 
@@ -83,18 +85,23 @@ var appLog = {
     enable: function (b) {
         this._enablefunc = b;
     },
-    _enablefunc: true
+
+    /**
+     * prepare
+     */
+    prepare: function () {
+        this._appcanIsReady = true;
+
+        if (window.uexLog) {
+            for (var i = 0; i < this._logs.length; i++) {
+                uexLog.sendLog(this._logs[i]);
+            }
+        }
+
+        this._logs = [];
+    }
 };
 
 appcan.ready(function () {
-    var thiz = appLog;
-    thiz._appcanIsReady = true;
-
-    if (window.uexLog) {
-        for (var i = 0; i < thiz._logs.length; i++) {
-            uexLog.sendLog(thiz._logs[i]);
-        }
-    }
-
-    thiz._logs = [];
+    appLog.prepare();
 });
