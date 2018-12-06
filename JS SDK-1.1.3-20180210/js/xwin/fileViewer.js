@@ -92,14 +92,14 @@ var fileViewer = appcan.fileViewer = {
 
         if (fileObj.savePath.isImageFile()) {
             uexImage.openBrowser(JSON.stringify({enableGrid: false, data: [{src: fileObj.savePath}]}));
-        } else if (appConfig.uex.uexiAppRevisionAndOffice && this._moffice_pro_installed && fileObj.savePath.isWpsFile()) {
+        } else if (window.uexiAppRevisionAndOffice && this._moffice_pro_installed && fileObj.savePath.isWpsFile()) {
             appcan.iApp.openLocalFile(fileObj.savePath, fileObj.isReadonly ? 1 : 0, fileObj.isReviseMode ? 1 : 0, appcan.xwin.userName, function (data) {
                 fileObj.changed = data.result;
                 if (fileObj.changed && $.type(fileObj.callback) === "function") {
                     fileObj.callback(fileObj);
                 }
             });
-        } else if (appConfig.uex.uexWps && this._moffice_pro_installed && fileObj.savePath.isWpsFile()) {
+        } else if (window.uexWps && this._moffice_pro_installed && fileObj.savePath.isWpsFile()) {
             uexWps.onMessage = function (msg, data) {
                 if (msg === "saved") {
                     if (!fileObj.isReadonly) fileObj.changed = true;

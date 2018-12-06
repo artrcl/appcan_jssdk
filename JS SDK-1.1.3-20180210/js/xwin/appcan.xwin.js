@@ -50,6 +50,17 @@ var xwin = appcan.xwin = {
     }(),
 
     /**@preserve
+     * 返回一个全局的序列值
+     * @return  {int}
+     */
+    getGlobalUID: function () {
+        var i = istore.get("xwin.global.uid", 1);
+        istore.set("xwin.global.uid", i + 1);
+
+        return i;
+    },
+
+    /**@preserve
      * open 打开一个新窗口
      * @param wnd       {String=}  窗口的名字, 无此参数或 "auto" ==> 自动取名
      * @param url       {String}  要加载的地址

@@ -25,28 +25,16 @@ window.appConfig = {
         defvalue: "f2"
     },
     fontSizeIsSet: false,
-    appLogEnabled: true,
-
-    // uex插件 是否可用
-    uex: {
-        uexGDCA: false,
-        uexiAppRevisionAndOffice: true,
-        uexWps: true
-    }
+    appLogEnabled: true
 };
 
 appcan.ready(function () {
-    if (!appcan.xwin.isAndroid()) {
-        for (var key in appConfig.uex) {
-            appConfig.uex[key] = false;
-        }
-    } else {
-        if (appConfig.uex.uexiAppRevisionAndOffice) {
-            var license = istore.get("sys.iAppLicense", "");
-            appConfig.uex.uexiAppRevisionAndOffice = license !== "";
-            if (appConfig.uex.uexiAppRevisionAndOffice) {
-                appcan.iApp.copyRight = license;
-            }
+    if (window.uexiAppRevisionAndOffice) {
+        var license = istore.get("sys.iAppLicense", "");
+        if (license === "") {
+            window.uexiAppRevisionAndOffice = undefined;
+        } else {
+            appcan.iApp.copyRight = license;
         }
     }
 });

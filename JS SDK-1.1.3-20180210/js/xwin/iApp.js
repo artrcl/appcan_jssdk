@@ -13,9 +13,9 @@ var iApp = appcan.iApp = {
         this.prepare();
     }, _inited: false,
 
-    prepare: function (force) {
+    prepare: function () {
         if (this._prepared) return;
-        if (!force && !appConfig.uex.uexiAppRevisionAndOffice) return;
+        if (!window.uexiAppRevisionAndOffice) return;
 
         this._prepared = true;
 
@@ -125,7 +125,3 @@ var iApp = appcan.iApp = {
         });
     }
 };
-
-appcan.ready(function () {
-    appcan.iApp.prepare();
-});

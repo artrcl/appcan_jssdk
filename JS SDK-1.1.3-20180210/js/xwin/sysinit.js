@@ -7,7 +7,5 @@ appcan.ready(function () {
     appcan.xwin.clearLocStorageAndTempFiles();
     appcan.xwin.initLocStorage();
 
-    if (appConfig.uex.uexiAppRevisionAndOffice && (uexWidgetOne.getPlatform() === 1)) {
-        appcan.iApp.prepare(true);
-    }
+    appcan.iApp.prepare(); // uexiAppRevisionAndOffice 插件的bug，其它window的回调都调用到了 第一个window的回调去了。
 });
