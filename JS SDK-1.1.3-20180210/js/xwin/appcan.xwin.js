@@ -34,6 +34,7 @@ var xwin = appcan.xwin = {
 
     onClose: null, // {function} close 窗口事件
     wgtPath: null, // wgt:// 对应的地址
+    sdcardPath: null, // file:///sdcard/
     tempDir: appcan.file.wgtPath + "temp/dummyTempdir/",
 
     /**@preserve
@@ -254,13 +255,20 @@ var xwin = appcan.xwin = {
      */
     prepare: function () {
         var wgtPath = istore.get("xwin.wgtPath");
+        var sdcardPath = istore.get("xwin.sdcardPath");
         if (!wgtPath) {
             var s = uexFileMgr.getFileRealPath(appcan.file.wgtPath);
             if (s.length > 0 && s.charAt(s.length - 1) !== "/") s += "/";
             istore.set("xwin.wgtPath", s);
             this.wgtPath = s;
+
+            s = uexFileMgr.getFileRealPath("file:///sdcard/");
+            if (s.length > 0 && s.charAt(s.length - 1) !== "/") s += "/";
+            istore.set("xwin.sdcardPath", s);
+            this.sdcardPath = s;
         } else {
             this.wgtPath = wgtPath;
+            this.sdcardPath = sdcardPath;
         }
 
         this.opener = istore.get("xwin.opener");
@@ -664,7 +672,7 @@ var xwin = appcan.xwin = {
      */
     fileProviderPath: function (wgtUrl) {
         var s = this.realPath(wgtUrl);
-        s = s.replace(/.*\/(widgetone\/apps\/[0-9]+\/)/, "$1");
+        if (s.substr(0, appcan.xwin.sdcardPath.length) === appcan.xwin.sdcardPath) s = s.substring(appcan.xwin.sdcardPath.length);
         return s;
     },
 

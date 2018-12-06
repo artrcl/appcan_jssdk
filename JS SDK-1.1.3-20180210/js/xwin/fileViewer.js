@@ -108,7 +108,7 @@ var fileViewer = appcan.fileViewer = {
                         data = JSON.parse(data);
                     }
                     var fileId = data.CurrentPath;
-                    fileId = fileId.replace(/.*\/widgetone\/apps\/[0-9]+\//, "");
+                    if (fileId.substr(0, appcan.xwin.wgtPath.length) === appcan.xwin.wgtPath) fileId = fileId.substring(appcan.xwin.wgtPath.length);
 
                     var thiz = appcan.fileViewer;
                     var fileObj = thiz.wpspro_queue[fileId].fileObj;
@@ -129,7 +129,7 @@ var fileViewer = appcan.fileViewer = {
             else if (fileId.substr(0, appcan.xwin.wgtPath.length) === appcan.xwin.wgtPath) fileId = fileId.substring(appcan.xwin.wgtPath.length);
             else {
                 fileId = uexFileMgr.getFileRealPath(fileId);
-                fileId = fileId.replace(/.*\/widgetone\/apps\/[0-9]+\//, "");
+                if (fileId.substr(0, appcan.xwin.wgtPath.length) === appcan.xwin.wgtPath) fileId = fileId.substring(appcan.xwin.wgtPath.length);
             }
 
             this.wpspro_queue[fileId] = {
