@@ -11,24 +11,24 @@
 
 /*global uexWindow, uexFileMgr, uexWidgetOne, uexXmlHttpMgr*/
 
-/**@preserve
- * window.appConfig {Object}
- *    serverUrl       服务端地址
- *    serverIndex     默认的服务端地址 index
- *    downloadUrlTemplate   服务端文件下载地址模板
- *    tokenType       会话维持的方式: JSESSIONID, param 或 header
- *    loginUrl        login url
- *    logoutUrl       logout url
- *    debugTokenId    用于appcan编辑调试
- */
 var xwin = appcan.xwin = {
+    serverConfig: {
+        serverUrl: 'http://a.bc.cn/dz',  //  服务端地址 {String|Array}
+        serverIndex: 0, // 默认的服务端地址 index
+        downloadUrlTemplate: 'http://a.bc.cn/dz/download?url=$s', // 服务端文件下载地址模板 {String|Array}
+        tokenType: 'JSESSIONID',  //  会话维持的方式: JSESSIONID, param 或 header    {String|Object}
+        loginUrl: 'login',  //  login url   {String=}
+        logoutUrl: 'logout',  //  logout url {String=}
+        debugTokenId: '',  //  用于appcan编辑调试    {String=}
+    },
+
     opener: null, // opener窗口名字
     current: null, // 当前窗口名字
 
     // JSESSIONID 方式的话将在 url 附加 JSESSIONID=...,
     // param 方式, 如 "__sid", 将会在 url 的 querystr 附加 __sid=...
     // header 方式, 如 {Auth: "?"}, 就在 http header 里添加 header： "Auth：..."
-    _tokenType: "JSESSIONID", // 默认值
+    _tokenType: "JSESSIONID", // 设置默认值
     // tokenType : '__sid',
     // tokenType : {Auth: "?"},
 
@@ -181,7 +181,7 @@ var xwin = appcan.xwin = {
      */
     get serverUrl() {
         if (!this._serverUrl) {
-            var value = window.appConfig.serverUrl;
+            var value = this.serverConfig.serverUrl;
             if ($.type(value) === "string") value = [value];
             this._serverUrl = value;
             if (this.serverIndex < 0 || this.serverIndex >= this._serverUrl.length) this.serverIndex = 0;
@@ -195,7 +195,7 @@ var xwin = appcan.xwin = {
      */
     get downloadUrlTemplate() {
         if (!this._downloadUrlTemplate) {
-            var value = window.appConfig.downloadUrlTemplate;
+            var value = this.serverConfig.downloadUrlTemplate;
             if ($.type(value) === "string") value = [value];
             this._downloadUrlTemplate = value;
         }
@@ -216,7 +216,7 @@ var xwin = appcan.xwin = {
     get serverIndex() {
         var value = istore.get("xwin.serverIndex");
         if (value == null) {
-            value = window.appConfig.serverIndex;
+            value = this.serverConfig.serverIndex;
             value = value ? eval(value) : 0;
             if (value < 0 || value >= this._serverUrl.length) value = 0;
             return value;
@@ -230,7 +230,7 @@ var xwin = appcan.xwin = {
      * @return  {String|Object}
      */
     get tokenType() {
-        var tokenType = window.appConfig.tokenType;
+        var tokenType = this.serverConfig.tokenType;
         if (tokenType) return tokenType;
         return this._tokenType;
     },
@@ -333,7 +333,7 @@ var xwin = appcan.xwin = {
         }
 
         if (typeof this.tokenType === "string") {
-            var tokenId = this.tokenId || window.appConfig.debugTokenId;
+            var tokenId = this.tokenId || this.serverConfig.debugTokenId;
             if (tokenId) {
                 var i = url.indexOf("?");
 
@@ -420,7 +420,7 @@ var xwin = appcan.xwin = {
         }
 
         if ($.type(this.tokenType) === "object") {
-            var tokenId = this.tokenId || window.appConfig.debugTokenId;
+            var tokenId = this.tokenId || this.serverConfig.debugTokenId;
             if (tokenId) {
                 options.headers = {};
                 for (var key in this.tokenType) {
@@ -501,7 +501,7 @@ var xwin = appcan.xwin = {
         }
 
         if ($.type(this.tokenType) === "object") {
-            var tokenId = this.tokenId || window.appConfig.debugTokenId;
+            var tokenId = this.tokenId || this.serverConfig.debugTokenId;
             if (tokenId) {
                 var headers = {};
                 for (var key in this.tokenType) {
@@ -520,7 +520,7 @@ var xwin = appcan.xwin = {
      */
     logout: function (url) {
         appcan.request.ajax({
-            url: this.httpUrl(url || window.appConfig.logoutUrl || "logout"),
+            url: this.httpUrl(url || this.serverConfig.logoutUrl || "logout"),
             type: 'POST',
             success: function (data, status, requestCode, response, xhr) {
                 //alert('success');

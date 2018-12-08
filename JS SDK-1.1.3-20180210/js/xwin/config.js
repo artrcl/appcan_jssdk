@@ -1,33 +1,18 @@
 "use strict";
 
-window.appConfig = {
-    // xwin
-    serverUrl: 'http://a.bc.cn/dz',  //  服务端地址 {String|Array}
-    serverIndex: 0, // 默认的服务端地址 index
-    downloadUrlTemplate: 'http://a.bc.cn/dz/download?url=$s', // 服务端文件下载地址模板 {String|Array}
-    tokenType: '',  //  会话维持的方式: JSESSIONID, param 或 header    {String|Object}
-    loginUrl: '',  //  login url   {String=}
-    logoutUrl: '',  //  logout url {String=}
-    debugTokenId: '',  //  用于appcan编辑调试    {String=}
-
-    ///////////////////////////
-    js: ['fontsize.js', 'istore.js', 'appLog.js', 'extend.js', 'array.js', 'laytpl.js',
-        'cxdate.js', 'appcan.downloader.js', 'appcan.xwin.js', 'toast.js',
-        'iApp.js', 'iGDCA.js', 'fileViewer.js', 'appcan.fileMgr.js',
-        'calendar.js'],
-    css: [],
-    fontSizeList: {
-        f1: {value: 0.90, label: "小"},
-        f2: {value: 1.00, label: "普通"},
-        f3: {value: 1.15, label: "大"},
-        f4: {value: 1.30, label: "特大"},
-        f5: {value: 1.50, label: "超大"},
-        defvalue: "f2"
-    },
-    appLogEnabled: true
-};
-
 appcan.ready(function () {
+    appLog.enable(true);
+
+    appcan.xwin.serverConfig = {
+        serverUrl: 'http://a.bc.cn/dz',  //  服务端地址 {String|Array}
+        serverIndex: 0, // 默认的服务端地址 index
+        downloadUrlTemplate: 'http://a.bc.cn/dz/download?url=$s', // 服务端文件下载地址模板 {String|Array}
+        tokenType: '__sid',  //  会话维持的方式: JSESSIONID, param 或 header    {String|Object}
+        loginUrl: 'login',  //  login url   {String=}
+        logoutUrl: 'logout',  //  logout url {String=}
+        debugTokenId: '',  //  用于appcan编辑调试    {String=}
+    };
+
     if (window.uexiAppRevisionAndOffice) {
         var license = istore.get("sys.iAppLicense", "");
         if (license === "") {
@@ -61,6 +46,8 @@ var reqJS = {
     },
 
     batchInclude: function (baseUrl, js, css) {
+        if (!baseUrl) baseUrl = this.baseUrlFromJs();
+
         if (!js) js = []; else if (typeof js === "string") js = [js];
         if (!css) css = []; else if (typeof css === "string") css = [css];
 
@@ -81,4 +68,14 @@ var reqJS = {
     }
 };
 
-reqJS.batchInclude(reqJS.baseUrlFromJs(), window.appConfig.js, window.appConfig.css);
+(function () {
+    var js = [
+        'fontsize.js', 'istore.js', 'appLog.js', 'extend.js', 'array.js', 'laytpl.js',
+        'cxdate.js', 'appcan.downloader.js', 'appcan.xwin.js', 'toast.js', 'iApp.js',
+        'iGDCA.js', 'fileViewer.js', 'appcan.fileMgr.js', 'calendar.js'
+    ];
+
+    var css = [];
+
+    reqJS.batchInclude('', js, css);
+})();
