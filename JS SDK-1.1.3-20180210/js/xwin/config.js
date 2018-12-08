@@ -24,7 +24,6 @@ window.appConfig = {
         f5: {value: 1.50, label: "超大"},
         defvalue: "f2"
     },
-    fontSizeIsSet: false,
     appLogEnabled: true
 };
 
@@ -62,8 +61,8 @@ var reqJS = {
     },
 
     batchInclude: function (baseUrl, js, css) {
-        if (!js) js = []; else if (typeof(js) === "string") js = [js];
-        if (!css) css = []; else if (typeof(css) === "string") css = [css];
+        if (!js) js = []; else if (typeof js === "string") js = [js];
+        if (!css) css = []; else if (typeof css === "string") css = [css];
 
         var i;
         for (i = 0; i < css.length; i++) {
