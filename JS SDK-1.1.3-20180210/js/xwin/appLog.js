@@ -92,7 +92,7 @@ var appLog = {
     prepare: function () {
         this._appcanIsReady = true;
 
-        if (window.uexLog) {
+        if (this._isEnabled()) {
             for (var i = 0; i < this._logs.length; i++) {
                 uexLog.sendLog(this._logs[i]);
             }
