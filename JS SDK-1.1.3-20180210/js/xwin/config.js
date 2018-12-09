@@ -1,8 +1,6 @@
 "use strict";
 
 appcan.ready(function () {
-    appLog.enable(true);
-
     appcan.xwin.serverConfig = {
         serverUrl: 'http://a.bc.cn/dz',  //  服务端地址 {String|Array}
         serverIndex: 0, // 默认的服务端地址 index
@@ -13,12 +11,24 @@ appcan.ready(function () {
         debugTokenId: '',  //  用于appcan编辑调试    {String=}
     };
 
+    var license;
     if (window.uexiAppRevisionAndOffice) {
-        var license = istore.get("sys.iAppLicense", "");
+        license = istore.get("sys.iApp.license", "");
         if (license === "") {
             window.uexiAppRevisionAndOffice = undefined;
         } else {
             appcan.iApp.copyRight = license;
+        }
+    }
+
+    if (window.uexGDCA) {
+        license = istore.get("sys.GDCA.license", "");
+        if (license === "") {
+            window.uexGDCA = undefined;
+        } else {
+            license = JSON.parse(license);
+            appcan.iGDCA.busId = license.busId;
+            appcan.iGDCA.license = license.license;
         }
     }
 });
