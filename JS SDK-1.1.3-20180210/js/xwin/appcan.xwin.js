@@ -639,6 +639,9 @@ var xwin = appcan.xwin = {
                     script += JSON.stringify(arguments[i]); // 不用传 function regexp, date 的话，请使用 date.getTime() 代替
                 }
                 script += ")";
+            } else {
+                var k = script.indexOf("(");
+                if (k < 0) script = script + "()";
             }
         }
 
