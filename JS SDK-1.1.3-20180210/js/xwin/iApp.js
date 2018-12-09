@@ -61,7 +61,7 @@ var iApp = appcan.iApp = {
      */
     openLocalFile: function (filePath, isReadOnly, isReviseMode, username, callback) {
         this._saveFileCallback = callback;
-        this.wndName = appcan.xwin.current;
+        this.wndName = appcan.xwin.wndName;
         this.init();
 
         uexiAppRevisionAndOffice.openLocalFile(appcan.xwin.fileProviderPath(filePath), isReadOnly ? 1 : 0, isReviseMode ? 1 : 0, username, 1 /*isShowReviseWin*/);
@@ -74,7 +74,7 @@ var iApp = appcan.iApp = {
      */
     doRevision: function (userName, callback) {
         this._cbDoRevision = callback;
-        this.wndName = appcan.xwin.current;
+        this.wndName = appcan.xwin.wndName;
         this.init();
 
         uexiAppRevisionAndOffice.doRevision(userName);
@@ -94,7 +94,7 @@ var iApp = appcan.iApp = {
             picWidth = 800;
         }
         this._cbDoRevision = callback;
-        this.wndName = appcan.xwin.current;
+        this.wndName = appcan.xwin.wndName;
         this.init();
 
         uexiAppRevisionAndOffice.doIntersectedRevision(userName, wordPerRow, picWidth);

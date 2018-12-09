@@ -22,8 +22,8 @@ var xwin = appcan.xwin = {
         debugTokenId: '',  //  用于appcan编辑调试    {String=}
     },
 
-    opener: null, // opener窗口名字
-    current: null, // 当前窗口名字
+    openerWndName: null, // opener窗口名字
+    wndName: null, // 当前窗口名字
 
     // JSESSIONID 方式的话将在 url 附加 JSESSIONID=...,
     // param 方式, 如 "__sid", 将会在 url 的 querystr 附加 __sid=...
@@ -63,7 +63,7 @@ var xwin = appcan.xwin = {
 
     /**@preserve
      * open 打开一个新窗口
-     * @param wnd       {String=}  窗口的名字, 无此参数或 "auto" ==> 自动取名
+     * @param wnd       {String=}  窗口的名字, 无此参数或 "_auto_" 或非字符串 ==> 自动取名
      * @param url       {String}  要加载的地址
      * @param param     {json}    传入参数，以备新开的窗口使用
      * @param aniId     {Integer} 动画效果
@@ -81,24 +81,24 @@ var xwin = appcan.xwin = {
             animDuration = argObj.animDuration;
         } else if (arguments.length === 1) {
             url = wnd;
-            wnd = "auto";
+            wnd = "_auto_";
         } else if ($.type(url) === "object") {
             animDuration = type;
             type = aniId;
             aniId = param;
             param = url;
             url = wnd;
-            wnd = "auto";
+            wnd = "_auto_";
         }
 
-        if (wnd === "auto" || $.type(wnd) !== "string") {
+        if (wnd === "_auto_" || $.type(wnd) !== "string") {
             var i = istore.get("xwin.nextVal", 1);
             istore.set("xwin.nextVal", i + 1);
             wnd = "aw" + i;
         }
 
-        istore.set("xwin.opener", this.current);
-        istore.set("xwin.current", wnd);
+        istore.set("xwin.opener.wndName", this.wndName);
+        istore.set("xwin.current.wndName", wnd);
 
         var wndList = istore.get("xwin.wndList", []);
 
@@ -116,16 +116,16 @@ var xwin = appcan.xwin = {
      * close 关闭窗口
      * @param wnd  {String}  窗口名字
      * 说明:
-     * 'current'  或无wnd参数，就关闭当前窗口，
-     * 'opener'   关闭 opener 窗口
-     * 'all'      关闭所有窗口
-     * 其它，     关闭指定名字的窗口
+     * '_current_'  或无wnd参数，就关闭当前窗口，
+     * '_opener_'   关闭 opener 窗口
+     * '_all_'      关闭所有窗口
+     * 其它，       关闭指定名字的窗口
      */
     close: function (wnd) {
         var wndList;
 
-        if (arguments.length === 0 || wnd === "current") {
-            wnd = this.current;
+        if (arguments.length === 0 || wnd === "_current_") {
+            wnd = this.wndName;
             this._deleteTempFiles();
             if (wnd === "root") {
                 appcan.window.evaluateScript(wnd, 'location.reload()');
@@ -146,10 +146,10 @@ var xwin = appcan.xwin = {
                     }
                 }
             }
-        } else if (wnd === "opener") {
-            wnd = this.opener;
+        } else if (wnd === "_opener_") {
+            wnd = this.openerWndName;
             appcan.window.evaluateScript(wnd, 'appcan.xwin.close()');
-        } else if (wnd === "all") {
+        } else if (wnd === "_all_") {
             wndList = istore.get("xwin.wndList", []);
 
             for (; wndList.length > 0;) {
@@ -165,14 +165,14 @@ var xwin = appcan.xwin = {
      * closeOpener  关闭 opener 窗口
      */
     closeOpener: function () {
-        this.close("opener");
+        this.close("_opener_");
     },
 
     /**@preserve
      * closeAll     关闭所有窗口
      */
     closeAll: function () {
-        this.close("all");
+        this.close("_all_");
     },
 
     /**@preserve
@@ -271,18 +271,18 @@ var xwin = appcan.xwin = {
             this.sdcardPath = sdcardPath;
         }
 
-        this.opener = istore.get("xwin.opener");
-        this.current = istore.get("xwin.current");
+        this.openerWndName = istore.get("xwin.opener.wndName");
+        this.wndName = istore.get("xwin.current.wndName");
 
-        if (this.opener === null && this.current === null) {
-            this.opener = "";
-            this.current = "root";
+        if (this.openerWndName === null && this.wndName === null) {
+            this.openerWndName = "";
+            this.wndName = "root";
         }
 
         this._param = istore.get("xwin.param", {});
         istore.remove("xwin.param"); // 取出即删除
 
-        this.tempDir = appcan.file.wgtPath + "temp/" + this.current + "/";
+        this.tempDir = appcan.file.wgtPath + "temp/" + this.wndName + "/";
 
         this._deleteTempFiles();
 
@@ -290,10 +290,10 @@ var xwin = appcan.xwin = {
         uexWindow.onKeyPressed = function (keyCode) {
             if (keyCode === 0 /*back key*/) {
                 var thiz = appcan.xwin;
-                if (thiz.current === "root") {
+                if (thiz.wndName === "root") {
                     thiz.clearLocStorageAndTempFiles();
                     uexWidgetOne.exit(0);
-                } else if (thiz.current === "index") {
+                } else if (thiz.wndName === "index") {
                     if (window.logoutClickCount && window.logoutClickCount > 0) {
                         thiz.logout();
                     } else {
@@ -598,8 +598,8 @@ var xwin = appcan.xwin = {
 
     /**@preserve
      * execute 跨窗口执行脚本
-     * @param wnd     {String=}    可选项，窗口名字，为'opener'或false的值，表示opener窗口，其它值指定窗口名字
-     * @param script  {String}    脚本
+     * @param wnd     {String=}    可选项，窗口名字，为'_opener_'或空字符串或非字符串，表示opener窗口，其它值指定窗口名字
+     * @param script  {String}     脚本
      * 说明: 还可以附加额外参数
      * 例子:
      * execute("hello(1)", 2); 在opener窗口执行 hello(1,2)
@@ -610,16 +610,16 @@ var xwin = appcan.xwin = {
     execute: function (wnd, script) {
         if (script === undefined) {
             script = wnd;
-            wnd = this.opener;
+            wnd = this.openerWndName;
         } else {
             var len;
             if (wnd && wnd.indexOf("(") >= 0) {
                 // 第一个参数包括括号，认为wnd参数忽略了，第一个参数就是script
                 script = wnd;
-                wnd = this.opener;
+                wnd = this.openerWndName;
                 len = 1;
             } else {
-                wnd = (wnd && (wnd !== "opener")) ? wnd : this.opener;
+                if (wnd === "" || wnd === "_opener_" || $.type(wnd) !== "string") wnd = this.openerWndName;
                 len = 2;
             }
 
@@ -680,11 +680,11 @@ var xwin = appcan.xwin = {
      * initLocStorage 初始化 locStorage, 用于 root 窗口，最开始就调用，应该优先于 config.js 的 appcan.ready():
      */
     initLocStorage: function () {
-        this.opener = "";
-        this.current = "root";
+        this.openerWndName = "";
+        this.wndName = "root";
 
-        istore.set("xwin.opener", this.opener);
-        istore.set("xwin.current", this.current);
+        istore.set("xwin.opener.wndName", this.openerWndName);
+        istore.set("xwin.current.wndName", this.wndName);
         istore.set("xwin.nextVal", "1");
         istore.set("xwin.wndList", ["root"]);
 
