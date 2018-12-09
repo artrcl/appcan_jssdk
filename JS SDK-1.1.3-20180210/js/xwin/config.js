@@ -20,17 +20,6 @@ appcan.ready(function () {
             appcan.iApp.copyRight = license;
         }
     }
-
-    if (window.uexGDCA) {
-        license = istore.get("sys.GDCA.license", "");
-        if (license === "") {
-            window.uexGDCA = undefined;
-        } else {
-            license = JSON.parse(license);
-            appcan.iGDCA.busId = license.busId;
-            appcan.iGDCA.license = license.license;
-        }
-    }
 });
 
 var reqJS = {
@@ -82,7 +71,7 @@ var reqJS = {
     var js = [
         'fontsize.js', 'istore.js', 'appLog.js', 'extend.js', 'array.js', 'laytpl.js',
         'cxdate.js', 'appcan.downloader.js', 'appcan.xwin.js', 'toast.js', 'iApp.js',
-        'iGDCA.js', 'fileViewer.js', 'appcan.fileMgr.js', 'calendar.js'
+        'fileViewer.js', 'appcan.fileMgr.js', 'calendar.js'
     ];
 
     var css = [];
