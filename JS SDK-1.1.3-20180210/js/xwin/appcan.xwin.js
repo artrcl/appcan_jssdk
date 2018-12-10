@@ -19,7 +19,7 @@ var xwin = appcan.xwin = {
         tokenType: 'JSESSIONID',  //  会话维持的方式: JSESSIONID, param 或 header    {String|Object}
         loginUrl: 'login',  //  login url   {String=}
         logoutUrl: 'logout',  //  logout url {String=}
-        debugTokenId: '',  //  用于appcan编辑调试    {String=}
+        debugTokenId: ''  //  用于appcan编辑调试    {String=}
     },
 
     openerWndName: null, // opener窗口名字
@@ -701,11 +701,9 @@ var xwin = appcan.xwin = {
         else istore.set("persist.deviceOs", "ide"); // 2
 
         var s = uexFileMgr.getFileRealPath(appcan.file.wgtPath);
-        if (s.length > 0 && s.charAt(s.length - 1) !== "/") s += "/";
         istore.set("xwin.wgtPath", s);
 
         s = uexFileMgr.getFileRealPath("file:///sdcard/");
-        if (s.length > 0 && s.charAt(s.length - 1) !== "/") s += "/";
         istore.set("xwin.sdcardPath", s);
     },
 

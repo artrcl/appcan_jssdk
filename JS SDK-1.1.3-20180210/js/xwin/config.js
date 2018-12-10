@@ -8,7 +8,7 @@ appcan.ready(function () {
         tokenType: '__sid',  //  会话维持的方式: JSESSIONID, param 或 header    {String|Object}
         loginUrl: 'login',  //  login url   {String=}
         logoutUrl: 'logout',  //  logout url {String=}
-        debugTokenId: '',  //  用于appcan编辑调试    {String=}
+        debugTokenId: ''  //  用于appcan编辑调试    {String=}
     };
 });
 
