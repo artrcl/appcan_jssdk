@@ -46,7 +46,7 @@ appcan.fileMgr = {
      * @param path      {String}    根路径
      * @param callback  {function(data:json)}  回调函数
      */
-    explorer(path, callback) {
+    explorer: function (path, callback) {
         if (arguments.length === 1 && appcan.isPlainObject(path)) {
             var argObj = path;
             path = argObj.path;
@@ -78,7 +78,7 @@ appcan.fileMgr = {
      * @param path      {String}    根路径
      * @param callback  {function(data:json)}  回调函数
      */
-    multiExplorer(path, callback) {
+    multiExplorer: function (path, callback) {
         if (arguments.length === 1 && appcan.isPlainObject(path)) {
             var argObj = path;
             path = argObj.path;
