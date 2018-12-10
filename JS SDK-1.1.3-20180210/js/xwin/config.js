@@ -10,16 +10,6 @@ appcan.ready(function () {
         logoutUrl: 'logout',  //  logout url {String=}
         debugTokenId: '',  //  用于appcan编辑调试    {String=}
     };
-
-    var license;
-    if (window.uexiAppRevisionAndOffice) {
-        license = istore.get("sys.iApp.license", "");
-        if (license === "") {
-            window.uexiAppRevisionAndOffice = undefined;
-        } else {
-            appcan.iApp.copyRight = license;
-        }
-    }
 });
 
 var reqJS = {

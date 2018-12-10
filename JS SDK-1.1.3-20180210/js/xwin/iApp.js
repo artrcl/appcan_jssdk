@@ -2,7 +2,7 @@
 
 /* global uexiAppRevisionAndOffice */
 var iApp = appcan.iApp = {
-
+    persisted: false,
     copyRight: '',
 
     init: function () {
@@ -13,7 +13,9 @@ var iApp = appcan.iApp = {
         this.prepare();
     }, _inited: false,
 
-    prepare: function () {
+    prepare: function (persisted) {
+        if (persisted) this.persisted = persisted;
+
         if (this._prepared) return;
         if (!window.uexiAppRevisionAndOffice) return;
 
@@ -125,3 +127,15 @@ var iApp = appcan.iApp = {
         });
     }
 };
+
+appcan.ready(function () {
+    var license;
+    if (window.uexiAppRevisionAndOffice) {
+        license = istore.get("sys.iApp.license", "");
+        if (license === "") {
+            if (!iApp.persisted) window.uexiAppRevisionAndOffice = undefined;
+        } else {
+            appcan.iApp.copyRight = license;
+        }
+    }
+});

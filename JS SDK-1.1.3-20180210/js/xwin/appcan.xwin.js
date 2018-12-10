@@ -703,6 +703,10 @@ var xwin = appcan.xwin = {
         var s = uexFileMgr.getFileRealPath(appcan.file.wgtPath);
         if (s.length > 0 && s.charAt(s.length - 1) !== "/") s += "/";
         istore.set("xwin.wgtPath", s);
+
+        s = uexFileMgr.getFileRealPath("file:///sdcard/");
+        if (s.length > 0 && s.charAt(s.length - 1) !== "/") s += "/";
+        istore.set("xwin.sdcardPath", s);
     },
 
     /**@preserve
