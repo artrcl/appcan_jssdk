@@ -4,14 +4,13 @@ var appLog = (function () {
 
     var logs = [];
     var appcanIsReady = false;
-    var enablefunc = true;
 
     /**
      * log
      * @param s  {*...}
      */
     function log(s) {
-        if (isEnabled()) send("log", Array.prototype.slice.apply(arguments));
+        if (!appcanIsReady || window.uexLog) send("log", Array.prototype.slice.apply(arguments));
     }
 
     /**
@@ -19,7 +18,7 @@ var appLog = (function () {
      * @param s  {*...}
      */
     function warn(s) {
-        if (isEnabled()) send("warn", Array.prototype.slice.apply(arguments));
+        if (!appcanIsReady || window.uexLog) send("warn", Array.prototype.slice.apply(arguments));
     }
 
     /**
@@ -27,7 +26,7 @@ var appLog = (function () {
      * @param s  {*...}
      */
     function error(s) {
-        if (isEnabled()) send("error", Array.prototype.slice.apply(arguments));
+        if (!appcanIsReady || window.uexLog) send("error", Array.prototype.slice.apply(arguments));
     }
 
     function send(t, sa) {
@@ -64,36 +63,13 @@ var appLog = (function () {
         }
     }
 
-    function isEnabled() {
-        if ((enablefunc === false) || (appcanIsReady && !window.uexLog)) return false;
-        if (enablefunc === true) return true;
-
-        if (Object.prototype.toString.call(enablefunc) === '[object Function]') {
-            try {
-                return !!enablefunc();
-            } catch (e) {
-                return false;
-            }
-        } else {
-            return !!enablefunc;
-        }
-    }
-
-    /**
-     * enable
-     * @param b   {boolean | function : boolean}, default true
-     */
-    function enable(b) {
-        enablefunc = b;
-    }
-
     /**
      * prepare
      */
     function prepare() {
         appcanIsReady = true;
 
-        if (isEnabled()) {
+        if (window.uexLog) {
             for (var i = 0; i < logs.length; i++) {
                 uexLog.sendLog(logs[i]);
             }
@@ -106,7 +82,6 @@ var appLog = (function () {
         log: log,
         warn: warn,
         error: error,
-        enable: enable,
         prepare: prepare
     }
 })();
