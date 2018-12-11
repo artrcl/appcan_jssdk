@@ -63,7 +63,7 @@ var xwin = appcan.xwin = {
 
     /**@preserve
      * open 打开一个新窗口
-     * @param wnd       {String=}  窗口的名字, 无此参数或 "_auto_" 或非字符串 ==> 自动取名
+     * @param wnd       {String=}  窗口名字, 使用时只有一个参数、为'_auto_'、空字符串或非字符串 ==> 自动取名
      * @param url       {String}  要加载的地址
      * @param param     {json}    传入参数，以备新开的窗口使用
      * @param aniId     {Integer} 动画效果
@@ -91,7 +91,7 @@ var xwin = appcan.xwin = {
             wnd = "_auto_";
         }
 
-        if (wnd === "_auto_" || $.type(wnd) !== "string") {
+        if (wnd === "" || wnd === "_auto_" || $.type(wnd) !== "string") {
             var i = istore.get("xwin.nextVal", 1);
             istore.set("xwin.nextVal", i + 1);
             wnd = "aw" + i;
@@ -598,7 +598,7 @@ var xwin = appcan.xwin = {
 
     /**@preserve
      * execute 跨窗口执行脚本
-     * @param wnd     {String=}    可选项，窗口名字，为'_opener_'或空字符串或非字符串，表示opener窗口，其它值指定窗口名字
+     * @param wnd     {String=}    窗口名字，调用时只有一个参数、为'_opener_'、空字符串或非字符串，窗口即为opener窗口，否则使用指定窗口名
      * @param script  {String}     脚本
      * 说明: 还可以附加额外参数
      * 例子:
