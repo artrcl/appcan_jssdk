@@ -13,7 +13,7 @@
 
 var xwin = appcan.xwin = {
     serverConfig: {
-        serverUrl: 'http://a.bc.cn/dz',  //  服务端地址 {String|Array}
+        serverUrl: 'http://a.bc.cn/dz/',  //  服务端地址 {String|Array}
         serverIndex: 0, // 默认的服务端地址 index
         downloadUrlTemplate: 'http://a.bc.cn/dz/download?url=$s', // 服务端文件下载地址模板 {String|Array}
         tokenType: 'JSESSIONID',  //  会话维持的方式: JSESSIONID, param 或 header    {String|Object}
@@ -316,6 +316,32 @@ var xwin = appcan.xwin = {
 
     },
 
+    /**
+     * @preserve
+     * absoluteUrl 把相对地址转为绝对地址
+     * @param url   {string}
+     * @return      {string}
+     */
+    absoluteUrl: function (url) {
+        var query = '';
+        var i = url.indexOf('?');
+        if (i >= 0) {
+            url = url.substring(0, i);
+            query = url.substring(i);
+        }
+
+        url = url.replace(/(?!:)(?:\/)\/{2,}/g, "/");
+        url = url.replace(/\/(\.\/)+/g, "/");
+
+        var s = "";
+        while (s !== url) {
+            s = url;
+            url = url.replace(/(?!\/\.\.\/)\/[^\/]+\/\.\.\//g, "/");
+        }
+
+        return url + query;
+    },
+
     /**@preserve
      * httpUrl 转换为一个绝对的地址，并根据需要附带 TOKENID
      * @param url   {String}
@@ -323,11 +349,10 @@ var xwin = appcan.xwin = {
      */
     httpUrl: function (url) {
         var serverUrl = this.serverUrl[this.serverIndex];
-        if (serverUrl.charAt(serverUrl.length - 1) !== "/") serverUrl += "/";
-        if (url.length > 0 && url.charAt(0) === "/") url = url.substring(1);
 
         if (url.indexOf("://") < 0) {
-            url = serverUrl + url;
+            url = serverUrl + "/" + url;
+            url = this.absoluteUrl(url);
         } else {
             // return url; // 重复调用 httpUrl() !
         }
