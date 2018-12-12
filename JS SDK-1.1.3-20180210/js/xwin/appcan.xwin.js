@@ -431,7 +431,7 @@ var xwin = appcan.xwin = {
                 var msg = result.msg;
                 if (!msg || msg.toLowerCase().indexOf("failed") >= 0) msg = msg_failed;
                 uexWindow.toast(0, 8, msg, 4000);
-                return;
+                if (callback.length === 1) return;  // callback 有2个参数时，code为 FAILED 也回调
             }
             callback(result.data, result.code);
         };
@@ -491,7 +491,7 @@ var xwin = appcan.xwin = {
                     var msg = result.msg;
                     if (!msg || msg.toLowerCase().indexOf("failed") >= 0) msg = msg_failed;
                     uexWindow.toast(0, 8, msg, 4000);
-                    return;
+                    if (callback.length === 1) return;  // callback 有2个参数时，code为 FAILED 也回调
                 }
 
                 callback(result.data, result.code);
