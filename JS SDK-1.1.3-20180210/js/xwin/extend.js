@@ -98,7 +98,7 @@ function parseFilePart(url, part) {
  * isValueOf 判断是否是已其中一个指定的其中一个值
  * @param value    {String...|array}
  * @return          {boolean}
- * 可以任意个参数，只要字符串已任意一个结尾，就返回 true
+ * 可以任意个参数，只要字符串与任意一个相等，就返回 true
  * value 可以是字符串数组，是数组时，只判断这个数组里的元素，并忽略其它参数
  */
 String.prototype.isValueOf = function (value) {
@@ -131,7 +131,7 @@ String.prototype.endsWith = function (suffix) {
  * @return  {boolean}
  */
 String.prototype.isImageFile = function () {
-    return this.toLowerCase().endsWith(".bmp", ".png", ".jpg", ".jpeg", ".gif");
+    return this.toLowerCase().endsWith([".bmp", ".png", ".jpg", ".jpeg", ".gif"]);
 };
 
 /**@preserve
@@ -139,13 +139,13 @@ String.prototype.isImageFile = function () {
  * @return  {boolean}
  */
 String.prototype.isWpsFile = function () {
-    return this.toLowerCase().endsWith(
+    return this.toLowerCase().endsWith([
         ".ppt", ".pot", ".pps", ".dps", ".dpss", ".dpt",
         ".pptx", ".potx", ".ppsx", ".pptm", ".potm", ".ppsm",
         ".doc", ".dot", ".wps", ".wpss", ".wpt", ".docx", ".dotx", ".docm", ".dotm",
         ".xls", ".xlt", ".et", ".ets", ".ett", ".xlsx", ".xltx", ".xlsb", ".xlsm", ".xltm",
         ".csv", ".rtf", ".txt", ".pdf"
-    );
+    ]);
 };
 
 /**@preserve
@@ -153,9 +153,7 @@ String.prototype.isWpsFile = function () {
  * @return  {boolean}
  */
 String.prototype.isTifFile = function () {
-    return this.toLowerCase().endsWith(
-        ".tif", ".tiff"
-    );
+    return this.toLowerCase().endsWith([".tif", ".tiff"]);
 };
 
 /**@preserve
@@ -164,7 +162,14 @@ String.prototype.isTifFile = function () {
  * @return          {boolean}
  */
 String.prototype.isFileType = function (suffix) {
-    return this.toLowerCase().endsWith.apply(this, arguments);
+    if (Object.prototype.toString.call(suffix) !== '[object Array]') suffix = Array.prototype.slice.apply(arguments);
+
+    var value = this.toLowerCase();
+    for (var i = 0, len = suffix.length; i < len; i++) {
+        var s = suffix[i].toLowerCase();
+        if (value.length >= s.length && value.indexOf(s, value.length - s.length) >= 0) return true;
+    }
+    return false;
 };
 
 /**@preserve
