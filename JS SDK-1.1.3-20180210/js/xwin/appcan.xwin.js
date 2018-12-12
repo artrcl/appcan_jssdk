@@ -406,7 +406,7 @@ var xwin = appcan.xwin = {
      * POST 提交请求
      * @param url       {String}
      * @param data      {json}  上传文件的话，指定参数值为 object, 如 {path:'/path/file.jpg'}
-     * @param callback  {function(data)}
+     * @param callback  {function(data, code)}
      * @param progressCallback  {function(progress)}
      */
     post: function (url, data, callback, progressCallback) {
@@ -433,7 +433,7 @@ var xwin = appcan.xwin = {
                 uexWindow.toast(0, 8, msg, 4000);
                 return;
             }
-            callback(result.data)
+            callback(result.data, result.code);
         };
         options.error = function (xhr, errorType, error, msg) {
             uexWindow.toast(0, 8, msg_error, 4000);
@@ -461,7 +461,7 @@ var xwin = appcan.xwin = {
      * post2 提交请求, 与 post 完成一样的功能
      * @param url       {String}
      * @param data      {json}  上传文件的话，指定参数值为 object, 如 {path:'/path/file.jpg'}
-     * @param callback  {function(data)}
+     * @param callback  {function(data, code)}
      * @param progressCallback  {function(progress)}
      */
     post2: function (url, data, callback, progressCallback) {
@@ -494,7 +494,7 @@ var xwin = appcan.xwin = {
                     return;
                 }
 
-                callback(result.data);
+                callback(result.data, result.code);
             };
         } else {
             uexXmlHttpMgr.onData = null;
