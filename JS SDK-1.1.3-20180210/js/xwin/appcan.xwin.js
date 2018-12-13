@@ -421,6 +421,7 @@ var xwin = appcan.xwin = {
         options.success = function (data, status, requestCode, response, xhr) {
             uexWindow.closeToast();
             var result = JSON.parse(data);
+            var isfunc = $.type(callback) === "function";
             if (result.code === Result.TIMEOUT) {
                 uexWindow.toast(0, 8, msg_timeout, 4000);
                 window.setTimeout(function () {
@@ -431,9 +432,9 @@ var xwin = appcan.xwin = {
                 var msg = result.msg;
                 if (!msg || msg.toLowerCase().indexOf("failed") >= 0) msg = msg_failed;
                 uexWindow.toast(0, 8, msg, 4000);
-                if (callback.length === 1) return;  // callback 有2个参数时，code为 FAILED 也回调
+                if (!isfunc || callback.length <= 1) return;  // callback 有2个或多个参数时，code为 FAILED 也回调
             }
-            callback(result.data, result.code);
+            if (isfunc) callback(result.data, result.code);
         };
         options.error = function (xhr, errorType, error, msg) {
             uexWindow.toast(0, 8, msg_error, 4000);
@@ -469,36 +470,31 @@ var xwin = appcan.xwin = {
         var msg_failed = "请求数据失败了";  // 服务端获取数据出现了问题，没有得到数据
         var msg_error = "请求过程中发生错误了"; // 一般是网络故障或服务端物理故障不能完成请求
 
-        if ($.type(callback) === "function") {
-            uexXmlHttpMgr.onData = function (reqId, status, result) {
-                uexXmlHttpMgr.close(reqId);
+        uexXmlHttpMgr.onData = function (reqId, status, result) {
+            uexXmlHttpMgr.close(reqId);
 
-                if (status === -1) { // -1=error 0=receive 1=finish
-                    uexWindow.toast(0, 8, msg_error, 4000);
-                    return;
-                }
+            if (status === -1) { // -1=error 0=receive 1=finish
+                uexWindow.toast(0, 8, msg_error, 4000);
+                return;
+            }
 
-                uexWindow.closeToast();
-
-                result = JSON.parse(result);
-                if (result.code === Result.TIMEOUT) {
-                    uexWindow.toast(0, 8, msg_timeout, 4000);
-                    window.setTimeout(function () {
-                        appcan.xwin.closeAll(); // 关闭所有窗口
-                    }, 1500);
-                    return;
-                } else if (result.code === Result.FAILED) {
-                    var msg = result.msg;
-                    if (!msg || msg.toLowerCase().indexOf("failed") >= 0) msg = msg_failed;
-                    uexWindow.toast(0, 8, msg, 4000);
-                    if (callback.length === 1) return;  // callback 有2个参数时，code为 FAILED 也回调
-                }
-
-                callback(result.data, result.code);
-            };
-        } else {
-            uexXmlHttpMgr.onData = null;
-        }
+            uexWindow.closeToast();
+            result = JSON.parse(result);
+            var isfunc = $.type(callback) === "function";
+            if (result.code === Result.TIMEOUT) {
+                uexWindow.toast(0, 8, msg_timeout, 4000);
+                window.setTimeout(function () {
+                    appcan.xwin.closeAll(); // 关闭所有窗口
+                }, 1500);
+                return;
+            } else if (result.code === Result.FAILED) {
+                var msg = result.msg;
+                if (!msg || msg.toLowerCase().indexOf("failed") >= 0) msg = msg_failed;
+                uexWindow.toast(0, 8, msg, 4000);
+                if (!isfunc || callback.length <= 1) return;  // callback 有2个或多个参数时，code为 FAILED 也回调
+            }
+            if (isfunc) callback(result.data, result.code);
+        };
 
         if ($.type(progressCallback) === "function") {
             uexXmlHttpMgr.onPostProgress = function (reqId, progress) {
