@@ -68,3 +68,9 @@ var reqJS = {
 
     reqJS.batchInclude('', js, css);
 })();
+
+/**
+ * @important
+ * The javascript loaded by reqJS.batchInclude() may be not effective at this time.
+ * You can run your code with callback function if necessary.
+ */
