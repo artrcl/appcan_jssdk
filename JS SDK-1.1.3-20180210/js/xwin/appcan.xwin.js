@@ -470,41 +470,15 @@ var xwin = appcan.xwin = {
         var msg_failed = "请求数据失败了";  // 服务端获取数据出现了问题，没有得到数据
         var msg_error = "请求过程中发生错误了"; // 一般是网络故障或服务端物理故障不能完成请求
 
-        uexXmlHttpMgr.onData = function (reqId, status, result) {
-            uexXmlHttpMgr.close(reqId);
-
-            if (status === -1) { // -1=error 0=receive 1=finish
-                uexWindow.toast(0, 8, msg_error, 4000);
-                return;
-            }
-
-            uexWindow.closeToast();
-            result = JSON.parse(result);
-            var isfunc = $.type(callback) === "function";
-            if (result.code === Result.TIMEOUT) {
-                uexWindow.toast(0, 8, msg_timeout, 4000);
-                window.setTimeout(function () {
-                    appcan.xwin.closeAll(); // 关闭所有窗口
-                }, 1500);
-                return;
-            } else if (result.code === Result.FAILED) {
-                var msg = result.msg;
-                if (!msg || msg.toLowerCase().indexOf("failed") >= 0) msg = msg_failed;
-                uexWindow.toast(0, 8, msg, 4000);
-                if (!isfunc || callback.length <= 1) return;  // callback 有2个或多个参数时，code为 FAILED 也回调
-            }
-            if (isfunc) callback(result.data, result.code);
-        };
-
-        if ($.type(progressCallback) === "function") {
-            uexXmlHttpMgr.onPostProgress = function (reqId, progress) {
-                progressCallback(progress);
-            }
-        } else {
-            uexXmlHttpMgr.onPostProgress = null;
-        }
+        uexXmlHttpMgr.onData = this._post2_onDate;
+        uexXmlHttpMgr.onPostProgress = this._post2_onPostProgress;
 
         var reqId = this.getUID();
+        this._post2_queue["" + reqId] = {
+            callback: callback,
+            progressCallback: progressCallback
+        };
+
         uexXmlHttpMgr.open(reqId, 'POST', this.httpUrl(url), '');
 
         if ($.type(data) === "object") {
@@ -533,6 +507,50 @@ var xwin = appcan.xwin = {
         }
 
         uexXmlHttpMgr.send(reqId);
+    },
+
+    _post2_queue: {},
+    _post2_onDate: function (reqId, status, result) {
+        uexXmlHttpMgr.close(reqId);
+
+        var callback = null;
+
+        var thiz = appcan.xwin;
+        var cbs = thiz._post2_queue["" + reqId];
+        if (cbs) callback = cbs.callback;
+
+        delete thiz._post2_queue["" + reqId];
+
+        if (status === -1) { // -1=error 0=receive 1=finish
+            uexWindow.toast(0, 8, msg_error, 4000);
+            return;
+        }
+
+        uexWindow.closeToast();
+        result = JSON.parse(result);
+        var isfunc = $.type(callback) === "function";
+        if (result.code === Result.TIMEOUT) {
+            uexWindow.toast(0, 8, msg_timeout, 4000);
+            window.setTimeout(function () {
+                appcan.xwin.closeAll(); // 关闭所有窗口
+            }, 1500);
+            return;
+        } else if (result.code === Result.FAILED) {
+            var msg = result.msg;
+            if (!msg || msg.toLowerCase().indexOf("failed") >= 0) msg = msg_failed;
+            uexWindow.toast(0, 8, msg, 4000);
+            if (!isfunc || callback.length <= 1) return;  // callback 有2个或多个参数时，code为 FAILED 也回调
+        }
+        if (isfunc) callback(result.data, result.code);
+    },
+    _post2_onPostProgress: function (reqId, progress) {
+        var progressCallback = null;
+
+        var thiz = appcan.xwin;
+        var cbs = thiz._post2_queue["" + reqId];
+        if (cbs) progressCallback = cbs.progressCallback;
+
+        if ($.type(progressCallback) === "function") progressCallback(progress);
     },
 
     /**@preserve
