@@ -421,7 +421,6 @@ var xwin = appcan.xwin = {
         options.success = function (data, status, requestCode, response, xhr) {
             uexWindow.closeToast();
             var result = JSON.parse(data);
-            var isfunc = $.type(callback) === "function";
             if (result.code === Result.TIMEOUT) {
                 uexWindow.toast(0, 8, msg_timeout, 4000);
                 window.setTimeout(function () {
@@ -432,9 +431,9 @@ var xwin = appcan.xwin = {
                 var msg = result.msg;
                 if (!msg || msg.toLowerCase().indexOf("failed") >= 0) msg = msg_failed;
                 uexWindow.toast(0, 8, msg, 4000);
-                if (!isfunc || callback.length <= 1) return;  // callback 有2个或多个参数时，code为 FAILED 也回调
+                if (callback.length <= 1) return;  // callback 有2个或多个参数时，code为 FAILED 也回调
             }
-            if (isfunc) callback(result.data, result.code);
+            if ($.type(callback) === "function") callback(result.data, result.code);
         };
         options.error = function (xhr, errorType, error, msg) {
             uexWindow.toast(0, 8, msg_error, 4000);
@@ -528,7 +527,6 @@ var xwin = appcan.xwin = {
 
         uexWindow.closeToast();
         result = JSON.parse(result);
-        var isfunc = $.type(callback) === "function";
         if (result.code === Result.TIMEOUT) {
             uexWindow.toast(0, 8, msg_timeout, 4000);
             window.setTimeout(function () {
@@ -539,9 +537,9 @@ var xwin = appcan.xwin = {
             var msg = result.msg;
             if (!msg || msg.toLowerCase().indexOf("failed") >= 0) msg = msg_failed;
             uexWindow.toast(0, 8, msg, 4000);
-            if (!isfunc || callback.length <= 1) return;  // callback 有2个或多个参数时，code为 FAILED 也回调
+            if (callback.length <= 1) return;  // callback 有2个或多个参数时，code为 FAILED 也回调
         }
-        if (isfunc) callback(result.data, result.code);
+        if ($.type(callback) === "function") callback(result.data, result.code);
     },
     _post2_onPostProgress: function (reqId, progress) {
         var progressCallback = null;
