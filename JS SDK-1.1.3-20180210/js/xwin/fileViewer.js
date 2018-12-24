@@ -63,22 +63,7 @@ var fileViewer = appcan.fileViewer = {
         if (flags === undefined) flags = {};
 
         if (flags.exists === undefined) {
-            appcan.file.exists({
-                filePath: fileObj.savePath,
-                callback: function (err, data, dataType, optId) {
-                    var thiz = appcan.fileViewer;
-                    if (err) {
-                        //判断文件存在出错了
-                        Toast.show("检查文件存在性出错了");
-                    } else if (data === 1) { // 文件存在
-                        flags.exists = true;
-                        thiz.open(fileObj, flags);
-                    } else { // 文件不存在
-                        Toast.show("文件不存在");
-                    }
-                }
-            });
-            return;
+            flags.exists = uexFileMgr.isFileExistByPath(fileObj.savePath);
         }
 
         if (!flags.exists) {
@@ -166,33 +151,19 @@ var fileViewer = appcan.fileViewer = {
             urlObj.savePath = appcan.xwin.tempDir + appcan.xwin.mapFileName(urlObj.url);
         }
 
-        if (flags.exists === undefined) {
-            appcan.file.exists({
-                filePath: urlObj.savePath,
-                callback: function (err, data, dataType, optId) {
-                    var thiz = appcan.fileViewer;
-                    if (err) {
-                        //判断文件存在出错了
-                        Toast.show("检查文件存在性出错了");
-                    } else if (data === 1) { // 文件存在
-                        if (urlObj.isOverrideMode) {
-                            uexFileMgr.deleteFileByPath(urlObj.savePath); // 下载覆盖文件会出错，删除原来的文件
-                            flags.exists = false;
-                            thiz.openFromWeb(urlObj, flags);
-                        } else {
-                            flags.exists = true;
-                            thiz.open(urlObj, flags);
-                        }
-                    } else { // 文件不存在
-                        flags.exists = false;
-                        thiz.openFromWeb(urlObj, flags);
-                    }
-                }
-            });
-            return;
+        flags.exists = uexFileMgr.isFileExistByPath(urlObj.savePath);
+
+        if (flags.exists) { // 文件存在
+            if (urlObj.isOverrideMode) {
+                uexFileMgr.deleteFileByPath(urlObj.savePath); // 下载覆盖文件会出错，删除原来的文件
+                flags.exists = false;
+            } else {
+                this.open(urlObj, flags);
+                return;
+            }
         }
 
-        appcan.downloader.download(urlObj.url, urlObj.savePath, 1, null, function (optId, fileSize, percent, status) {
+        appcan.downloader.download(urlObj.url, urlObj.savePath, 1, null, function (fileSize, percent, status) {
             switch (status) {
                 case 0: // 下载中
                     Toast.show(percent + '%');
