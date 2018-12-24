@@ -75,9 +75,7 @@ var fileViewer = appcan.fileViewer = {
             urlObj.savePath = appcan.xwin.tempDir + appcan.xwin.mapFileName(urlObj.url);
         }
 
-        if (flags.exists === undefined) {
-            flags.exists = uexFileMgr.isFileExistByPath(urlObj.savePath);
-        }
+        flags.exists = uexFileMgr.isFileExistByPath(urlObj.savePath);
 
         if (flags.exists) { // 文件存在
             if (urlObj.isOverrideMode) {
