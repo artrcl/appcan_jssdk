@@ -811,14 +811,22 @@ var xwin = appcan.xwin = {
             return result;
         }
 
+        if (this._fileNamePart1 === '') {
+            try {
+                this._fileNamePart1 = new Date().getTime().toString(36).toUpperCase();
+            } catch (e) {
+                this._fileNamePart1 = '' + (new Date().getTime());
+            }
+        }
+
         var i = url.lastIndexOf(".");
         var ext = (i >= 0) ? url.substring(i) : "";
-        if (ext.isImageFile()) result = "iamge" + this.getUID() + ext;
-        else result = "doc" + this.getUID() + ext;
+        if (ext.isImageFile()) result = "iamge_" + this._fileNamePart1 + "_" + this.getUID() + ext;
+        else result = "doc_" + this._fileNamePart1 + "_" + this.getUID() + ext;
 
         if (i !== 0) this._mapFileName[url] = result;
         return result;
-    }, _mapFileName: {}
+    }, _mapFileName: {}, _fileNamePart1: ''
 
 };
 
