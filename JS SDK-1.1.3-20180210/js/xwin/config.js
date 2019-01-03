@@ -1,7 +1,7 @@
 "use strict";
 
 appcan.ready(function () {
-    appcan.xwin.serverConfig = {
+    appcan.xio.serverConfig = {
         serverUrl: 'http://a.bc.cn/dz/',  //  服务端地址 {String|Array}
         serverIndex: 0, // 默认的服务端地址 index
         downloadUrlTemplate: 'http://a.bc.cn/dz/download?url=$s', // 服务端文件下载地址模板 {String|Array}
@@ -60,8 +60,8 @@ var reqJS = {
 (function () {
     var js = [
         'fontsize.js', 'istore.js', 'appLog.js', 'extend.js', 'array.js', 'laytpl.js',
-        'cxdate.js', 'appcan.downloader.js', 'appcan.xwin.js', 'toast.js', 'iApp.js',
-        'fileViewer.js', 'appcan.fileMgr.js', 'calendar.js'
+        'cxdate.js', 'downloader.js', 'xwin.js', 'xio.js', 'toast.js',
+        'iApp.js', 'fileViewer.js', 'calendar.js'
     ];
 
     var css = [];

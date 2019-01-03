@@ -7,5 +7,5 @@ appcan.ready(function () {
     appcan.xwin.clearLocStorageAndTempFiles();
     appcan.xwin.initLocStorage();
 
-    appcan.iApp.prepare(true); // uexiAppRevisionAndOffice 插件的bug，其它window的回调都调用 第一个window的回调
+    appcan.iApp.prepare(true); // uexiAppRevisionAndOffice 插件有bug，其它window的回调都调用了 第一个window的回调
 });

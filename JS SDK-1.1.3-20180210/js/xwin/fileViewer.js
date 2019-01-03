@@ -78,7 +78,7 @@ var fileViewer = appcan.fileViewer = {
         if (fileObj.savePath.isImageFile()) {
             uexImage.openBrowser(JSON.stringify({enableGrid: false, data: [{src: fileObj.savePath}]}));
         } else if (window.uexiAppRevisionAndOffice && this._moffice_pro_installed && fileObj.savePath.isWpsFile()) {
-            appcan.iApp.openLocalFile(fileObj.savePath, fileObj.isReadonly ? 1 : 0, fileObj.isReviseMode ? 1 : 0, appcan.xwin.userName, function (data) {
+            appcan.iApp.openLocalFile(fileObj.savePath, fileObj.isReadonly ? 1 : 0, fileObj.isReviseMode ? 1 : 0, appcan.xio.userName, function (data) {
                 fileObj.changed = data.result;
                 if (fileObj.changed && $.type(fileObj.callback) === "function") {
                     fileObj.callback(fileObj);
@@ -118,7 +118,7 @@ var fileViewer = appcan.fileViewer = {
                 filePath: fileObj.savePath,
                 isReadonly: !!fileObj.isReadonly,
                 isReviseMode: !!fileObj.isReviseMode,
-                userName: appcan.xwin.userName
+                userName: appcan.xio.userName
             })
         } else if (fileObj.savePath.isWpsFile()) {
             Toast.show('提示: 对文档的修改都将被忽略');
