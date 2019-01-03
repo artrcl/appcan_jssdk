@@ -135,7 +135,7 @@ String.prototype.isImageFile = function () {
 };
 
 /**@preserve
- * isDocFile 判断是否是 Wps 可查看的文件
+ * isWpsFile 判断是否是 Wps 可查看的文件
  * @return  {boolean}
  */
 String.prototype.isWpsFile = function () {
@@ -149,7 +149,7 @@ String.prototype.isWpsFile = function () {
 };
 
 /**@preserve
- * isDocFile 判断是否是 Wps 可查看的文件
+ * isTifFile 判断是否是 Wps 可查看的文件
  * @return  {boolean}
  */
 String.prototype.isTifFile = function () {
