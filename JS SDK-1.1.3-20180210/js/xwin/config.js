@@ -59,9 +59,9 @@ var reqJS = {
 
 (function () {
     var js = [
-        'fontsize.js', 'istore.js', 'appLog.js', 'extend.js', 'array.js', 'laytpl.js',
-        'cxdate.js', 'downloader.js', 'xwin.js', 'xio.js', 'toast.js',
-        'iApp.js', 'fileViewer.js', 'calendar.js'
+        'fontsize.js', 'istore.js', 'appLog.js', 'extend.js', 'array.js',
+        'laytpl.js', 'cxdate.js', 'downloader.js', 'xwin.js', 'xio.js',
+        'toast.js', 'iApp.js', 'fileViewer.js', 'calendar.js'
     ];
 
     var css = [];

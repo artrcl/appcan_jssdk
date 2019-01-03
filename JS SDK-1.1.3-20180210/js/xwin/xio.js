@@ -176,19 +176,6 @@ var xio = appcan.xio = {
     },
 
     /**@preserve
-     * 返回一个序列值
-     * @return  {int}
-     */
-    _getUID: function () {
-        var maxId = 65536;
-        var uid = 0;
-        return function () {
-            uid = (uid + 1) % maxId;
-            return uid;
-        };
-    }(),
-
-    /**@preserve
      * POST 提交请求
      * @param url       {String}
      * @param data      {json}  上传文件的话，指定参数值为 object, 如 {path:'/path/file.jpg'}
@@ -248,36 +235,30 @@ var xio = appcan.xio = {
      * @param url       {String}
      * @param data      {json}  上传文件的话，指定参数值为 object, 如 {path:'/path/file.jpg'}
      * @param callback  {function(data, code)}
+     * @param isDebug   {boolean=}
      * @param progressCallback  {function(progress)}
      */
-    post2: function (url, data, callback, progressCallback) {
+    post2: function (url, data, callback, progressCallback, isDebug) {
         var msg_timeout = "操作超时,请重新登录"; // 会话超时了
         var msg_failed = "请求数据失败了";  // 服务端获取数据出现了问题，没有得到数据
         var msg_error = "请求过程中发生错误了"; // 一般是网络故障或服务端物理故障不能完成请求
 
-        uexXmlHttpMgr.onData = this._post2_onDate;
-        uexXmlHttpMgr.onPostProgress = this._post2_onPostProgress;
-
-        var reqId = this._getUID();
-        this._post2_queue["" + reqId] = {
-            callback: callback,
-            progressCallback: progressCallback
-        };
-
-        uexXmlHttpMgr.open(reqId, 'POST', this.httpUrl(url), '');
+        var req = uexXmlHttpMgr.create({
+            method: "POST",
+            url: this.httpUrl(url)
+        });
 
         if ($.type(data) === "object") {
             for (var key in data) {
-                headers[key] = this.tokenType[key].replace(/\?/g, tokenId);
                 var value = data[key];
                 if ($.type(value) === "object" && value.path) {
-                    uexXmlHttpMgr.setPostData(reqId, 1, key, value.path); // binary
+                    uexXmlHttpMgr.setPostData(req, 1, key, value.path); // binary
                 } else {
-                    uexXmlHttpMgr.setPostData(reqId, 0, key, value);
+                    uexXmlHttpMgr.setPostData(req, 0, key, value);
                 }
             }
         } else {
-            uexXmlHttpMgr.setBody(reqId, data);
+            uexXmlHttpMgr.setBody(req, data);
         }
 
         if ($.type(this.tokenType) === "object") {
@@ -287,54 +268,40 @@ var xio = appcan.xio = {
                 for (var key in this.tokenType) {
                     headers[key] = this.tokenType[key].replace(/\?/g, tokenId);
                 }
-                uexXmlHttpMgr.setHeaders(reqId, JSON.stringify(headers))
+                uexXmlHttpMgr.setHeaders(req, JSON.stringify(headers))
             }
         }
 
-        uexXmlHttpMgr.send(reqId);
-    },
+        uexXmlHttpMgr.send(req, (isDebug) ? 3 : 0,
+            function (status, resStr, resCode, resInfo) {
+                if (status === 0) return; // -1=error 0=receive 1=finish
+                uexXmlHttpMgr.close(req);
 
-    _post2_queue: {},
-    _post2_onDate: function (reqId, status, result) {
-        uexXmlHttpMgr.close(reqId);
+                if (status === -1) {
+                    uexWindow.toast(0, 8, msg_error, 4000);
+                    return;
+                }
 
-        var callback = null;
-
-        var thiz = appcan.xio;
-        var cbs = thiz._post2_queue["" + reqId];
-        if (cbs) callback = cbs.callback;
-
-        delete thiz._post2_queue["" + reqId];
-
-        if (status === -1) { // -1=error 0=receive 1=finish
-            uexWindow.toast(0, 8, msg_error, 4000);
-            return;
-        }
-
-        uexWindow.closeToast();
-        result = JSON.parse(result);
-        if (result.code === Result.TIMEOUT) {
-            uexWindow.toast(0, 8, msg_timeout, 4000);
-            window.setTimeout(function () {
-                appcan.xwin.closeAll(); // 关闭所有窗口
-            }, 1500);
-            return;
-        } else if (result.code === Result.FAILED) {
-            var msg = result.msg;
-            if (!msg || msg.toLowerCase().indexOf("failed") >= 0) msg = msg_failed;
-            uexWindow.toast(0, 8, msg, 4000);
-            if (callback.length <= 1) return;  // callback 有2个或多个参数时，code为 FAILED 也回调
-        }
-        if ($.type(callback) === "function") callback(result.data, result.code);
-    },
-    _post2_onPostProgress: function (reqId, progress) {
-        var progressCallback = null;
-
-        var thiz = appcan.xio;
-        var cbs = thiz._post2_queue["" + reqId];
-        if (cbs) progressCallback = cbs.progressCallback;
-
-        if ($.type(progressCallback) === "function") progressCallback(progress);
+                uexWindow.closeToast();
+                var result = JSON.parse(resStr);
+                if (result.code === Result.TIMEOUT) {
+                    uexWindow.toast(0, 8, msg_timeout, 4000);
+                    window.setTimeout(function () {
+                        appcan.xwin.closeAll(); // 关闭所有窗口
+                    }, 1500);
+                    return;
+                } else if (result.code === Result.FAILED) {
+                    var msg = result.msg;
+                    if (!msg || msg.toLowerCase().indexOf("failed") >= 0) msg = msg_failed;
+                    uexWindow.toast(0, 8, msg, 4000);
+                    if (callback.length <= 1) return;  // callback 有2个或多个参数时，code为 FAILED 也回调
+                }
+                if ($.type(callback) === "function") callback(result.data, result.code);
+            },
+            function (progress) {
+                if ($.type(progressCallback) === "function") progressCallback(progress);
+            }
+        );
     },
 
     /**@preserve

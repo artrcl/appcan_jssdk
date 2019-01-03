@@ -24,7 +24,7 @@ var xwin = appcan.xwin = {
      * 返回一个序列值
      * @return  {int}
      */
-    _getUID: function () {
+    getUID: function () {
         var maxId = 65536;
         var uid = 0;
         return function () {
@@ -426,12 +426,13 @@ var xwin = appcan.xwin = {
 
         var i = url.lastIndexOf(".");
         var ext = (i >= 0) ? url.substring(i) : "";
-        if (ext.isImageFile()) result = "iamge" + this._getUID() + ext;
-        else result = "doc" + this._getUID() + ext;
+        if (ext.isImageFile()) result = "iamge" + this._fileGen + ext;
+        else result = "doc" + this._fileGen + ext;
+        this._fileGen++;
 
         if (i !== 0) this._mapFileName[url] = result;
         return result;
-    }, _mapFileName: {}
+    }, _mapFileName: {}, _fileGen: 1
 
 };
 
