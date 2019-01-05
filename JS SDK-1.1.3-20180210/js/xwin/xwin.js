@@ -54,7 +54,7 @@ var xwin = appcan.xwin = {
      * @param animDuration {Integer} 动画时长
      */
     open: function (wnd, url, param, aniId, type, animDuration) {
-        if (arguments.length === 1 && $.tppe(wnd) === "object") {
+        if (arguments.length === 1 && $.type(wnd) === "object") {
             var argObj = wnd;
             wnd = argObj.wnd;
             url = argObj.url;
@@ -181,12 +181,12 @@ var xwin = appcan.xwin = {
         var sdcardPath = istore.get("xwin.sdcardPath");
         if (!wgtPath) {
             var s = uexFileMgr.getFileRealPath(appcan.file.wgtPath);
-            if (s.length > 0 && s.charAt(s.length - 1) !== "/") s += "/";
+            if (s.length > 0 && s.charAt(s.length - 1) !== "/" && s.charAt(s.length - 1) !== "\\") s += "/";
             istore.set("xwin.wgtPath", s);
             this.wgtPath = s;
 
             s = uexFileMgr.getFileRealPath("file:///sdcard/");
-            if (s.length > 0 && s.charAt(s.length - 1) !== "/") s += "/";
+            if (s.length > 0 && s.charAt(s.length - 1) !== "/" && s.charAt(s.length - 1) !== "\\") s += "/";
             istore.set("xwin.sdcardPath", s);
             this.sdcardPath = s;
         } else {
@@ -341,19 +341,12 @@ var xwin = appcan.xwin = {
         istore.set("xwin.nextVal", "1");
         istore.set("xwin.wndList", ["root"]);
 
-        var widgetInfo = uexWidgetOne.getCurrentWidgetInfo(); // {appId: 123456, version: "00.00.0000", name: "xxx", icon: "icon.png"}
-        var version = widgetInfo.version;
-        istore.set("sys.appVersion", version);
-
-        var platform = uexWidgetOne.getPlatform();
-        if (platform === 0) istore.set("persist.deviceOs", "ios");
-        else if (platform === 1) istore.set("persist.deviceOs", "android");
-        else istore.set("persist.deviceOs", "ide"); // 2
-
         var s = uexFileMgr.getFileRealPath(appcan.file.wgtPath);
+        if (s.length > 0 && s.charAt(s.length - 1) !== "/" && s.charAt(s.length - 1) !== "\\") s += "/";
         istore.set("xwin.wgtPath", s);
 
         s = uexFileMgr.getFileRealPath("file:///sdcard/");
+        if (s.length > 0 && s.charAt(s.length - 1) !== "/" && s.charAt(s.length - 1) !== "\\") s += "/";
         istore.set("xwin.sdcardPath", s);
     },
 

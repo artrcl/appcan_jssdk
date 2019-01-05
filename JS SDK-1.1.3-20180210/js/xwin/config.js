@@ -1,16 +1,14 @@
 "use strict";
 
-appcan.ready(function () {
-    appcan.xio.serverConfig = {
-        serverUrl: 'http://a.bc.cn/dz/',  //  服务端地址 {String|Array}
-        serverIndex: 0, // 默认的服务端地址 index
-        downloadUrlTemplate: 'http://a.bc.cn/dz/download?url=$s', // 服务端文件下载地址模板 {String|Array}
-        tokenType: '__sid',  //  会话维持的方式: JSESSIONID, param 或 header    {String|Object}
-        loginUrl: 'login',  //  login url   {String=}
-        logoutUrl: 'logout',  //  logout url {String=}
-        debugTokenId: ''  //  用于appcan编辑调试    {String=}
-    };
-});
+window._serverConfig = {
+    serverUrl: 'http://a.bc.cn/dz/',  //  服务端地址 {String|Array}
+    serverIndex: 0, // 默认的服务端地址 index
+    downloadUrlTemplate: 'http://a.bc.cn/dz/download?url=$s', // 服务端文件下载地址模板 {String|Array}
+    tokenType: '__sid',  //  会话维持的方式: JSESSIONID, param 或 header    {String|Object}
+    loginUrl: 'login',  //  login url   {String=}
+    logoutUrl: 'logout',  //  logout url {String=}
+    debugTokenId: ''  //  用于appcan编辑调试    {String=}
+};
 
 var reqJS = {
     absUrl: function (baseUrl, url) {

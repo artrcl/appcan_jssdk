@@ -35,7 +35,7 @@ var xio = appcan.xio = {
      */
     get serverUrl() {
         if (!this._serverUrl) {
-            var value = this.serverConfig.serverUrl;
+            var value = (window._serverConfig || this.serverConfig).serverUrl;
             if ($.type(value) === "string") value = [value];
             this._serverUrl = value;
             if (this.serverIndex < 0 || this.serverIndex >= this._serverUrl.length) this.serverIndex = 0;
@@ -49,7 +49,7 @@ var xio = appcan.xio = {
      */
     get downloadUrlTemplate() {
         if (!this._downloadUrlTemplate) {
-            var value = this.serverConfig.downloadUrlTemplate;
+            var value = (window._serverConfig || this.serverConfig).downloadUrlTemplate;
             if ($.type(value) === "string") value = [value];
             this._downloadUrlTemplate = value;
         }
@@ -61,6 +61,8 @@ var xio = appcan.xio = {
      * @param value {Integer}
      */
     set serverIndex(value) {
+        this._serverUrl = null;
+        this._downloadUrlTemplate = null;
         istore.set("xio.serverIndex", value);
     },
     /**@preserve
@@ -70,7 +72,7 @@ var xio = appcan.xio = {
     get serverIndex() {
         var value = istore.get("xio.serverIndex");
         if (value == null) {
-            value = this.serverConfig.serverIndex;
+            value = (window._serverConfig || this.serverConfig).serverIndex;
             value = value ? eval(value) : 0;
             if (value < 0 || value >= this._serverUrl.length) value = 0;
             return value;
@@ -84,7 +86,7 @@ var xio = appcan.xio = {
      * @return  {String|Object}
      */
     get tokenType() {
-        var tokenType = this.serverConfig.tokenType;
+        var tokenType = (window._serverConfig || this.serverConfig).tokenType;
         if (tokenType) return tokenType;
         return this._tokenType;
     },
@@ -131,7 +133,7 @@ var xio = appcan.xio = {
         }
 
         if (typeof this.tokenType === "string") {
-            var tokenId = this.tokenId || this.serverConfig.debugTokenId;
+            var tokenId = this.tokenId || (window._serverConfig || this.serverConfig).debugTokenId;
             if (tokenId) {
                 var i = url.indexOf("?");
 
@@ -141,9 +143,9 @@ var xio = appcan.xio = {
                     var j = url.indexOf(";");
 
                     if (j < 0 || j > i) {
-                        url = url.substring(0, i) + ";" + hiz.tokenType + "=" + tokenId + url.substring(i);
+                        url = url.substring(0, i) + ";" + this.tokenType + "=" + tokenId + url.substring(i);
                     } else {
-                        url = url.substring(0, j) + ";" + hiz.tokenType + "=" + tokenId + url.substring(i);
+                        url = url.substring(0, j) + ";" + this.tokenType + "=" + tokenId + url.substring(i);
                     }
                 } else {
                     if (i >= 0) {
@@ -218,7 +220,7 @@ var xio = appcan.xio = {
         }
 
         if ($.type(this.tokenType) === "object") {
-            var tokenId = this.tokenId || this.serverConfig.debugTokenId;
+            var tokenId = this.tokenId || (window._serverConfig || this.serverConfig).debugTokenId;
             if (tokenId) {
                 options.headers = {};
                 for (var key in this.tokenType) {
@@ -262,7 +264,7 @@ var xio = appcan.xio = {
         }
 
         if ($.type(this.tokenType) === "object") {
-            var tokenId = this.tokenId || this.serverConfig.debugTokenId;
+            var tokenId = this.tokenId || (window._serverConfig || this.serverConfig).debugTokenId;
             if (tokenId) {
                 var headers = {};
                 for (var key in this.tokenType) {
@@ -310,7 +312,7 @@ var xio = appcan.xio = {
      */
     logout: function (url) {
         appcan.request.ajax({
-            url: this.httpUrl(url || this.serverConfig.logoutUrl || "logout"),
+            url: this.httpUrl(url || (window._serverConfig || this.serverConfig).logoutUrl || "logout"),
             type: 'POST',
             success: function (data, status, requestCode, response, xhr) {
                 //alert('success');
