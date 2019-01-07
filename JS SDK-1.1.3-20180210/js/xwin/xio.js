@@ -101,11 +101,11 @@ var xio = appcan.xio = {
         var query = '';
         var i = url.indexOf('?');
         if (i >= 0) {
-            url = url.substring(0, i);
             query = url.substring(i);
+            url = url.substring(0, i);
         }
 
-        url = url.replace(/(?!:)(?:\/)\/{2,}/g, "/");
+        url = url.replace(/(^|[^:])\/{2,}/g, "$1/");
         url = url.replace(/\/(\.\/)+/g, "/");
 
         var s = "";
