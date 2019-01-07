@@ -15,7 +15,6 @@ var xwin = appcan.xwin = {
     openerWndName: null, // opener窗口名字
     wndName: null, // 当前窗口名字
 
-    onClose: null, // {function} close 窗口事件
     wgtPath: null, // wgt:// 对应的地址
     sdcardPath: null, // file:///sdcard/
     tempDir: appcan.file.wgtPath + "temp/dummyTempdir/",
@@ -122,9 +121,9 @@ var xwin = appcan.xwin = {
                         istore.set("xwin.wndList", wndList);
                     }
                 }
-                if (appcan.isFunction(this.onClose)) {
+                if (appcan.isFunction(this._onCloseFunc)) {
                     try {
-                        this.onClose();
+                        this._onCloseFunc();
                     } catch (e) {
                     }
                 }
@@ -157,6 +156,14 @@ var xwin = appcan.xwin = {
     closeAll: function () {
         this.close("_all_");
     },
+
+    /**@preserve
+     * bindClose    设置关闭窗口回调事件
+     * @param func  {function}
+     */
+    bindClose: function (func) {
+        this._onCloseFunc = func;
+    }, _onCloseFunc: null,
 
     /**@preserve
      * param 窗口间传递参数，保存的数据在新窗口才可用
