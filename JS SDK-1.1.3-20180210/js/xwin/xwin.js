@@ -254,17 +254,17 @@ var xwin = appcan.xwin = {
     },
 
     /**@preserve
-     * execute 跨窗口执行脚本
+     * evaluate 跨窗口执行脚本
      * @param wnd     {String=}    窗口名字，调用时只有一个参数、为'_opener_'、空字符串或非字符串，窗口即为opener窗口，否则使用指定窗口名
      * @param script  {String}     脚本
      * 说明: 还可以附加额外参数
      * 例子:
-     * execute("hello(1)", 2); 在opener窗口执行 hello(1,2)
-     * execute("hello()", 1, 2); 在opener窗口执行 hello(1,2)
-     * execute(null, "hello()", 1, 2); null表示opener窗口，在opener窗口执行 hello(1,2)
-     * execute("win", "hello()", {name: "jack", age: 28}, 20); 在名为win的窗口执行 hello({name: "jack", age: 28}, 20)
+     * evaluate("hello(1)", 2); 在opener窗口执行 hello(1,2)
+     * evaluate("hello()", 1, 2); 在opener窗口执行 hello(1,2)
+     * evaluate(null, "hello()", 1, 2); null表示opener窗口，在opener窗口执行 hello(1,2)
+     * evaluate("win", "hello()", {name: "jack", age: 28}, 20); 在名为win的窗口执行 hello({name: "jack", age: 28}, 20)
      */
-    execute: function (wnd, script) {
+    evaluate: function (wnd, script) {
         if (script === undefined) {
             script = wnd;
             wnd = this.openerWndName;

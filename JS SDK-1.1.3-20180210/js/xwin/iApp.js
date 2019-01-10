@@ -24,13 +24,13 @@ var iApp = appcan.iApp = {
         uexiAppRevisionAndOffice.saveFileCallback = function (data) {
             var thiz = appcan.iApp;
             if (typeof data === "string") data = JSON.parse(data);
-            appcan.xwin.execute(thiz.wndName, 'appcan.iApp.callsaveFileCallback()', data);
+            appcan.xwin.evaluate(thiz.wndName, 'appcan.iApp.callsaveFileCallback()', data);
         };
 
         uexiAppRevisionAndOffice.cbDoRevision = function (data) {
             var thiz = appcan.iApp;
             if (typeof data === "string") data = JSON.parse(data);
-            appcan.xwin.execute(thiz.wndName, 'appcan.iApp.callcbDoRevision()', data);
+            appcan.xwin.evaluate(thiz.wndName, 'appcan.iApp.callcbDoRevision()', data);
         };
     }, _prepared: false,
 
