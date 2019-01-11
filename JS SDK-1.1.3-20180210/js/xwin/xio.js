@@ -179,7 +179,7 @@ var xio = appcan.xio = {
     },
 
     /**@preserve
-     * post2 提交请求, 与 post 完成一样的功能
+     * POST 提交请求
      * @param url       {String}
      * @param data      {json}  上传文件的话，指定参数值为 object, 如 {path:'/path/file.jpg'}
      * @param callback  {function(data, code)}
@@ -189,6 +189,73 @@ var xio = appcan.xio = {
         var msg_timeout = "操作超时,请重新登录"; // 会话超时了
         var msg_failed = "请求数据失败了";  // 服务端获取数据出现了问题，没有得到数据
         var msg_error = "请求过程中发生错误了"; // 一般是网络故障或服务端物理故障不能完成请求
+
+        if ($.type(data) === "function") {
+            progressCallback = callback;
+            callback = data;
+            data = null;
+        }
+
+        var options = {};
+        options.type = "POST";
+        options.url = this.httpUrl(url);
+        options.data = data; //
+        options.success = function (resStr, status, requestCode, response, xhr) {
+            uexWindow.closeToast();
+            var result = JSON.parse(resStr);
+            if (result.code === Result.TIMEOUT) {
+                uexWindow.toast(0, 8, msg_timeout, 4000);
+                window.setTimeout(function () {
+                    appcan.xwin.closeAll(); // 关闭所有窗口
+                }, 1500);
+                return;
+            } else if (result.code === Result.FAILED) {
+                var msg = result.msg;
+                if (!msg || msg.toLowerCase().indexOf("failed") >= 0) msg = msg_failed;
+                uexWindow.toast(0, 8, msg, 4000);
+                if (callback.length <= 1) return;  // callback 有2个或多个参数时，code为 FAILED 也回调
+            }
+            if ($.type(callback) === "function") callback(result.data, result.code, resStr);
+        };
+        options.error = function (xhr, errorType, error, msg) {
+            uexWindow.toast(0, 8, msg_error, 4000);
+        };
+        if ($.type(progressCallback) === "function") {
+            options.progress = function (progress, xhr) {
+                progressCallback(progress);
+            }
+        }
+
+        if ($.type(this.tokenType) === "object") {
+            var tokenId = this.tokenId || (window.serverConfig || this.serverConfig).debugTokenId;
+            if (tokenId) {
+                options.headers = {};
+                for (var key in this.tokenType) {
+                    options.headers[key] = this.tokenType[key].replace(/\?/g, tokenId);
+                }
+            }
+        }
+
+        appcan.ajax(options);
+    },
+
+    /**@preserve
+     * post2 提交请求, 与 post 完成一样的功能
+     * @param url       {String}
+     * @param data      {json}  上传文件的话，指定参数值为 object, 如 {path:'/path/file.jpg'}
+     * @param callback  {function(data, code)}
+     * @param progressCallback  {function(progress)}
+     */
+    post2: function (url, data, callback, progressCallback) {
+        var msg_timeout = "操作超时,请重新登录"; // 会话超时了
+        var msg_failed = "请求数据失败了";  // 服务端获取数据出现了问题，没有得到数据
+        var msg_error = "请求过程中发生错误了"; // 一般是网络故障或服务端物理故障不能完成请求
+
+        if ($.type(data) === "function") {
+            progressCallback = callback;
+            callback = data;
+            data = null;
+        }
 
         var req = uexXmlHttpMgr.create({
             method: "POST",
@@ -231,6 +298,10 @@ var xio = appcan.xio = {
 
                 uexWindow.closeToast();
                 var result = JSON.parse(resStr);
+                if ($.type(result) === "string") { // 竟然还是 string
+                    resStr = result;
+                    result = JSON.parse(resStr);
+                }
                 if (result.code === Result.TIMEOUT) {
                     uexWindow.toast(0, 8, msg_timeout, 4000);
                     window.setTimeout(function () {
@@ -243,7 +314,7 @@ var xio = appcan.xio = {
                     uexWindow.toast(0, 8, msg, 4000);
                     if (callback.length <= 1) return;  // callback 有2个或多个参数时，code为 FAILED 也回调
                 }
-                if ($.type(callback) === "function") callback(result.data, result.code, result);
+                if ($.type(callback) === "function") callback(result.data, result.code, resStr);
             },
             function (progress) {
                 if ($.type(progressCallback) === "function") progressCallback(progress);
