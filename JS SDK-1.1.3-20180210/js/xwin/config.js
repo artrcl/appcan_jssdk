@@ -7,6 +7,7 @@ window.serverConfig = {
     tokenType: '__sid',  //  会话维持的方式: JSESSIONID, param 或 header    {String|Object}
     loginUrl: 'login',  //  login url   {String=}
     logoutUrl: 'logout',  //  logout url {String=}
+    isDebug: false,  // uexXmlHttpMgr 提交是否打开日志输出
     debugTokenId: ''  //  用于appcan编辑调试    {String=}
 };
 

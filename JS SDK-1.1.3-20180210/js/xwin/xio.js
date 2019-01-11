@@ -19,6 +19,7 @@ var xio = appcan.xio = {
         tokenType: 'JSESSIONID',  //  会话维持的方式: JSESSIONID, param 或 header    {String|Object}
         loginUrl: 'login',  //  login url   {String=}
         logoutUrl: 'logout',  //  logout url {String=}
+        isDebug: false,  // uexXmlHttpMgr 提交是否打开日志输出
         debugTokenId: ''  //  用于appcan编辑调试    {String=}
     },
 
@@ -178,69 +179,13 @@ var xio = appcan.xio = {
     },
 
     /**@preserve
-     * POST 提交请求
+     * post2 提交请求, 与 post 完成一样的功能
      * @param url       {String}
      * @param data      {json}  上传文件的话，指定参数值为 object, 如 {path:'/path/file.jpg'}
      * @param callback  {function(data, code)}
      * @param progressCallback  {function(progress)}
      */
     post: function (url, data, callback, progressCallback) {
-        var msg_timeout = "操作超时,请重新登录"; // 会话超时了
-        var msg_failed = "请求数据失败了";  // 服务端获取数据出现了问题，没有得到数据
-        var msg_error = "请求过程中发生错误了"; // 一般是网络故障或服务端物理故障不能完成请求
-
-        var options = {};
-        options.type = "POST";
-        options.url = this.httpUrl(url);
-        options.data = data; //
-        options.success = function (data, status, requestCode, response, xhr) {
-            uexWindow.closeToast();
-            var result = JSON.parse(data);
-            if (result.code === Result.TIMEOUT) {
-                uexWindow.toast(0, 8, msg_timeout, 4000);
-                window.setTimeout(function () {
-                    appcan.xwin.closeAll(); // 关闭所有窗口
-                }, 1500);
-                return;
-            } else if (result.code === Result.FAILED) {
-                var msg = result.msg;
-                if (!msg || msg.toLowerCase().indexOf("failed") >= 0) msg = msg_failed;
-                uexWindow.toast(0, 8, msg, 4000);
-                if (callback.length <= 1) return;  // callback 有2个或多个参数时，code为 FAILED 也回调
-            }
-            if ($.type(callback) === "function") callback(result.data, result.code);
-        };
-        options.error = function (xhr, errorType, error, msg) {
-            uexWindow.toast(0, 8, msg_error, 4000);
-        };
-        if ($.type(progressCallback) === "function") {
-            options.progress = function (progress, xhr) {
-                progressCallback(progress);
-            }
-        }
-
-        if ($.type(this.tokenType) === "object") {
-            var tokenId = this.tokenId || (window.serverConfig || this.serverConfig).debugTokenId;
-            if (tokenId) {
-                options.headers = {};
-                for (var key in this.tokenType) {
-                    options.headers[key] = this.tokenType[key].replace(/\?/g, tokenId);
-                }
-            }
-        }
-
-        appcan.ajax(options);
-    },
-
-    /**@preserve
-     * post2 提交请求, 与 post 完成一样的功能
-     * @param url       {String}
-     * @param data      {json}  上传文件的话，指定参数值为 object, 如 {path:'/path/file.jpg'}
-     * @param callback  {function(data, code)}
-     * @param isDebug   {boolean=}
-     * @param progressCallback  {function(progress)}
-     */
-    post2: function (url, data, callback, progressCallback, isDebug) {
         var msg_timeout = "操作超时,请重新登录"; // 会话超时了
         var msg_failed = "请求数据失败了";  // 服务端获取数据出现了问题，没有得到数据
         var msg_error = "请求过程中发生错误了"; // 一般是网络故障或服务端物理故障不能完成请求
@@ -274,7 +219,7 @@ var xio = appcan.xio = {
             }
         }
 
-        uexXmlHttpMgr.send(req, (isDebug) ? 3 : 0,
+        uexXmlHttpMgr.send(req, ((window.serverConfig || this.serverConfig).isDebug) ? 3 : 0,
             function (status, resStr, resCode, resInfo) {
                 if (status === 0) return; // -1=error 0=receive 1=finish
                 uexXmlHttpMgr.close(req);
@@ -298,7 +243,7 @@ var xio = appcan.xio = {
                     uexWindow.toast(0, 8, msg, 4000);
                     if (callback.length <= 1) return;  // callback 有2个或多个参数时，code为 FAILED 也回调
                 }
-                if ($.type(callback) === "function") callback(result.data, result.code);
+                if ($.type(callback) === "function") callback(result.data, result.code, result);
             },
             function (progress) {
                 if ($.type(progressCallback) === "function") progressCallback(progress);
@@ -311,21 +256,9 @@ var xio = appcan.xio = {
      * @param url   {String=} optional logout url
      */
     logout: function (url) {
-        appcan.request.ajax({
-            url: this.httpUrl(url || (window.serverConfig || this.serverConfig).logoutUrl || "logout"),
-            type: 'POST',
-            success: function (data, status, requestCode, response, xhr) {
-                //alert('success');
-            },
-            error: function (xhr, errorType, error, msg) {
-                //alert('error');
-            },
-            complete: function (xhr, status) {
-                //alert('complete');
-                appcan.xwin.clearLocStorageAndTempFiles();
-                uexWidgetOne.exit(0);
-            }
-        });
+        xio.post(url || (window.serverConfig || this.serverConfig).logoutUrl || "logout");
+        appcan.xwin.clearLocStorageAndTempFiles();
+        uexWidgetOne.exit(0);
     },
 
     /**@preserve
