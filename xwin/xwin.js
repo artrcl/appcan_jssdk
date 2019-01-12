@@ -51,8 +51,9 @@ var xwin = appcan.xwin = {
      * @param   {Integer}   aniId   - 动画效果
      * @param   {Integer}   type    - 窗口的类型
      * @param   {Integer}   animDuration    - 动画时长
+     * @param   {function}  callback        - 提供新窗口回调数据的函数
      */
-    open: function (wnd, url, param, aniId, type, animDuration) {
+    open: function (wnd, url, param, aniId, type, animDuration, callback) {
         if (arguments.length === 1 && $.type(wnd) === "object") {
             var argObj = wnd;
             wnd = argObj.wnd;
@@ -61,16 +62,31 @@ var xwin = appcan.xwin = {
             aniId = argObj.aniId;
             type = argObj.type;
             animDuration = argObj.animDuration;
+            callback = argObj.callback;
         } else if (arguments.length === 1) {
             url = wnd;
             wnd = "_auto_";
-        } else if ($.type(url) === "object") {
-            animDuration = type;
-            type = aniId;
-            aniId = param;
-            param = url;
-            url = wnd;
-            wnd = "_auto_";
+        } else {
+            var delta = 0;
+            if ($.type(url) !== "string") {
+                callback = animDuration;
+                animDuration = type;
+                type = aniId;
+                aniId = param;
+                param = url;
+                url = wnd;
+                wnd = "_auto_";
+                delta = 1;
+            }
+
+            var len = arguments.length;
+            if ($.type(arguments[len - 1]) === "function") {
+                callback = arguments[len - 1];
+                if (len + delta === 3) param = undefined;
+                else if (len + delta === 4) aniId = undefined;
+                else if (len + delta === 5) type = undefined;
+                else if (len + delta === 6) animDuration = undefined;
+            }
         }
 
         if (wnd === "" || wnd === "_auto_" || $.type(wnd) !== "string") {
@@ -91,7 +107,25 @@ var xwin = appcan.xwin = {
         }
 
         if (param !== undefined) this.param = param;
+        if ($.type(callback) === "function") {
+            appcan.xwin.nextWndCallbackFunc = callback;
+            istore.set("temp.callBack." + wnd, "qwe");
+        }
         appcan.openWinWithUrl(wnd, url, aniId, (type) ? type : 4, animDuration);
+    },
+
+    /**@preserve
+     * 回调到 Opener 窗口
+     */
+    callBackToOpener: function () {
+        var req = istore.get("temp.callBack." + this.wndName);
+        if (req === "qwe") {
+            var args = ["appcan.xwin.nextWndCallbackFunc()"];
+            Array.prototype.push.apply(args, Array.prototype.slice.call(arguments));
+            this.evaluate.apply(this, args);
+            return true;
+        }
+        return false;
     },
 
     /**@preserve
@@ -109,6 +143,10 @@ var xwin = appcan.xwin = {
         if (arguments.length === 0 || wnd === "_current_") {
             wnd = this.wndName;
             this._deleteTempFiles();
+
+            // remove the temp settings
+            istore.remove("temp.callBack." + wnd);
+
             if (wnd === "root") {
                 appcan.window.evaluateScript(wnd, 'location.reload()');
             } else {
