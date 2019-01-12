@@ -170,15 +170,24 @@ var xwin = appcan.xwin = {
      * @param value {json}
      */
     set param(value) {
-        istore.set("xwin.param", value);
+        istore.set("xwin.param", JSON.stringify(value));
     },
     /**@preserve
      * param 窗口间传递参数
      * @return  {json}
      */
     get param() {
+        if (this._param === null) this._param = this.originalParam();
         return this._param;
-    }, _param: {},
+    }, _param: null,
+    /**@preserve
+     * originalParam 返回不可修改的 param
+     * @returns  {json}
+     */
+    originalParam: function () {
+        if (this._paramstr === null) return {};
+        else return JSON.parse(this._paramstr);
+    }, _paramstr: null,
 
     /**@preserve
      * prepare 执行窗口初始化操作
@@ -209,7 +218,7 @@ var xwin = appcan.xwin = {
             this.wndName = "root";
         }
 
-        this._param = istore.get("xwin.param", {});
+        this._paramstr = istore.get("xwin.param");
         istore.remove("xwin.param"); // 取出即删除
 
         var part1;
