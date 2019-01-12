@@ -1,65 +1,79 @@
 "use strict";
 
-/**
- * unique 去重复
- * @return {*[]}
- */
-Array.prototype.unique = function () {
-    return this.filter(function (element, index, array) {
-        return array.indexOf(element) === index;
-    });
-};
+var arrays = (function () {
 
-/**
- * intersect 交集
- * @param arr  {[]...}
- * @return {*[]}
- */
-Array.prototype.intersect = function (arr) {
-    var result = this.unique();
-
-    for (var i = 0; i < arguments.length; i++) {
-        arr = arguments[i];
-        result = result.filter(function (v) {
-            return arr.indexOf(v) >= 0
-        })
-    }
-
-    return result;
-};
-
-/**
- * union 并集
- * @param arr  {[]...}
- * @return {*[]}
- */
-Array.prototype.union = function (arr) {
-    var result = this.unique();
-
-    for (var i = 0; i < arguments.length; i++) {
-        arr = arguments[i];
-        result = result.concat(arr.filter(function (v) {
-            return result.indexOf(v) === -1
-        }));
-    }
-
-    return result;
-};
-
-/**
- * minus 差集
- * @param arr  {[]...}
- * @return {*[]}
- */
-Array.prototype.minus = function (arr) {
-    var result = this.unique();
-
-    for (var i = 0; i < arguments.length; i++) {
-        arr = arguments[i];
-        result = result.filter(function (v) {
-            return arr.indexOf(v) === -1
+    /**
+     * 去重复
+     * @param {Array}   arr
+     * @return {Array}
+     */
+    function unique(arr) {
+        return arr.filter(function (element, index, array) {
+            return array.indexOf(element) === index;
         });
     }
 
-    return result;
-};
+    /**
+     * 交集
+     * @param {Array}       arr
+     * @param {Array...}    another
+     * @return {Array}
+     */
+    function intersect(arr, another) {
+        var result = arr.unique();
+
+        for (var i = 0; i < arguments.length; i++) {
+            another = arguments[i];
+            result = result.filter(function (v) {
+                return another.indexOf(v) >= 0
+            })
+        }
+
+        return result;
+    }
+
+    /**
+     * 并集
+     * @param {Array}       arr
+     * @param {Array...}    another
+     * @return {Array}
+     */
+    function union(arr, another) {
+        var result = arr.unique();
+
+        for (var i = 0; i < arguments.length; i++) {
+            another = arguments[i];
+            result = result.concat(another.filter(function (v) {
+                return result.indexOf(v) === -1
+            }));
+        }
+
+        return result;
+    }
+
+    /**
+     * 差集
+     * @param {Array}       arr
+     * @param {Array...}    another
+     * @return {Array}
+     */
+    function minus(arr, another) {
+        var result = arr.unique();
+
+        for (var i = 0; i < arguments.length; i++) {
+            another = arguments[i];
+            result = result.filter(function (v) {
+                return another.indexOf(v) === -1
+            });
+        }
+
+        return result;
+    }
+
+    return {
+        unique: unique,
+        intersect: intersect,
+        union: union,
+        minus: minus
+    }
+})();

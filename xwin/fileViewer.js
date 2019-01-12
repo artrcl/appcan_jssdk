@@ -3,11 +3,11 @@
 var fileViewer = appcan.fileViewer = {
 
     /**
-     * createFileObj
-     * @param url               {String=}
-     * @param savePath          {String=}
-     * @param isOverrideMode    {boolean=}
-     * @return {{url: string, savePath: string, isOverrideMode: boolean}}
+     * 创建一个文件对象
+     * @param   {String=}   url
+     * @param   {String=}   savePath
+     * @param   {boolean=}  isOverrideMode
+     * @return  {{url: string, savePath: string, isOverrideMode: boolean}}
      */
     createFileObj: function (url, savePath, isOverrideMode) {
         return {
@@ -20,9 +20,9 @@ var fileViewer = appcan.fileViewer = {
     },
 
     /**
-     * open
-     * @param fileObj   {{savePath:String}}
-     * @param flags     {josn=}
+     * 打开
+     * @param {{savePath:String}}   fileObj
+     * @param {Object=}             flags
      *
      */
     open: function (fileObj, flags) {
@@ -57,9 +57,9 @@ var fileViewer = appcan.fileViewer = {
     },
 
     /**
-     * openFromWeb
-     * @param urlObj   {{url:String, isOverrideMode:boolean}}
-     * @param flags   {josn=}
+     * 从服务端得到文件并打开
+     * @param {{url:String, isOverrideMode:boolean}}    urlObj
+     * @param {Object=}                                 flags
      *
      */
     openFromWeb: function (urlObj, flags) {

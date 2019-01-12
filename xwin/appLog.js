@@ -6,24 +6,21 @@ var appLog = (function () {
     var appcanIsReady = false;
 
     /**
-     * log
-     * @param s  {*...}
+     * @param   {*...}  s
      */
     function log(s) {
         if (!appcanIsReady || window.uexLog) send("log", Array.prototype.slice.apply(arguments));
     }
 
     /**
-     * warn
-     * @param s  {*...}
+     * @param   {*...}  s
      */
     function warn(s) {
         if (!appcanIsReady || window.uexLog) send("warn", Array.prototype.slice.apply(arguments));
     }
 
     /**
-     * error
-     * @param s  {*...}
+     * @param   {*...}  s
      */
     function error(s) {
         if (!appcanIsReady || window.uexLog) send("error", Array.prototype.slice.apply(arguments));

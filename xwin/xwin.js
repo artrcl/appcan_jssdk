@@ -21,7 +21,7 @@ var xwin = appcan.xwin = {
 
     /**@preserve
      * 返回一个序列值
-     * @return  {int}
+     * @return  {Integer}
      */
     getUID: function () {
         var maxId = 65536;
@@ -34,7 +34,7 @@ var xwin = appcan.xwin = {
 
     /**@preserve
      * 返回一个全局的序列值
-     * @return  {int}
+     * @return  {Integer}
      */
     getGlobalUID: function () {
         var i = istore.get("xwin.global.uid", 1);
@@ -44,13 +44,13 @@ var xwin = appcan.xwin = {
     },
 
     /**@preserve
-     * open 打开一个新窗口
-     * @param wnd       {String=}  窗口名字, 使用时只有一个参数、为'_auto_'、空字符串或非字符串 ==> 自动取名
-     * @param url       {String}  要加载的地址
-     * @param param     {object}  传入参数，以备新开的窗口使用
-     * @param aniId     {Integer} 动画效果
-     * @param type      {Integer} 窗口的类型
-     * @param animDuration {Integer} 动画时长
+     * 打开一个新窗口
+     * @param   {String=}   wnd     - 窗口名字, 使用时只有一个参数、为'_auto_'、空字符串或非字符串 ==> 自动取名
+     * @param   {String}    url     - 要加载的地址
+     * @param   {object}    param   - 传入参数，以备新开的窗口使用
+     * @param   {Integer}   aniId   - 动画效果
+     * @param   {Integer}   type    - 窗口的类型
+     * @param   {Integer}   animDuration    - 动画时长
      */
     open: function (wnd, url, param, aniId, type, animDuration) {
         if (arguments.length === 1 && $.type(wnd) === "object") {
@@ -95,8 +95,8 @@ var xwin = appcan.xwin = {
     },
 
     /**@preserve
-     * close 关闭窗口
-     * @param wnd  {String}  窗口名字
+     * 关闭窗口
+     * @param   {String}    wnd - 窗口名字
      * 说明:
      * '_current_'  或无wnd参数，就关闭当前窗口，
      * '_opener_'   关闭 opener 窗口
@@ -144,22 +144,22 @@ var xwin = appcan.xwin = {
     },
 
     /**@preserve
-     * closeOpener  关闭 opener 窗口
+     * 关闭 opener 窗口
      */
     closeOpener: function () {
         this.close("_opener_");
     },
 
     /**@preserve
-     * closeAll     关闭所有窗口
+     * 关闭所有窗口
      */
     closeAll: function () {
         this.close("_all_");
     },
 
     /**@preserve
-     * bindClose    设置关闭窗口回调事件
-     * @param func  {function}
+     * 设置关闭窗口回调事件
+     * @param   {function}  func
      */
     bindClose: function (func) {
         this._onCloseFunc = func;
@@ -167,14 +167,14 @@ var xwin = appcan.xwin = {
 
     /**@preserve
      * param 窗口间传递参数，保存的数据在新窗口才可用
-     * @param value {json}
+     * @param   {Object}    value
      */
     set param(value) {
         istore.set("xwin.param", JSON.stringify(value));
     },
     /**@preserve
      * param 窗口间传递参数
-     * @return  {json}
+     * @return  {Object}
      */
     get param() {
         if (this._param === null) this._param = this.originalParam();
@@ -182,7 +182,7 @@ var xwin = appcan.xwin = {
     }, _param: null,
     /**@preserve
      * originalParam 返回不可修改的 param
-     * @returns  {json}
+     * @returns  {Object}
      */
     originalParam: function () {
         if (this._paramstr === null) return {};
@@ -190,7 +190,7 @@ var xwin = appcan.xwin = {
     }, _paramstr: null,
 
     /**@preserve
-     * prepare 执行窗口初始化操作
+     * 执行窗口初始化操作
      */
     prepare: function () {
         var wgtPath = istore.get("xwin.wgtPath");
@@ -263,9 +263,9 @@ var xwin = appcan.xwin = {
     },
 
     /**@preserve
-     * evaluate 跨窗口执行脚本
-     * @param wnd     {String=}    窗口名字，调用时只有一个参数、为'_opener_'、空字符串或非字符串，窗口即为opener窗口，否则使用指定窗口名
-     * @param script  {String}     脚本
+     * 跨窗口执行脚本
+     * @param   {String=}   wnd     - 窗口名字，调用时只有一个参数、为'_opener_'、空字符串或非字符串，窗口即为opener窗口，否则使用指定窗口名
+     * @param   {String}    script  - 脚本
      * 说明: 还可以附加额外参数
      * 例子:
      * evaluate("hello(1)", 2); 在opener窗口执行 hello(1,2)
@@ -315,16 +315,16 @@ var xwin = appcan.xwin = {
     },
 
     /**@preserve
-     * deleteTempFiles 删除当前窗口的临时文件
+     * 删除当前窗口的临时文件
      */
     _deleteTempFiles: function () {
         uexFileMgr.deleteFileByPath(this.tempDir);
     },
 
     /**@preserve
-     * realPath 获取wgt url的真实路径
-     * @param wgtUrl    {String} wgt://格式的 url
-     * @return          {String}
+     * 获取wgt url的真实路径
+     * @param   {String}    wgtUrl  - wgt://格式的 url
+     * @return  {String}
      */
     realPath: function (wgtUrl) {
         if (wgtUrl.substr(0, appcan.file.wgtPath.length) === appcan.file.wgtPath) {
@@ -335,9 +335,9 @@ var xwin = appcan.xwin = {
     },
 
     /**@preserve
-     * getFileProviderPath 得到对 SDCARD 的相对路径
-     * @param wgtUrl    {String}    wgt://temp/doc1.doc
-     * @return          {String}
+     * 得到对 SDCARD 的相对路径
+     * @param   {String}    wgtUrl  - wgt://格式的 url
+     * @return  {String}
      */
     fileProviderPath: function (wgtUrl) {
         var s = this.realPath(wgtUrl);
@@ -346,7 +346,7 @@ var xwin = appcan.xwin = {
     },
 
     /**@preserve
-     * initLocStorage 初始化 locStorage, 用于 root 窗口，最开始就调用，应该优先于 config.js 的 appcan.ready():
+     * 初始化 locStorage, 用于 root 窗口，最开始就调用，应该优先于 config.js 的 appcan.ready():
      */
     initLocStorage: function () {
         this.openerWndName = "";
@@ -367,7 +367,7 @@ var xwin = appcan.xwin = {
     },
 
     /**@preserve
-     * clearLocStorageAndTempFiles 清除 locStorage 和临时文件，在 root 页面 和 logout 时调用
+     * 清除 locStorage 和临时文件，在 root 页面 和 logout 时调用
      */
     clearLocStorageAndTempFiles: function () {
         uexFileMgr.deleteFileByPath(appcan.file.wgtPath + "temp/");
@@ -381,7 +381,7 @@ var xwin = appcan.xwin = {
     },
 
     /**@preserve
-     * appVersion 获取appVerion
+     * 获取appVerion
      * @return  {String}
      */
     get appVersion() {
@@ -390,7 +390,7 @@ var xwin = appcan.xwin = {
     },
 
     /**@preserve
-     * deviceOs 获取device OS
+     * 获取device OS
      * @return  {String}
      */
     get deviceOs() {
@@ -401,8 +401,8 @@ var xwin = appcan.xwin = {
     },
 
     /**@preserve
-     * isAndroid 判断是否是 android 系统
-     * @return  {boolean}
+     * 判断是否是 android 系统
+     * @return  {Boolean}
      */
     isAndroid: function () {
         if (this._isAndroid === null) {
@@ -412,18 +412,18 @@ var xwin = appcan.xwin = {
     }, _isAndroid: null,
 
     /**@preserve
-     * isAppInstalled 判断系统是否安装了指定的应用
-     * @param name  {String} 应用名
-     * @return      {boolean}
+     * 判断系统是否安装了指定的应用
+     * @param   {String}    name    - 应用名
+     * @return  {boolean}
      */
     isAppInstalled: function (name) {
         return uexWidget.isAppInstalled(JSON.stringify({appData: name}));
     },
 
     /**@preserve
-     * mapFileName 返回 url 匹配的文件名 用于下载保存文件时文件名的确定
-     * @param url   {String}
-     * @return      {string}
+     * 返回 url 匹配的文件名 用于下载保存文件时文件名的确定
+     * @param   {String}    url
+     * @return  {string}
      * @desc url 如果只包含扩展名，每次获取都得到新文件名
      */
     mapFileName: function (url) {

@@ -31,8 +31,8 @@ var xio = appcan.xio = {
     // tokenType : {Auth: "?"},
 
     /**@preserve
-     * serverUrl    服务端地址
-     * @return  {array}
+     * 服务端地址
+     * @return  {Array}
      */
     get serverUrl() {
         if (!this._serverUrl) {
@@ -45,8 +45,8 @@ var xio = appcan.xio = {
     }, _serverUrl: null,
 
     /**@preserve
-     * downloadUrlTemplate  服务端文件下载地址模板
-     * @return  {array}
+     * 服务端文件下载地址模板
+     * @return  {Array}
      */
     get downloadUrlTemplate() {
         if (!this._downloadUrlTemplate) {
@@ -58,8 +58,8 @@ var xio = appcan.xio = {
     }, _downloadUrlTemplate: null,
 
     /**@preserve
-     * serverIndex 当前选用的server索引
-     * @param value {Integer}
+     * 当前选用的server索引
+     * @param   {Integer}   value
      */
     set serverIndex(value) {
         this._serverUrl = null;
@@ -67,7 +67,7 @@ var xio = appcan.xio = {
         istore.set("xio.serverIndex", value);
     },
     /**@preserve
-     * serverIndex 当前选用的server索引
+     * 当前选用的server索引
      * @return  {Integer}
      */
     get serverIndex() {
@@ -83,7 +83,7 @@ var xio = appcan.xio = {
     },
 
     /**@preserve
-     * tokenType 会话维持的方式: JSESSIONID, param 或 header
+     * 会话维持的方式: JSESSIONID, param 或 header
      * @return  {String|Object}
      */
     get tokenType() {
@@ -94,9 +94,9 @@ var xio = appcan.xio = {
 
     /**
      * @preserve
-     * absoluteUrl 把相对地址转为绝对地址
-     * @param url   {string}
-     * @return      {string}
+     * 把相对地址转为绝对地址
+     * @param   {String}    url
+     * @return  {String}
      */
     absoluteUrl: function (url) {
         var query = '';
@@ -119,9 +119,9 @@ var xio = appcan.xio = {
     },
 
     /**@preserve
-     * httpUrl 转换为一个绝对的地址，并根据需要附带 TOKENID
-     * @param url   {String}
-     * @return      {String}
+     * 转换为一个绝对的地址，并根据需要附带 TOKENID
+     * @param   {String}    url
+     * @return  {String}
      */
     httpUrl: function (url) {
         var serverUrl = this.serverUrl[this.serverIndex];
@@ -163,9 +163,9 @@ var xio = appcan.xio = {
     },
 
     /**@preserve
-     * downloadUrl 转换为一个绝对的文件下载地址，并根据需要附带 TOKENID
-     * @param url   {String}
-     * @return      {String}
+     * 转换为一个绝对的文件下载地址，并根据需要附带 TOKENID
+     * @param   {String}    url
+     * @return  {String}
      */
     downloadUrl: function (url) {
         var template = this.downloadUrlTemplate[this.serverIndex];
@@ -179,11 +179,11 @@ var xio = appcan.xio = {
     },
 
     /**@preserve
-     * POST 提交请求
-     * @param url       {String}
-     * @param data      {json}  上传文件的话，指定参数值为 object, 如 {path:'/path/file.jpg'}
-     * @param callback  {function(data, code)}
-     * @param progressCallback  {function(progress)}
+     * 提交请求
+     * @param   {String}    url
+     * @param   {Object}    data    - 上传文件的话，指定参数值为 object, 如 {path:'/path/file.jpg'}
+     * @param   {function(data, code)}  callback
+     * @param   {function(progress)}    progressCallback
      */
     post: function (url, data, callback, progressCallback) {
         var msg_timeout = "操作超时,请重新登录"; // 会话超时了
@@ -240,11 +240,11 @@ var xio = appcan.xio = {
     },
 
     /**@preserve
-     * post2 提交请求, 与 post 完成一样的功能
-     * @param url       {String}
-     * @param data      {json}  上传文件的话，指定参数值为 object, 如 {path:'/path/file.jpg'}
-     * @param callback  {function(data, code)}
-     * @param progressCallback  {function(progress)}
+     * 提交请求, 与 post 完成一样的功能
+     * @param   {String}    url
+     * @param   {Object}    data    - 上传文件的话，指定参数值为 object, 如 {path:'/path/file.jpg'
+     * @param   {function(data, code)}  callback
+     * @param   {function(progress)}    progressCallback
      */
     post2: function (url, data, callback, progressCallback) {
         var msg_timeout = "操作超时,请重新登录"; // 会话超时了
@@ -324,7 +324,7 @@ var xio = appcan.xio = {
 
     /**@preserve
      * logout
-     * @param url   {String=} optional logout url
+     * @param   {String=}   url - logout url
      */
     logout: function (url) {
         xio.post(url || (window.serverConfig || this.serverConfig).logoutUrl || "logout");
@@ -334,7 +334,7 @@ var xio = appcan.xio = {
 
     /**@preserve
      * tokenId
-     * @param value {String}
+     * @param   {String}    value
      */
     set tokenId(value) {
         istore.set("xio.tokenId", value);
@@ -349,7 +349,7 @@ var xio = appcan.xio = {
 
     /**@preserve
      * loginName
-     * @param value {String}
+     * @param   {String}    value
      */
     set loginName(value) {
         istore.set("persist.loginName", value);
@@ -364,7 +364,7 @@ var xio = appcan.xio = {
 
     /**@preserve
      * userName
-     * @param value {String}
+     * @param   {String}    value
      */
     set userName(value) {
         istore.set("sys.userName", value);
@@ -379,14 +379,14 @@ var xio = appcan.xio = {
 
     /**@preserve
      * userId
-     * @param value {String}
+     * @param   {String}    value
      */
     set userId(value) {
         istore.set("sys.userId", value);
     },
     /**@preserve
      * userId
-     * @return {String}
+     * @return  {String}
      */
     get userId() {
         return istore.get("sys.userId", "");

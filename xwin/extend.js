@@ -10,7 +10,7 @@
  */
 
 /**@preserve
- * Result 返回结果的 code
+ * 返回结果的 code
  */
 var Result = {
     SUCCEED: 1,     // 成功
@@ -20,7 +20,7 @@ var Result = {
 };
 
 /**@preserve
- * fullFileName 获取文件的全文件名 fileName.fileExt
+ * 获取文件的全文件名 fileName.fileExt
  * @return {string}
  */
 String.prototype.fullFileName = function () {
@@ -30,7 +30,7 @@ String.prototype.fullFileName = function () {
 };
 
 /**@preserve
- * fileName 获取文件的文件名，不包括扩展名部分 fileName
+ * 获取文件的文件名，不包括扩展名部分 fileName
  * @return {string}
  */
 String.prototype.fileName = function () {
@@ -45,7 +45,7 @@ String.prototype.fileName = function () {
 };
 
 /**@preserve
- * fileExt 获取文件的扩展名，包括小数点 .fileExt
+ * 获取文件的扩展名，包括小数点 .fileExt
  * @return {string}
  */
 String.prototype.fileExt = function () {
@@ -60,9 +60,9 @@ String.prototype.fileExt = function () {
 };
 
 /**@preserve
- * parseFilePart 分析 url，得到其 path, fullName, name, ext, 其中 ext 包括小数点
- * @param url   {String}
- * @param part  {int=}      optional 需要得到哪个部分: 0=path, 1=fullName 2=name 3=ext 其它=object of {path, fullName, name, ext}
+ * 分析 url，得到其 path, fullName, name, ext, 其中 ext 包括小数点
+ * @param   {String}    url
+ * @param   {int=}      part    - 需要得到哪个部分: 0=path, 1=fullName 2=name 3=ext 其它=object of {path, fullName, name, ext}
  * @return {String|object<path, fullName, name, ext>}
  */
 function parseFilePart(url, part) {
@@ -95,9 +95,9 @@ function parseFilePart(url, part) {
 }
 
 /**@preserve
- * isValueOf 判断是否是已其中一个指定的其中一个值
- * @param value    {String...|array}
- * @return          {boolean}
+ * 判断是否是已其中一个指定的其中一个值
+ * @param   {String...|array}   value
+ * @return  {boolean}
  * 可以任意个参数，只要字符串与任意一个相等，就返回 true
  * value 可以是字符串数组，是数组时，只判断这个数组里的元素，并忽略其它参数
  */
@@ -111,9 +111,9 @@ String.prototype.isValueOf = function (value) {
 };
 
 /**@preserve
- * endsWith 判断是否是已其中一个指定的后缀结尾
- * @param suffix    {String...|array}
- * @return          {boolean}
+ * 判断是否是已其中一个指定的后缀结尾
+ * @param   {String...|array}   suffix
+ * @return  {boolean}
  * 可以任意个参数，只要字符串已任意一个结尾，就返回 true
  * suffix 可以是字符串数组，是数组时，只判断这个数组里的元素，并忽略其它参数
  */
@@ -127,7 +127,7 @@ String.prototype.endsWith = function (suffix) {
 };
 
 /**@preserve
- * isImageFile 判断是否是图形文件
+ * 判断是否是图形文件
  * @return  {boolean}
  */
 String.prototype.isImageFile = function () {
@@ -135,7 +135,7 @@ String.prototype.isImageFile = function () {
 };
 
 /**@preserve
- * isWpsFile 判断是否是 Wps 可查看的文件
+ * 判断是否是 Wps 可查看的文件
  * @return  {boolean}
  */
 String.prototype.isWpsFile = function () {
@@ -149,7 +149,7 @@ String.prototype.isWpsFile = function () {
 };
 
 /**@preserve
- * isTifFile 判断是否是 Wps 可查看的文件
+ * 判断是否是 Tif 文件
  * @return  {boolean}
  */
 String.prototype.isTifFile = function () {
@@ -157,7 +157,7 @@ String.prototype.isTifFile = function () {
 };
 
 /**@preserve
- * isFileType 判断是否是指定类型的文件
+ * 判断是否是指定类型的文件
  * @param suffix    {String...|array}
  * @return          {boolean}
  */
@@ -173,15 +173,15 @@ String.prototype.isFileType = function (suffix) {
 };
 
 /**@preserve
- * ifThen 根据值匹配返回结果
- * @param value     {*}
- * @param valueN    {*}
- * @param returnN   {*}
- * @param defaultValue  {*}
- * @return          {*}
+ * 根据值匹配返回结果
+ * @param   {*}     value
+ * @param   {*...}  valueN
+ * @param   {*...}  returnN
+ * @param   {*}     defaultValue
+ * @return  {*}
  * ifThen 可任意个参数
  * 如果 value 等于
- *      value1 返回  return1
+ *      value1 返回 return1
  *      value2 返回 return2
  *      ...
  *      valueN 返回 returnN

@@ -11,10 +11,9 @@
  */
 (function (window) {
     /**@preserve
-     * cxDate
-     * @param style {String}        格式化的样式
-     * @param time  {int|String}    需要格式化的时间
-     * @return      {String}
+     * @param   {String}     style  - 格式化的样式
+     * @param   {int|String} time   - 需要格式化的时间
+     * @return  {String}
      */
     var cxDate = function (style, time) {
         return cxDate.decode.apply(cxDate, arguments);
@@ -181,45 +180,40 @@
     window.cxDate = cxDate;
 
     /**@preserve
-     * longDate
-     * @param   time    {int|String}
-     * @return          {String}
+     * @param   {int|String}    time
+     * @return  {String}
      */
     cxDate.longDate = function (time) {
         return cxDate("YYYY-MM-DD HH:mm:ss", time);
     };
 
     /**@preserve
-     * mediumDate
-     * @param   time    {int|String}
-     * @return          {String}
+     * @param   {int|String}    time
+     * @return  {String}
      */
     cxDate.mediumDate = function (time) {
         return cxDate("YYYY-MM-DD HH:mm", time);
     };
 
     /**@preserve
-     * shortDate
-     * @param   time    {int|String}
-     * @return          {String}
+     * @param   {int|String}    time
+     * @return  {String}
      */
     cxDate.shortDate = function (time) {
         return cxDate("YYYY-MM-DD", time);
     };
 
     /**@preserve
-     * longTime
-     * @param   time    {int|String}
-     * @return          {String}
+     * @param   {int|String}    time
+     * @return  {String}
      */
     cxDate.longTime = function (time) {
         return cxDate("HH:mm:ss", time);
     };
 
     /**@preserve
-     * shortTime
-     * @param   time    {int|String}
-     * @return          {String}
+     * @param   {int|String}    time
+     * @return  {String}
      */
     cxDate.shortTime = function (time) {
         return cxDate("HH:mm", time);

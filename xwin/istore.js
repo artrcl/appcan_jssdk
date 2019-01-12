@@ -2,11 +2,11 @@
 
 var istore = {
     /**
-     * set  保存值
-     * @param key    {String}
-     * @param value  {*}
-     * @param keyN   {String}
-     * @param valueN {*}
+     * 保存值
+     * @param   {String}    key
+     * @param   {*}         value
+     * @param   {String...} keyN
+     * @param   {*...}      valueN
      */
     set: function (key, value, keyN, valueN) {
         try {
@@ -45,9 +45,9 @@ var istore = {
     },
 
     /**
-     * get  获取值
-     * @param key   {String}
-     * @param defaultValue {*=} optional
+     * 获取值
+     * @param   {String}    key
+     * @param   {*=}        defaultValue
      * @return  {String}
      */
     get: function (key, defaultValue) {
@@ -76,9 +76,9 @@ var istore = {
     },
 
     /**
-     * remove 删除键值
-     * @param key   {String}
-     * @param keyN  {String}
+     * 删除键值
+     * @param   {String}    key
+     * @param   {String...} keyN
      */
     remove: function (key, keyN) {
         try {
@@ -104,7 +104,7 @@ var istore = {
     },
 
     /**
-     * clear 清除所有的key
+     * 清除所有的key
      */
     clear: function () {
         try {
@@ -118,8 +118,8 @@ var istore = {
     },
 
     /**
-     * keepAndClear 清除key, 但保留符合 正则表达式 reg 的key
-     * @param reg   {regexp}
+     * 清除key, 但保留符合 正则表达式 reg 的key
+     * @param   {regexp}    reg
      */
     keepAndClear: function (reg) {
         try {
@@ -141,8 +141,8 @@ var istore = {
     },
 
     /**
-     * keys     获取所有的key
-     * @return {Array}
+     * 获取所有的key
+     * @return  {Array}
      */
     keys: function () {
         var result = [];
