@@ -26,7 +26,7 @@ var xio = appcan.xio = {
     // JSESSIONID 方式的话将在 url 附加 JSESSIONID=...,
     // param 方式, 如 "__sid", 将会在 url 的 querystr 附加 __sid=...
     // header 方式, 如 {Auth: "?"}, 就在 http header 里添加 header： "Auth：..."
-    _tokenType: "JSESSIONID", // 设置默认值
+    // tokenType : "JSESSIONID",
     // tokenType : '__sid',
     // tokenType : {Auth: "?"},
 
@@ -35,35 +35,35 @@ var xio = appcan.xio = {
      * @return  {Array}
      */
     get serverUrl() {
-        if (!this._serverUrl) {
+        if (!this._internals.serverUrl) {
             var value = (window.serverConfig || this.serverConfig).serverUrl;
             if ($.type(value) === "string") value = [value];
-            this._serverUrl = value;
-            if (this.serverIndex < 0 || this.serverIndex >= this._serverUrl.length) this.serverIndex = 0;
+            this._internals.serverUrl = value;
+            if (this.serverIndex < 0 || this.serverIndex >= this._internals.serverUrl.length) this.serverIndex = 0;
         }
-        return this._serverUrl;
-    }, _serverUrl: null,
+        return this._internals.serverUrl;
+    },
 
     /**@preserve
      * 服务端文件下载地址模板
      * @return  {Array}
      */
     get downloadUrlTemplate() {
-        if (!this._downloadUrlTemplate) {
+        if (!this._internals.downloadUrlTemplate) {
             var value = (window.serverConfig || this.serverConfig).downloadUrlTemplate;
             if ($.type(value) === "string") value = [value];
-            this._downloadUrlTemplate = value;
+            this._internals.downloadUrlTemplate = value;
         }
-        return this._downloadUrlTemplate;
-    }, _downloadUrlTemplate: null,
+        return this._internals.downloadUrlTemplate;
+    },
 
     /**@preserve
      * 当前选用的server索引
      * @param   {Integer}   value
      */
     set serverIndex(value) {
-        this._serverUrl = null;
-        this._downloadUrlTemplate = null;
+        this._internals.serverUrl = null;
+        this._internals.downloadUrlTemplate = null;
         istore.set("xio.serverIndex", value);
     },
     /**@preserve
@@ -75,7 +75,7 @@ var xio = appcan.xio = {
         if (value == null) {
             value = (window.serverConfig || this.serverConfig).serverIndex;
             value = value ? eval(value) : 0;
-            if (value < 0 || value >= this._serverUrl.length) value = 0;
+            if (value < 0 || value >= this.serverUrl.length) value = 0;
             return value;
         } else {
             return eval(value);
@@ -89,7 +89,7 @@ var xio = appcan.xio = {
     get tokenType() {
         var tokenType = (window.serverConfig || this.serverConfig).tokenType;
         if (tokenType) return tokenType;
-        return this._tokenType;
+        return 'JSESSIONID';
     },
 
     /**
@@ -396,6 +396,11 @@ var xio = appcan.xio = {
      */
     get userId() {
         return istore.get("sys.userId", "");
+    },
+
+    _internals: {
+        serverUrl: null,
+        downloadUrlTemplate: null,
     }
 
 };

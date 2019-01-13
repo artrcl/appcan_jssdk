@@ -142,7 +142,7 @@ var xwin = appcan.xwin = {
 
         if (arguments.length === 0 || wnd === "_current_") {
             wnd = this.wndName;
-            this._deleteTempFiles();
+            this.deleteTempFiles();
 
             // remove the temp settings
             istore.remove("temp.callBack." + wnd);
@@ -159,9 +159,9 @@ var xwin = appcan.xwin = {
                         istore.set("xwin.wndList", wndList);
                     }
                 }
-                if (appcan.isFunction(this._onCloseFunc)) {
+                if (appcan.isFunction(this._internals.onCloseFunc)) {
                     try {
-                        this._onCloseFunc();
+                        this._internals.onCloseFunc();
                     } catch (e) {
                     }
                 }
@@ -200,8 +200,8 @@ var xwin = appcan.xwin = {
      * @param   {function}  func
      */
     bindClose: function (func) {
-        this._onCloseFunc = func;
-    }, _onCloseFunc: null,
+        this._internals.onCloseFunc = func;
+    },
 
     /**@preserve
      * param 窗口间传递参数，保存的数据在新窗口才可用
@@ -215,17 +215,17 @@ var xwin = appcan.xwin = {
      * @return  {Object}
      */
     get param() {
-        if (this._param === null) this._param = this.originalParam();
-        return this._param;
-    }, _param: null,
+        if (this._internals.param === null) this._internals.param = this.originalParam();
+        return this._internals.param;
+    },
     /**@preserve
      * originalParam 返回不可修改的 param
      * @returns  {Object}
      */
     originalParam: function () {
-        if (this._paramstr === null) return {};
-        else return JSON.parse(this._paramstr);
-    }, _paramstr: null,
+        if (this._internals.paramstr === null) return {};
+        else return JSON.parse(this._internals.paramstr);
+    },
 
     /**@preserve
      * 执行窗口初始化操作
@@ -256,7 +256,7 @@ var xwin = appcan.xwin = {
             this.wndName = "root";
         }
 
-        this._paramstr = istore.get("xwin.param");
+        this._internals.paramstr = istore.get("xwin.param");
         istore.remove("xwin.param"); // 取出即删除
 
         var part1;
@@ -268,7 +268,7 @@ var xwin = appcan.xwin = {
 
         this.tempDir = appcan.file.wgtPath + "temp/" + part1 + "_" + this.wndName + "/";
 
-        this._deleteTempFiles();
+        this.deleteTempFiles();
 
         uexWindow.setReportKey(0, 1);
         uexWindow.onKeyPressed = function (keyCode) {
@@ -355,7 +355,7 @@ var xwin = appcan.xwin = {
     /**@preserve
      * 删除当前窗口的临时文件
      */
-    _deleteTempFiles: function () {
+    deleteTempFiles: function () {
         uexFileMgr.deleteFileByPath(this.tempDir);
     },
 
@@ -443,11 +443,11 @@ var xwin = appcan.xwin = {
      * @return  {Boolean}
      */
     isAndroid: function () {
-        if (this._isAndroid === null) {
-            this._isAndroid = uexWidgetOne.getPlatform() === 1;
+        if (this._internals.isAndroid === null) {
+            this._internals.isAndroid = uexWidgetOne.getPlatform() === 1;
         }
-        return this._isAndroid;
-    }, _isAndroid: null,
+        return this._internals.isAndroid;
+    },
 
     /**@preserve
      * 判断系统是否安装了指定的应用
@@ -466,20 +466,29 @@ var xwin = appcan.xwin = {
      */
     mapFileName: function (url) {
         if (!url) return null;
-        var result = this._mapFileName[url];
+        var result = this._internals.mapFileName[url];
         if (result !== undefined) {
             return result;
         }
 
         var i = url.lastIndexOf(".");
         var ext = (i >= 0) ? url.substring(i) : "";
-        if (ext.isImageFile()) result = "iamge" + this._fileGen + ext;
-        else result = "doc" + this._fileGen + ext;
-        this._fileGen++;
+        if (ext.isImageFile()) result = "iamge" + this._internals.fileGen + ext;
+        else result = "doc" + this._internals.fileGen + ext;
+        this._internals.fileGen++;
 
-        if (i !== 0) this._mapFileName[url] = result;
+        if (i !== 0) this._internals.mapFileName[url] = result;
         return result;
-    }, _mapFileName: {}, _fileGen: 1
+    },
+
+    _internals: {
+        onCloseFunc: null,
+        param: null,
+        paramstr: null,
+        isAndroid: null,
+        mapFileName: {},
+        fileGen: 1,
+    }
 
 };
 
