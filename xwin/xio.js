@@ -262,12 +262,18 @@ var xio = appcan.xio = {
             url: this.httpUrl(url)
         });
 
+        uexXmlHttpMgr.setAppVerify(req, 1);
+
         if ($.type(data) === "object") {
             for (var key in data) {
                 var value = data[key];
-                if ($.type(value) === "object" && value.path) {
-                    uexXmlHttpMgr.setPostData(req, 1, key, value.path); // binary
-                } else {
+                if ($.type(value) === "object") {
+                    if (value.path) {
+                        uexXmlHttpMgr.setPostData(req, 1, key, value.path); // binary
+                    } else {
+                        uexXmlHttpMgr.setPostData(req, 0, key, JSON.stringify(value));
+                    }
+                } else if (value !== null && value !== undefined) {
                     uexXmlHttpMgr.setPostData(req, 0, key, value);
                 }
             }

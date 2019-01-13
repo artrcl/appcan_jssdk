@@ -1518,7 +1518,7 @@ window.$ === undefined && (window.$ = Zepto) && (window.jQuery = window.$)
 
   $.param = function(obj, traditional){
     var params = []
-    params.add = function(k, v){ this.push(escape(k) + '=' + escape(v)) }
+    params.add = function(k, v){ if (v !== null && v !== undefined) this.push(escape(k) + '=' + escape(v)) }
     serialize(params, obj, traditional)
     return params.join('&').replace(/%20/g, '+')
   }
@@ -8631,17 +8631,17 @@ appcan && appcan.define('request',function($,exports,module){
         
         if(settings.data && (settings.contentType === false||settings.contentType === 'application/x-www-form-urlencoded')){
             for(name in settings.data){
-                //fixed Number 类型bug
-                if(appcan.isPlainObject(settings.data[name])){
-                    if(settings.data[name].path){
+                var value = settings.data[name]; //fixed Number 类型bug
+                if(appcan.isPlainObject(value)){
+                    if(value.path){
                         //上传文件数据
-                        xhr.setPostData(httpId,"1",name,settings.data[name].path);
+                        xhr.setPostData(httpId,"1",name,value.path);
                     }else{
-                        xhr.setPostData(httpId,"0",name,JSON.stringify(settings.data[name]));
+                        xhr.setPostData(httpId,"0",name,JSON.stringify(value));
                     }
-                }else{
+                }else if(value !== null && value !== undefined){
                     //添加普通数据
-                    xhr.setPostData(httpId,"0",name,settings.data[name]);
+                    xhr.setPostData(httpId,"0",name,value);
                 }
             }
         }else{
