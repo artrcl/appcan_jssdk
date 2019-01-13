@@ -109,8 +109,17 @@ var xwin = appcan.xwin = {
         if (param !== undefined) this.param = param;
         if ($.type(callback) === "function") {
             appcan.xwin.nextWndCallbackFunc = callback;
-            istore.set("temp.callBack." + wnd, "qwe");
+            istore.set("temp." + wnd + ".callBack", "qwe");
         }
+
+        var k = url.indexOf('?');
+        if (k >= 0) {
+            var query = url.substring(k + 1);
+            url = url.substring(0, k);
+
+            istore.set("temp." + wnd + ".query", query);
+        }
+
         appcan.openWinWithUrl(wnd, url, aniId, (type) ? type : 4, animDuration);
     },
 
@@ -118,7 +127,7 @@ var xwin = appcan.xwin = {
      * 回调到 Opener 窗口
      */
     callBackToOpener: function () {
-        var req = istore.get("temp.callBack." + this.wndName);
+        var req = istore.get("temp." + this.wndName + ".callBack");
         if (req === "qwe") {
             var args = ["appcan.xwin.nextWndCallbackFunc()"];
             Array.prototype.push.apply(args, Array.prototype.slice.call(arguments));
@@ -145,7 +154,7 @@ var xwin = appcan.xwin = {
             this.deleteTempFiles();
 
             // remove the temp settings
-            istore.remove("temp.callBack." + wnd);
+            istore.remove("temp." + wnd + ".callBack");
 
             if (wnd === "root") {
                 appcan.window.evaluateScript(wnd, 'location.reload()');
@@ -219,12 +228,33 @@ var xwin = appcan.xwin = {
         return this._internals.param;
     },
     /**@preserve
-     * originalParam 返回不可修改的 param
+     * 返回不可修改的 param
      * @returns  {Object}
      */
     originalParam: function () {
         if (this._internals.paramstr === null) return {};
         else return JSON.parse(this._internals.paramstr);
+    },
+
+    /**@preserve
+     * 返回打开窗口时 url 附带的 query string，不包括问号
+     * @returns  {String}
+     */
+    get query() {
+        return this._internals.query;
+    },
+    /**@preserve
+     * 获取 query string 的键值
+     * @param   {String}    name
+     * @param   {String=}   defaultValue
+     * @returns {String}
+     */
+    queryValue: function (name, defaultValue) {
+        var s = this._internals.query;
+        var arr = s.match(new RegExp("(^|&)" + name + "=([^&]*)(&|$)"));
+        if (arr != null) return decodeURIComponent(arr[2]);
+        if (defaultValue === undefined) return null;
+        return defaultValue;
     },
 
     /**@preserve
@@ -258,6 +288,10 @@ var xwin = appcan.xwin = {
 
         this._internals.paramstr = istore.get("xwin.param");
         istore.remove("xwin.param"); // 取出即删除
+
+        var key = "temp." + this.wndName + ".query";
+        this._internals.query = istore.get(key, '');
+        istore.remove(key);
 
         var part1;
         try {
@@ -485,6 +519,7 @@ var xwin = appcan.xwin = {
         onCloseFunc: null,
         param: null,
         paramstr: null,
+        query: null,
         isAndroid: null,
         mapFileName: {},
         fileGen: 1,
