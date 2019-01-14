@@ -495,18 +495,25 @@ var xwin = appcan.xwin = {
     /**@preserve
      * 返回 url 匹配的文件名 用于下载保存文件时文件名的确定
      * @param   {String}    url
+     * @param   {String=}   fileExt   - 可指定扩展名
      * @return  {string}
      * @desc url 如果只包含扩展名，每次获取都得到新文件名
      */
-    mapFileName: function (url) {
+    mapFileName: function (url, fileExt) {
         if (!url) return null;
         var result = this._internals.mapFileName[url];
         if (result !== undefined) {
             return result;
         }
 
-        var i = url.lastIndexOf(".");
-        var ext = (i >= 0) ? url.substring(i) : "";
+        var i, ext;
+        if ($.type(fileExt) === "string") {
+            i = 100;
+            ext = fileExt;
+        } else {
+            i = url.lastIndexOf(".");
+            ext = (i >= 0) ? url.substring(i) : "";
+        }
         if (ext.isImageFile()) result = "iamge" + this._internals.fileGen + ext;
         else result = "doc" + this._internals.fileGen + ext;
         this._internals.fileGen++;

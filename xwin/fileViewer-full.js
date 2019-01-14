@@ -4,26 +4,28 @@ var fileViewer = appcan.fileViewer = {
     _moffice_pro_installed: undefined,
 
     /**
-     * createFileObj
-     * @param url               {String=}
-     * @param savePath          {String=}
-     * @param isOverrideMode    {boolean=}
-     * @param isReadonly        {boolean=}
-     * @param isReviseMode      {boolean=}
-     * @param callback          {function(fileObj)=}
-     * @param filePath          {String=}
-     * @param fileName          {String=}
-     * @param isDocEditable     {boolean=}
-     * @param isSharable        {boolean=}
-     * @param attachmentType    {number=}
-     * @return {{url: string, savePath: string, isOverrideMode: boolean, isReadonly: boolean, isReviseMode: boolean,
-     *           filePath: string, fileName: string, isDocEditable: boolean, isSharable: boolean,
-     *           attachmentType: number, callback: function(fileObj), changed: boolean}}
+     * 创建一个文件对象
+     * @param {String=}         url
+     * @param {String=}         fileExt
+     * @param {String=}         savePath
+     * @param {boolean=}        isOverrideMode
+     * @param {boolean=}        isReadonly
+     * @param {boolean=}        isReviseMode
+     * @param {function(fileObj)=}  callback
+     * @param {String=}         filePath
+     * @param {String=}         fileName
+     * @param {boolean=}        isDocEditable
+     * @param {boolean=}        isSharable
+     * @param {number=}         attachmentType
+     * @returns {{url: string, fileExt: string, savePath: string, isOverrideMode: boolean, isReadonly: boolean,
+     *           isReviseMode: boolean, filePath: string, fileName: string, isDocEditable: boolean,
+     *           isSharable: boolean, attachmentType: number, callback: function(fileObj), changed: boolean}}
      */
-    createFileObj: function (url, savePath, isOverrideMode, isReadonly, isReviseMode, callback,
+    createFileObj: function (url, fileExt, savePath, isOverrideMode, isReadonly, isReviseMode, callback,
                              filePath, fileName, isDocEditable, isSharable, attachmentType) {
         return {
             url: url || '', // 文件下载地址 全路径地址
+            fileExt: fileExt, // url 可能不好判断文件类型，fileExt 直接指定
             savePath: savePath || '', // 本地保存路径
 
             // 下载控制
@@ -134,36 +136,37 @@ var fileViewer = appcan.fileViewer = {
 
     /**
      * openFromWeb
-     * @param urlObj   {{url:String, isOverrideMode:boolean, isReadonly:boolean, isReviseMode:boolean, callback:function(fileObj)}}
-     * @param flags   {josn=}
+     * @param {{url:String, fileExt:String, isOverrideMode:boolean,
+     *          isReadonly:boolean, isReviseMode:boolean, callback:function(fileObj)}}  fileObj
+     * @param {Object=} flags
      *
      */
-    openFromWeb: function (urlObj, flags) {
-        if (!urlObj.url) return;
+    openFromWeb: function (fileObj, flags) {
+        if (!fileObj.url) return;
 
         if (flags === undefined) {
-            if (urlObj.url.isImageFile()) {
-                uexImage.openBrowser(JSON.stringify({enableGrid: false, data: [{src: urlObj.url}]}));
+            if ((($.type(fileObj.fileExt) === "string") ? fileObj.fileExt : fileObj.url).isImageFile()) {
+                uexImage.openBrowser(JSON.stringify({enableGrid: false, data: [{src: fileObj.url}]}));
                 return;
             }
 
             flags = {};
-            urlObj.savePath = appcan.xwin.tempDir + appcan.xwin.mapFileName(urlObj.url);
+            fileObj.savePath = appcan.xwin.tempDir + appcan.xwin.mapFileName(fileObj.url, fileObj.fileExt);
         }
 
-        flags.exists = uexFileMgr.isFileExistByPath(urlObj.savePath);
+        flags.exists = uexFileMgr.isFileExistByPath(fileObj.savePath);
 
         if (flags.exists) { // 文件存在
-            if (urlObj.isOverrideMode) {
-                uexFileMgr.deleteFileByPath(urlObj.savePath); // 下载覆盖文件会出错，删除原来的文件
+            if (fileObj.isOverrideMode) {
+                uexFileMgr.deleteFileByPath(fileObj.savePath); // 下载覆盖文件会出错，删除原来的文件
                 flags.exists = false;
             } else {
-                this.open(urlObj, flags);
+                this.open(fileObj, flags);
                 return;
             }
         }
 
-        appcan.downloader.download(urlObj.url, urlObj.savePath, 1, null, function (fileSize, percent, status) {
+        appcan.downloader.download(fileObj.url, fileObj.savePath, 1, null, function (fileSize, percent, status) {
             switch (status) {
                 case 0: // 下载中
                     Toast.show(percent + '%');
@@ -172,7 +175,7 @@ var fileViewer = appcan.fileViewer = {
                     Toast.hide();
                     var thiz = appcan.fileViewer;
                     flags.exists = true;
-                    thiz.open(urlObj, flags);
+                    thiz.open(fileObj, flags);
                     break;
                 case 2: // 下载失败
                     Toast.show('文件下载失败');

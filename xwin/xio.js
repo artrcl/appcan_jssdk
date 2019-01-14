@@ -150,7 +150,8 @@ var xio = appcan.xio = {
                     }
                 } else {
                     if (i >= 0) {
-                        url = url.substring(0, i + 1) + this.tokenType + "=" + tokenId + "&" + url.substring(i + 1);
+                        url = url.substring(0, i + 1) + this.tokenType + "=" + tokenId
+                            + ("&" + url.substring(i + 1)).replace(new RegExp('&' + this.tokenType + '=[^&#]*'), '');
                     } else {
                         var k = url.indexOf("#");
                         if (k < 0) url = url + "?" + this.tokenType + "=" + tokenId;

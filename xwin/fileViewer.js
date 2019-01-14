@@ -4,18 +4,20 @@ var fileViewer = appcan.fileViewer = {
 
     /**
      * 创建一个文件对象
-     * @param   {String=}   url
-     * @param   {String=}   savePath
-     * @param   {boolean=}  isOverrideMode
+     * @param   {String=}   url         - 文件下载地址 全路径地址
+     * @param   {String=}   fileExt     - url 可能不好判断文件类型，fileExt 直接指定
+     * @param   {String=}   savePath    - 本地保存路径
+     * @param   {boolean=}  isOverrideMode  - 下载是否覆盖, 如果不覆盖且存在文件, 就使用原来已有的文件
      * @return  {{url: string, savePath: string, isOverrideMode: boolean}}
      */
-    createFileObj: function (url, savePath, isOverrideMode) {
+    createFileObj: function (url, fileExt, savePath, isOverrideMode) {
         return {
-            url: url || '', // 文件下载地址 全路径地址
-            savePath: savePath || '', // 本地保存路径
+            url: url || '',
+            fileExt: fileExt,
+            savePath: savePath || '',
 
             // 下载控制
-            isOverrideMode: !!isOverrideMode  // 下载是否覆盖, 如果不覆盖且存在文件, 就使用原来已有的文件
+            isOverrideMode: !!isOverrideMode
         };
     },
 
@@ -58,36 +60,36 @@ var fileViewer = appcan.fileViewer = {
 
     /**
      * 从服务端得到文件并打开
-     * @param {{url:String, isOverrideMode:boolean}}    urlObj
-     * @param {Object=}                                 flags
+     * @param {{url:String, fileExt:String, isOverrideMode:boolean}}    fileObj
+     * @param {Object=}     flags
      *
      */
-    openFromWeb: function (urlObj, flags) {
-        if (!urlObj.url) return;
+    openFromWeb: function (fileObj, flags) {
+        if (!fileObj.url) return;
 
         if (flags === undefined) {
-            if (urlObj.url.isImageFile()) {
-                uexImage.openBrowser(JSON.stringify({enableGrid: false, data: [{src: urlObj.url}]}));
+            if ((($.type(fileObj.fileExt) === "string") ? fileObj.fileExt : fileObj.url).isImageFile()) {
+                uexImage.openBrowser(JSON.stringify({enableGrid: false, data: [{src: fileObj.url}]}));
                 return;
             }
 
             flags = {};
-            urlObj.savePath = appcan.xwin.tempDir + appcan.xwin.mapFileName(urlObj.url);
+            fileObj.savePath = appcan.xwin.tempDir + appcan.xwin.mapFileName(fileObj.url, fileObj.fileExt);
         }
 
-        flags.exists = uexFileMgr.isFileExistByPath(urlObj.savePath);
+        flags.exists = uexFileMgr.isFileExistByPath(fileObj.savePath);
 
         if (flags.exists) { // 文件存在
-            if (urlObj.isOverrideMode) {
-                uexFileMgr.deleteFileByPath(urlObj.savePath); // 下载覆盖文件会出错，删除原来的文件
+            if (fileObj.isOverrideMode) {
+                uexFileMgr.deleteFileByPath(fileObj.savePath); // 下载覆盖文件会出错，删除原来的文件
                 flags.exists = false;
             } else {
-                this.open(urlObj, flags);
+                this.open(fileObj, flags);
                 return;
             }
         }
 
-        appcan.downloader.download(urlObj.url, urlObj.savePath, 1, null, function (fileSize, percent, status) {
+        appcan.downloader.download(fileObj.url, fileObj.savePath, 1, null, function (fileSize, percent, status) {
             switch (status) {
                 case 0: // 下载中
                     Toast.show(percent + '%');
@@ -96,7 +98,7 @@ var fileViewer = appcan.fileViewer = {
                     Toast.hide();
                     var thiz = appcan.fileViewer;
                     flags.exists = true;
-                    thiz.open(urlObj, flags);
+                    thiz.open(fileObj, flags);
                     break;
                 case 2: // 下载失败
                     Toast.show('文件下载失败');
