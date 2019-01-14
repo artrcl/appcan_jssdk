@@ -15,7 +15,7 @@ var xio = appcan.xio = {
     serverConfig: {
         serverUrl: 'http://a.bc.cn/dz/',  //  服务端地址 {String|Array}
         serverIndex: 0, // 默认的服务端地址 index
-        downloadUrlTemplate: 'http://a.bc.cn/dz/download?url=$s', // 服务端文件下载地址模板 {String|Array}
+        downloadUrlTemplate: 'http://a.bc.cn/dz/download?url=%s', // 服务端文件下载地址模板 {String|Array}
         tokenType: 'JSESSIONID',  //  会话维持的方式: JSESSIONID, param 或 header    {String|Object}
         loginUrl: 'login',  //  login url   {String=}
         logoutUrl: 'logout',  //  logout url {String=}
@@ -23,12 +23,9 @@ var xio = appcan.xio = {
         debugTokenId: ''  //  用于appcan编辑调试    {String=}
     },
 
-    // JSESSIONID 方式的话将在 url 附加 JSESSIONID=...,
+    // JSESSIONID 方式的话将在 url 附加 ;JSESSIONID=...
     // param 方式, 如 "__sid", 将会在 url 的 querystr 附加 __sid=...
-    // header 方式, 如 {Auth: "?"}, 就在 http header 里添加 header： "Auth：..."
-    // tokenType : "JSESSIONID",
-    // tokenType : '__sid',
-    // tokenType : {Auth: "?"},
+    // header 方式, 如 {Cookie: "jeesite.session.id=%s"}, 就在 http header 里添加 Cookie: jeesite.session.id=...
 
     /**@preserve
      * 服务端地址
@@ -172,9 +169,9 @@ var xio = appcan.xio = {
         var template = this.downloadUrlTemplate[this.serverIndex];
         var s;
         if (template.indexOf('?') >= 0) {
-            s = template.replace(/\$s/g, $.param({a: url}).substring(2));
+            s = template.replace(/%s/g, $.param({a: url}).substring(2));
         } else {
-            s = template.replace(/\$s/g, url);
+            s = template.replace(/%s/g, url);
         }
         return this.httpUrl(s);
     },
@@ -216,7 +213,10 @@ var xio = appcan.xio = {
                 uexWindow.toast(0, 8, msg, 4000);
                 if (callback.length <= 1) return;  // callback 有2个或多个参数时，code为 FAILED 也回调
             }
-            if ($.type(callback) === "function") callback(result.data, result.code, resStr);
+            if ($.type(callback) === "function") {
+                if (callback.length >= 3) callback(resStr, status, xhr); // 兼容appcan.request.post 的success 方法
+                else callback(result.data, result.code);
+            }
         };
         options.error = function (xhr, errorType, error, msg) {
             uexWindow.toast(0, 8, msg_error, 4000);
@@ -232,7 +232,7 @@ var xio = appcan.xio = {
             if (tokenId) {
                 options.headers = {};
                 for (var key in this.tokenType) {
-                    options.headers[key] = this.tokenType[key].replace(/\?/g, tokenId);
+                    options.headers[key] = this.tokenType[key].replace(/%s/g, tokenId);
                 }
             }
         }
@@ -321,7 +321,10 @@ var xio = appcan.xio = {
                     uexWindow.toast(0, 8, msg, 4000);
                     if (callback.length <= 1) return;  // callback 有2个或多个参数时，code为 FAILED 也回调
                 }
-                if ($.type(callback) === "function") callback(result.data, result.code, resStr);
+                if ($.type(callback) === "function") {
+                    if (callback.length >= 3) callback(resStr, status, resInfo); // 兼容appcan.request.post 的success 方法
+                    else callback(result.data, result.code);
+                }
             },
             function (progress) {
                 if ($.type(progressCallback) === "function") progressCallback(progress);
