@@ -20,7 +20,7 @@ var arrays = (function () {
      * @return {Array}
      */
     function intersect(arr, another) {
-        var result = arr.unique();
+        var result = unique(arr);
 
         for (var i = 0; i < arguments.length; i++) {
             another = arguments[i];
@@ -39,7 +39,7 @@ var arrays = (function () {
      * @return {Array}
      */
     function union(arr, another) {
-        var result = arr.unique();
+        var result = unique(arr);
 
         for (var i = 0; i < arguments.length; i++) {
             another = arguments[i];
@@ -58,7 +58,7 @@ var arrays = (function () {
      * @return {Array}
      */
     function minus(arr, another) {
-        var result = arr.unique();
+        var result = unique(arr);
 
         for (var i = 0; i < arguments.length; i++) {
             another = arguments[i];

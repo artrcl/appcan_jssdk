@@ -456,7 +456,7 @@ var xwin = appcan.xwin = {
      * 获取appVerion
      * @return  {String}
      */
-    get appVersion() {
+    appVersion: function () {
         var widgetInfo = uexWidgetOne.getCurrentWidgetInfo();
         return widgetInfo.version;
     },
@@ -465,7 +465,7 @@ var xwin = appcan.xwin = {
      * 获取device OS
      * @return  {String}
      */
-    get deviceOs() {
+    deviceOs: function () {
         var platform = uexWidgetOne.getPlatform();
         if (platform === 0) return "ios";
         else if (platform === 1) return "android";
