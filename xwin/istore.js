@@ -11,34 +11,14 @@ var istore = {
     set: function (key, value, keyN, valueN) {
         try {
             if (window.localStorage) {
-                if (value == null) {
-                    window.localStorage.removeItem(key);
-                } else {
-                    if (Object.prototype.toString.call(value) !== '[object String]') {
-                        value = JSON.stringify(value);
-                    }
-                    window.localStorage.setItem(key, value);
-                }
+                window.localStorage.setItem(key, JSON.stringify(value));
 
                 //////////////////////////
                 for (var i = 2, len = arguments.length; i + 1 < len; i += 2) {
-                    key = arguments[i];
-                    value = arguments[i + 1];
-
-                    if (value == null) {
-                        window.localStorage.removeItem(key);
-                    } else {
-                        if (Object.prototype.toString.call(value) !== '[object String]') {
-                            value = JSON.stringify(value);
-                        }
-                        window.localStorage.setItem(key, value);
-                    }
+                    window.localStorage.setItem(arguments[i], JSON.stringify(arguments[i + 1]));
                 }
-            } else {
-
             }
         } catch (e) {
-
         }
 
         return this;
@@ -48,31 +28,19 @@ var istore = {
      * 获取值
      * @param   {String}    key
      * @param   {*=}        defaultValue
-     * @return  {String}
+     * @return  {*}
      */
     get: function (key, defaultValue) {
-        var s = null;
-
         try {
             if (window.localStorage) {
-                if (key && (Object.prototype.toString.call(key) === '[object String]')) {
-                    s = window.localStorage.getItem(key);
-                }
+                var s = window.localStorage.getItem(key);
+                if (arguments.length > 1 && s == null) return defaultValue;
+                return JSON.parse(s);
             }
         } catch (e) {
-
         }
 
-        if (arguments.length > 1) {
-            if (s == null) return defaultValue;
-            try {
-                if (Object.prototype.toString.call(defaultValue) !== '[object String]') return JSON.parse(s);
-            } catch (e) {
-
-            }
-        }
-
-        return s;
+        return null;
     },
 
     /**
@@ -83,21 +51,14 @@ var istore = {
     remove: function (key, keyN) {
         try {
             if (window.localStorage) {
-                if (key && (Object.prototype.toString.call(key) === '[object String]')) {
-                    window.localStorage.removeItem(key);
-                }
+                window.localStorage.removeItem(key);
 
                 //////////////////////////
                 for (var i = 1, len = arguments.length; i < len; i++) {
-                    key = arguments[i];
-
-                    if (key && (Object.prototype.toString.call(key) === '[object String]')) {
-                        window.localStorage.removeItem(key);
-                    }
+                    window.localStorage.removeItem(arguments[i]);
                 }
             }
         } catch (e) {
-
         }
 
         return this;
@@ -128,9 +89,8 @@ var istore = {
                     window.localStorage.clear();
                 } else {
                     for (var i = 0, len = window.localStorage.length; i < len; i++) {
-                        var key = '';
-                        key = window.localStorage.key(i);
-                        if (key && !key.match(reg)) window.localStorage.removeItem(key);
+                        var key = window.localStorage.key(i);
+                        if (!key.match(reg)) window.localStorage.removeItem(key);
                     }
                 }
             }
@@ -149,11 +109,8 @@ var istore = {
         try {
             if (window.localStorage) {
                 for (var i = 0, len = window.localStorage.length; i < len; i++) {
-                    var key = '';
-                    key = window.localStorage.key(i);
-                    if (key) {
-                        result.push(key);
-                    }
+                    var key = window.localStorage.key(i);
+                    result.push(key);
                 }
             }
         } catch (e) {
