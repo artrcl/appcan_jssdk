@@ -15,8 +15,8 @@ var xwin = appcan.xwin = {
     openerWndName: null, // opener窗口名字
     wndName: null, // 当前窗口名字
 
-    wgtPath: null, // wgt:// 对应的地址
-    sdcardPath: null, // file:///sdcard/
+    wgtPath: null, // wgt:// 对应的地址, 包括最后的 /
+    sdcardPath: null, // file:///sdcard/, 包括最后的 /
     tempDir: appcan.file.wgtPath + "temp/dummyTempdir/",
 
     /**@preserve
