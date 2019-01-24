@@ -179,9 +179,10 @@ var xio = appcan.xio = {
      * @param   {function(progress)}    progressCallback
      */
     post: function (url, data, callback, progressCallback) {
-        var msg_timeout = "操作超时,请重新登录"; // 会话超时了
+        var msg_timeout = "操作超时, 请重新登录"; // 会话超时了
         var msg_failed = "请求数据失败了";  // 服务端获取数据出现了问题，没有得到数据
-        var msg_error = "请求过程中发生错误了"; // 一般是网络故障或服务端物理故障不能完成请求
+        var msg_error = "请求数据发生错误了"; // 一般是网络故障或服务端物理故障不能完成请求
+        var msg_err_timeout = "服务器访问超时, 请检查网络"; // 访问超时，一般是由于网络线路不够好
 
         if ($.type(data) === "function") {
             progressCallback = callback;
@@ -209,12 +210,14 @@ var xio = appcan.xio = {
                 } else if (callback.length === 2) {
                     callback(result, result.code);
                 } else {
-                    callback(resStr, status, resInfo); // 兼容appcan.request.post 的success 方法
+                    callback(resStr, status, xhr); // 兼容appcan.request.post 的success 方法
                 }
             }
         };
         options.error = function (xhr, errorType, error, msg) {
-            uexWindow.toast(0, 8, msg_error, 4000);
+            if (erroType === "timeout") uexWindow.toast(0, 8, msg_err_timeout, 4000);
+            else if (erroType === "request error") uexWindow.toast(0, 8, msg_error, 4000);
+            else uexWindow.toast(0, 8, erroType, 4000);
         };
         if ($.type(progressCallback) === "function") {
             options.progress = function (progress, xhr) {
@@ -243,9 +246,10 @@ var xio = appcan.xio = {
      * @param   {function(progress)}    progressCallback
      */
     post2: function (url, data, callback, progressCallback) {
-        var msg_timeout = "操作超时,请重新登录"; // 会话超时了
+        var msg_timeout = "操作超时, 请重新登录"; // 会话超时了
         var msg_failed = "请求数据失败了";  // 服务端获取数据出现了问题，没有得到数据
-        var msg_error = "请求过程中发生错误了"; // 一般是网络故障或服务端物理故障不能完成请求
+        var msg_error = "请求数据发生错误了"; // 一般是网络故障或服务端物理故障不能完成请求
+        var msg_err_timeout = "服务器访问超时, 请检查网络"; // 访问超时，一般是由于网络线路不够好
 
         if ($.type(data) === "function") {
             progressCallback = callback;
