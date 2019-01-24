@@ -175,7 +175,7 @@ var xio = appcan.xio = {
      * 提交请求
      * @param   {String}    url
      * @param   {Object}    data    - 上传文件的话，指定参数值为 object, 如 {path:'/path/file.jpg'}
-     * @param   {function(data, code)}  callback
+     * @param   {function(data) | function(result, errcode) | function(resStr, status, xhr)}  callback
      * @param   {function(progress)}    progressCallback
      */
     post: function (url, data, callback, progressCallback) {
@@ -202,15 +202,15 @@ var xio = appcan.xio = {
                     appcan.xwin.closeAll(); // 关闭所有窗口
                 }, 1500);
                 return;
-            } else if (result.code === Result.FAILED) {
-                var msg = result.msg;
-                if (!msg || msg.toLowerCase().indexOf("failed") >= 0) msg = msg_failed;
-                uexWindow.toast(0, 8, msg, 4000);
-                if (callback.length <= 1) return;  // callback 有2个或多个参数时，code为 FAILED 也回调
             }
             if ($.type(callback) === "function") {
-                if (callback.length >= 3) callback(resStr, status, xhr); // 兼容appcan.request.post 的success 方法
-                else callback(result.data, result.code);
+                if (callback.length <= 1) {
+                    if (result.code === Result.SUCCEED) callback(result.data);
+                } else if (callback.length === 2) {
+                    callback(result, result.code);
+                } else {
+                    callback(resStr, status, resInfo); // 兼容appcan.request.post 的success 方法
+                }
             }
         };
         options.error = function (xhr, errorType, error, msg) {
@@ -239,7 +239,7 @@ var xio = appcan.xio = {
      * 提交请求, 与 post 完成一样的功能
      * @param   {String}    url
      * @param   {Object}    data    - 上传文件的话，指定参数值为 object, 如 {path:'/path/file.jpg'
-     * @param   {function(data, code)}  callback
+     * @param   {function(data) | function(result, errcode) | function(resStr, status, xhr)}  callback
      * @param   {function(progress)}    progressCallback
      */
     post2: function (url, data, callback, progressCallback) {
@@ -310,15 +310,15 @@ var xio = appcan.xio = {
                         appcan.xwin.closeAll(); // 关闭所有窗口
                     }, 1500);
                     return;
-                } else if (result.code === Result.FAILED) {
-                    var msg = result.msg;
-                    if (!msg || msg.toLowerCase().indexOf("failed") >= 0) msg = msg_failed;
-                    uexWindow.toast(0, 8, msg, 4000);
-                    if (callback.length <= 1) return;  // callback 有2个或多个参数时，code为 FAILED 也回调
                 }
                 if ($.type(callback) === "function") {
-                    if (callback.length >= 3) callback(resStr, status, resInfo); // 兼容appcan.request.post 的success 方法
-                    else callback(result.data, result.code);
+                    if (callback.length <= 1) {
+                        if (result.code === Result.SUCCEED) callback(result.data);
+                    } else if (callback.length === 2) {
+                        callback(result, result.code);
+                    } else {
+                        callback(resStr, status, resInfo); // 兼容appcan.request.post 的success 方法
+                    }
                 }
             },
             function (progress) {
