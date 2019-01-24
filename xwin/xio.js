@@ -69,14 +69,9 @@ var xio = appcan.xio = {
      */
     get serverIndex() {
         var value = istore.get("xio.serverIndex");
-        if (value == null) {
-            value = (window.serverConfig || this.serverConfig).serverIndex;
-            value = value ? eval(value) : 0;
-            if (value < 0 || value >= this.serverUrl.length) value = 0;
-            return value;
-        } else {
-            return eval(value);
-        }
+        if (value == null) value = (window.serverConfig || this.serverConfig).serverIndex;
+        if (value < 0 || value >= this.serverUrl.length) value = 0;
+        return value;
     },
 
     /**@preserve

@@ -106,7 +106,7 @@ var xwin = appcan.xwin = {
             istore.set("xwin.wndList", wndList);
         }
 
-        if (param !== undefined) this.param = param;
+        if (param !== undefined && param !== null) this.param = param; // xwin.param 可能提前被设置了，在这里对 undefined / null 值不处理
         if ($.type(callback) === "function") {
             appcan.xwin.nextWndCallbackFunc = callback;
             istore.set("temp." + wnd + ".callBack", "qwe");
@@ -233,7 +233,11 @@ var xwin = appcan.xwin = {
      */
     originalParam: function () {
         if (this._internals.paramstr === null) return {};
-        else return JSON.parse(this._internals.paramstr);
+        else {
+            var value = JSON.parse(this._internals.paramstr);
+            if (value === undefined || value === null) value = {};
+            return value;
+        }
     },
 
     /**@preserve
@@ -426,7 +430,7 @@ var xwin = appcan.xwin = {
 
         istore.set("xwin.opener.wndName", this.openerWndName);
         istore.set("xwin.current.wndName", this.wndName);
-        istore.set("xwin.nextVal", "1");
+        istore.set("xwin.nextVal", 1);
         istore.set("xwin.wndList", ["root"]);
 
         var s = uexFileMgr.getFileRealPath(appcan.file.wgtPath);
@@ -443,13 +447,7 @@ var xwin = appcan.xwin = {
      */
     clearLocStorageAndTempFiles: function () {
         uexFileMgr.deleteFileByPath(appcan.file.wgtPath + "temp/");
-
-        var keys = istore.keys();
-        if (keys) for (var i = 0; i < keys.length; i++) {
-            // 保留 persist.*
-            if (!/^persist\..*$/.test(keys[i]))
-                istore.remove(keys[i]);
-        }
+        istore.keepAndClear(/^persist\./);
     },
 
     /**@preserve

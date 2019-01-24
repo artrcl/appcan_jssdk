@@ -5,18 +5,12 @@ var istore = {
      * 保存值
      * @param   {String}    key
      * @param   {*}         value
-     * @param   {String...} keyN
-     * @param   {*...}      valueN
      */
-    set: function (key, value, keyN, valueN) {
+    set: function (key, value) {
         try {
             if (window.localStorage) {
-                window.localStorage.setItem(key, JSON.stringify(value));
-
-                //////////////////////////
-                for (var i = 2, len = arguments.length; i + 1 < len; i += 2) {
-                    window.localStorage.setItem(arguments[i], JSON.stringify(arguments[i + 1]));
-                }
+                if (Object.prototype.toString.call(value) !== '[object String]') value = JSON.stringify(value);
+                window.localStorage.setItem(key, value);
             }
         } catch (e) {
         }
@@ -34,8 +28,16 @@ var istore = {
         try {
             if (window.localStorage) {
                 var s = window.localStorage.getItem(key);
-                if (arguments.length > 1 && s == null) return defaultValue;
-                return JSON.parse(s);
+
+                if (arguments.length > 1) {
+                    if (s == null) return defaultValue;
+                    try {
+                        if (Object.prototype.toString.call(defaultValue) !== '[object String]') return JSON.parse(s);
+                    } catch (e) {
+                    }
+                }
+
+                return s;
             }
         } catch (e) {
         }
@@ -46,17 +48,11 @@ var istore = {
     /**
      * 删除键值
      * @param   {String}    key
-     * @param   {String...} keyN
      */
-    remove: function (key, keyN) {
+    remove: function (key) {
         try {
             if (window.localStorage) {
                 window.localStorage.removeItem(key);
-
-                //////////////////////////
-                for (var i = 1, len = arguments.length; i < len; i++) {
-                    window.localStorage.removeItem(arguments[i]);
-                }
             }
         } catch (e) {
         }
@@ -80,7 +76,7 @@ var istore = {
 
     /**
      * 清除key, 但保留符合 正则表达式 reg 的key
-     * @param   {regexp}    reg
+     * @param   {RegExp}    reg
      */
     keepAndClear: function (reg) {
         try {
