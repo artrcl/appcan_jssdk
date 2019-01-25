@@ -7,22 +7,22 @@ var fileViewer = appcan.fileViewer = {
      * 创建一个文件对象
      * @param {String=}         url
      * @param {String=}         fileExt
-     * @param {String=}         savePath
      * @param {boolean=}        isOverrideMode
      * @param {boolean=}        isReadonly
      * @param {boolean=}        isReviseMode
+     * @param {String=}         savePath
      * @param {function(fileObj)=}  callback
      * @param {String=}         filePath
      * @param {String=}         fileName
      * @param {boolean=}        isDocEditable
      * @param {boolean=}        isSharable
      * @param {number=}         attachmentType
-     * @returns {{url: string, fileExt: string, savePath: string, isOverrideMode: boolean, isReadonly: boolean,
-     *           isReviseMode: boolean, filePath: string, fileName: string, isDocEditable: boolean,
-     *           isSharable: boolean, attachmentType: number, callback: function(fileObj), changed: boolean}}
+     * @returns {{isReadonly: boolean, fileName: (*|string), isDocEditable: boolean, attachmentType: number,
+     *           filePath: (*|string), isSharable: boolean, fileExt: *, isReviseMode: boolean,
+     *           url: (*|string), savePath: (*|string), isOverrideMode: boolean, callback: *, changed: boolean}}
      */
-    createFileObj: function (url, fileExt, savePath, isOverrideMode, isReadonly, isReviseMode, callback,
-                             filePath, fileName, isDocEditable, isSharable, attachmentType) {
+    createFileObj: function (url, fileExt, isOverrideMode, isReadonly, isReviseMode, savePath,
+                             filePath, fileName, isDocEditable, isSharable, attachmentType, callback) {
         return {
             url: url || '', // 文件下载地址 全路径地址
             fileExt: fileExt, // url 可能不好判断文件类型，fileExt 直接指定
@@ -43,12 +43,10 @@ var fileViewer = appcan.fileViewer = {
             attachmentType: (attachmentType === undefined) ? -1 : attachmentType, // 1=正文 0=附件
 
             // 回调
-            callback: function (fileObj) {
-            },
+            callback: callback,
             changed: false
         };
     },
-
 
     /**
      * open

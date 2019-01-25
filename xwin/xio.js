@@ -174,20 +174,22 @@ var xio = appcan.xio = {
     /**@preserve
      * 提交请求
      * @param   {String}    url
-     * @param   {Object}    data    - 上传文件的话，指定参数值为 object, 如 {path:'/path/file.jpg'}
-     * @param   {function(data) | function(result, errcode) | function(resStr, status, xhr)}  callback
-     * @param   {function(progress)}    progressCallback
+     * @param   {Object=}   data    - 上传文件的话，指定参数值为 object, 如 {path:'/path/file.jpg'}
+     * @param   {String=}   progressText
+     * @param   {function(data) | function(result, errcode) | function(resStr, status, xhr)=}  callback
      */
-    post: function (url, data, callback, progressCallback) {
+    post: function (url, data, progressText, callback) {
         var msg_timeout = "操作超时, 请重新登录"; // 会话超时了
         var msg_failed = "请求数据失败了";  // 服务端获取数据出现了问题，没有得到数据
         var msg_error = "请求数据发生错误了"; // 一般是网络故障或服务端物理故障不能完成请求
         var msg_err_timeout = "服务器访问超时, 请检查网络"; // 访问超时，一般是由于网络线路不够好
 
         if ($.type(data) === "function") {
-            progressCallback = callback;
             callback = data;
-            data = null;
+            data = progressText = null;
+        } else if ($.type(progressText) === "function") {
+            callback = progressText;
+            progressText = null;
         }
 
         var options = {};
@@ -219,11 +221,9 @@ var xio = appcan.xio = {
             else if (erroType === "request error") uexWindow.toast(0, 8, msg_error, 4000);
             else uexWindow.toast(0, 8, erroType, 4000);
         };
-        if ($.type(progressCallback) === "function") {
-            options.progress = function (progress, xhr) {
-                progressCallback(progress);
-            }
-        }
+        options.progress = function (progress, xhr) {
+            uexWindow.toast(0, 8, (progressText || '') + progress + '%', 4000);
+        };
 
         if ($.type(this.tokenType) === "object") {
             var tokenId = this.tokenId || (window.serverConfig || this.serverConfig).debugTokenId;
@@ -235,26 +235,29 @@ var xio = appcan.xio = {
             }
         }
 
+        if (progressText) uexWindow.toast(0, 8, progressText, 4000);
         appcan.ajax(options);
     },
 
     /**@preserve
      * 提交请求, 与 post 完成一样的功能
      * @param   {String}    url
-     * @param   {Object}    data    - 上传文件的话，指定参数值为 object, 如 {path:'/path/file.jpg'
-     * @param   {function(data) | function(result, errcode) | function(resStr, status, xhr)}  callback
-     * @param   {function(progress)}    progressCallback
+     * @param   {Object=}   data    - 上传文件的话，指定参数值为 object, 如 {path:'/path/file.jpg'
+     * @param   {String=}   progressText
+     * @param   {function(data) | function(result, errcode) | function(resStr, status, xhr)=}  callback
      */
-    post2: function (url, data, callback, progressCallback) {
+    post2: function (url, data, progressText, callback) {
         var msg_timeout = "操作超时, 请重新登录"; // 会话超时了
         var msg_failed = "请求数据失败了";  // 服务端获取数据出现了问题，没有得到数据
         var msg_error = "请求数据发生错误了"; // 一般是网络故障或服务端物理故障不能完成请求
         var msg_err_timeout = "服务器访问超时, 请检查网络"; // 访问超时，一般是由于网络线路不够好
 
         if ($.type(data) === "function") {
-            progressCallback = callback;
             callback = data;
-            data = null;
+            data = progressText = null;
+        } else if ($.type(progressText) === "function") {
+            callback = progressText;
+            progressText = null;
         }
 
         var req = uexXmlHttpMgr.create({
@@ -292,6 +295,8 @@ var xio = appcan.xio = {
             }
         }
 
+        if (progressText) uexWindow.toast(0, 8, progressText, 4000);
+
         uexXmlHttpMgr.send(req, ((window.serverConfig || this.serverConfig).isDebug) ? 3 : 0,
             function (status, resStr, resCode, resInfo) {
                 if (status === 0) return; // -1=error 0=receive 1=finish
@@ -326,7 +331,7 @@ var xio = appcan.xio = {
                 }
             },
             function (progress) {
-                if ($.type(progressCallback) === "function") progressCallback(progress);
+                uexWindow.toast(0, 8, (progressText || '') + progress + '%', 4000);
             }
         );
     },

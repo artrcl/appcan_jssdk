@@ -6,11 +6,11 @@ var fileViewer = appcan.fileViewer = {
      * 创建一个文件对象
      * @param   {String=}   url         - 文件下载地址 全路径地址
      * @param   {String=}   fileExt     - url 可能不好判断文件类型，fileExt 直接指定
-     * @param   {String=}   savePath    - 本地保存路径
      * @param   {boolean=}  isOverrideMode  - 下载是否覆盖, 如果不覆盖且存在文件, 就使用原来已有的文件
+     * @param   {String=}   savePath    - 本地保存路径
      * @return  {{url: string, savePath: string, isOverrideMode: boolean}}
      */
-    createFileObj: function (url, fileExt, savePath, isOverrideMode) {
+    createFileObj: function (url, fileExt, isOverrideMode, savePath) {
         return {
             url: url || '',
             fileExt: fileExt,

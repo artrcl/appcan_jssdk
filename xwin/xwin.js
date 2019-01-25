@@ -47,11 +47,11 @@ var xwin = appcan.xwin = {
      * 打开一个新窗口
      * @param   {String=}   wnd     - 窗口名字, 使用时只有一个参数、为'_auto_'、空字符串或非字符串 ==> 自动取名
      * @param   {String}    url     - 要加载的地址
-     * @param   {object}    param   - 传入参数，以备新开的窗口使用
-     * @param   {Integer}   aniId   - 动画效果
-     * @param   {Integer}   type    - 窗口的类型
-     * @param   {Integer}   animDuration    - 动画时长
-     * @param   {function}  callback        - 提供新窗口回调数据的函数
+     * @param   {object=}   param   - 传入参数，以备新开的窗口使用
+     * @param   {Integer=}  aniId   - 动画效果
+     * @param   {Integer=}  type    - 窗口的类型
+     * @param   {Integer=}  animDuration    - 动画时长
+     * @param   {function=} callback        - 提供新窗口回调数据的函数
      */
     open: function (wnd, url, param, aniId, type, animDuration, callback) {
         if (arguments.length === 1 && $.type(wnd) === "object") {
@@ -139,7 +139,7 @@ var xwin = appcan.xwin = {
 
     /**@preserve
      * 关闭窗口
-     * @param   {String}    wnd - 窗口名字
+     * @param   {String=}   wnd - 窗口名字
      * 说明:
      * '_current_'  或无wnd参数，就关闭当前窗口，
      * '_opener_'   关闭 opener 窗口
