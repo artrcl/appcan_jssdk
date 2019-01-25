@@ -6,10 +6,10 @@
  * @email: lai3122@qq.com
  * @description: 构建appcan xio 模块
  * @created: 2018.3.22
- * @update: 2019.1.3
+ * @update: 2019.1.26
  */
 
-/*global uexWindow, uexWidgetOne, uexXmlHttpMgr*/
+/*global uexWidgetOne, uexXmlHttpMgr*/
 
 var xio = appcan.xio = {
     serverConfig: {
@@ -197,10 +197,10 @@ var xio = appcan.xio = {
         options.url = this.httpUrl(url);
         options.data = data; //
         options.success = function (resStr, status, requestCode, response, xhr) {
-            uexWindow.closeToast();
+            Toast.hide();
             var result = JSON.parse(resStr);
             if (result.code === Result.TIMEOUT) {
-                uexWindow.toast(0, 8, msg_timeout, 4000);
+                Toast.show(msg_timeout);
                 window.setTimeout(function () {
                     appcan.xwin.closeAll(); // 关闭所有窗口
                 }, 1500);
@@ -217,12 +217,12 @@ var xio = appcan.xio = {
             }
         };
         options.error = function (xhr, errorType, error, msg) {
-            if (erroType === "timeout") uexWindow.toast(0, 8, msg_err_timeout, 4000);
-            else if (erroType === "request error") uexWindow.toast(0, 8, msg_error, 4000);
-            else uexWindow.toast(0, 8, erroType, 4000);
+            if (erroType === "timeout") Toast.show(msg_err_timeout);
+            else if (erroType === "request error") Toast.show(msg_error);
+            else Toast.show(erroType);
         };
         options.progress = function (progress, xhr) {
-            uexWindow.toast(0, 8, (progressText || '') + progress + '%', 4000);
+            Toast.show((progressText || '') + progress + '%');
         };
 
         if ($.type(this.tokenType) === "object") {
@@ -235,7 +235,7 @@ var xio = appcan.xio = {
             }
         }
 
-        if (progressText) uexWindow.toast(0, 8, progressText, 4000);
+        if (progressText) Toast.show(progressText);
         appcan.ajax(options);
     },
 
@@ -295,7 +295,7 @@ var xio = appcan.xio = {
             }
         }
 
-        if (progressText) uexWindow.toast(0, 8, progressText, 4000);
+        if (progressText) Toast.show(progressText);
 
         uexXmlHttpMgr.send(req, ((window.serverConfig || this.serverConfig).isDebug) ? 3 : 0,
             function (status, resStr, resCode, resInfo) {
@@ -303,18 +303,18 @@ var xio = appcan.xio = {
                 uexXmlHttpMgr.close(req);
 
                 if (status === -1) {
-                    uexWindow.toast(0, 8, msg_error, 4000);
+                    Toast.show(msg_error);
                     return;
                 }
 
-                uexWindow.closeToast();
+                Toast.hide();
                 var result = JSON.parse(resStr);
                 if ($.type(result) === "string") { // 竟然还是 string
                     resStr = result;
                     result = JSON.parse(resStr);
                 }
                 if (result.code === Result.TIMEOUT) {
-                    uexWindow.toast(0, 8, msg_timeout, 4000);
+                    Toast.show(msg_timeout);
                     window.setTimeout(function () {
                         appcan.xwin.closeAll(); // 关闭所有窗口
                     }, 1500);
@@ -331,7 +331,7 @@ var xio = appcan.xio = {
                 }
             },
             function (progress) {
-                uexWindow.toast(0, 8, (progressText || '') + progress + '%', 4000);
+                Toast.show((progressText || '') + progress + '%');
             }
         );
     },

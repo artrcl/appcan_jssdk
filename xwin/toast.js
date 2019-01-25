@@ -5,31 +5,24 @@
  * @email: lai3122@qq.com
  * @description: Toast
  * @created: 2018.4.4
- * @update: 2018.4.4
+ * @update: 2019.1.26
  */
 var Toast = appcan.Toast = {
-    logging: function () {
-        var msg = "正在登录中";
-        uexWindow.toast(1, 8, msg, 20000);
-    },
-
-    loading: function () {
-        var msg = "正在加载中";
-        uexWindow.toast(1, 8, msg, 20000);
-    },
-
-    saving: function () {
-        var msg = "正在提交数据";
-        uexWindow.toast(1, 8, msg, 20000);
-    },
-
+    /**
+     * 隐藏 Toast
+     */
     hide: function () {
         uexWindow.closeToast();
     },
 
-    show: function (msg) {
+    /**
+     * 显示Toast
+     * @param   {String}    msg     - 显示的文本
+     * @param   {Integer=}  timeout - 显示时间长度 默认 4000 毫秒
+     */
+    show: function (msg, timeout) {
         if (!msg) uexWindow.closeToast();
-        else uexWindow.toast(0, 8, msg, 4000);
+        else uexWindow.toast(0, 8, msg, timeout || 4000);
     }
 };
 

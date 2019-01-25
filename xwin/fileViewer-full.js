@@ -11,12 +11,12 @@ var fileViewer = appcan.fileViewer = {
      * @param {boolean=}        isReadonly
      * @param {boolean=}        isReviseMode
      * @param {String=}         savePath
-     * @param {function(fileObj)=}  callback
      * @param {String=}         filePath
      * @param {String=}         fileName
      * @param {boolean=}        isDocEditable
      * @param {boolean=}        isSharable
      * @param {number=}         attachmentType
+     * @param {function(fileObj)=}  callback
      * @returns {{isReadonly: boolean, fileName: (*|string), isDocEditable: boolean, attachmentType: number,
      *           filePath: (*|string), isSharable: boolean, fileExt: *, isReviseMode: boolean,
      *           url: (*|string), savePath: (*|string), isOverrideMode: boolean, callback: *, changed: boolean}}

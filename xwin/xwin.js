@@ -319,9 +319,9 @@ var xwin = appcan.xwin = {
                     if (window.logoutClickCount && window.logoutClickCount > 0) {
                         appcan.xio.logout();
                     } else {
-                        uexWindow.toast(0, 8, '再按一次退出应用', 2000);
+                        Toast.show('再按一次退出应用', 2000);
                         window.logoutClickCount = 1;
-                        setTimeout(function () {
+                        window.setTimeout(function () {
                             window.logoutClickCount = undefined;
                         }, 2000);
                     }
@@ -335,19 +335,16 @@ var xwin = appcan.xwin = {
         $(".backkey, .left_btn").click(function () {
             appcan.xwin.close();
         });
-
     },
 
     /**@preserve
      * 跨窗口执行脚本
-     * @param   {String=}   wnd     - 窗口名字，调用时只有一个参数、为'_opener_'、空字符串或非字符串，窗口即为opener窗口，否则使用指定窗口名
+     * @param   {String=}   wnd     - 窗口名字，当合理判断为无wnd参数、或wnd为'_opener_'、空字符串或非字符串，表示opener窗口
      * @param   {String}    script  - 脚本
      * 说明: 还可以附加额外参数
      * 例子:
-     * evaluate("hello(1)", 2); 在opener窗口执行 hello(1,2)
-     * evaluate("hello()", 1, 2); 在opener窗口执行 hello(1,2)
-     * evaluate(null, "hello()", 1, 2); null表示opener窗口，在opener窗口执行 hello(1,2)
-     * evaluate("win", "hello()", {name: "jack", age: 28}, 20); 在名为win的窗口执行 hello({name: "jack", age: 28}, 20)
+     * evaluate("index", "func(1)", 2, "a");  // 在 index 窗口执行 func(1, 2, "a")
+     * evaluate("func()", 1, 2, {a: 3}); // 在 opener 窗口执行 func(1, 2, {a: 3});
      */
     evaluate: function (wnd, script) {
         if (script === undefined) {

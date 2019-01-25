@@ -122,7 +122,7 @@ var iApp = appcan.iApp = {
                     callback(filePath, extra);
                 }
             } else { // error
-                uexWindow.toast(0, 8, '保存文件失败', 4000);
+                Toast.show('保存文件失败');
             }
         });
     }
