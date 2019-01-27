@@ -47,10 +47,10 @@ var fileViewer = appcan.fileViewer = {
         if (fileObj.savePath.isImageFile()) {
             uexImage.openBrowser(JSON.stringify({enableGrid: false, data: [{src: fileObj.savePath}]}));
         } else if (fileObj.savePath.isWpsFile()) {
-            Toast.show('提示: 对文档的修改都将被忽略');
-            window.setTimeout(function () {
+            //Toast.show('提示: 对文档的修改都将被忽略');
+            //window.setTimeout(function () {
                 uexDocumentReader.openDocumentReader(fileObj.savePath);
-            }, 1500);
+            //}, 1500);
         } else if (fileObj.savePath.isTifFile()) {
             uexDocumentReader.openDocumentReader(fileObj.savePath);
         } else { // 其它

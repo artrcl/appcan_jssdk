@@ -51,7 +51,7 @@ var fileViewer = appcan.fileViewer = {
     /**
      * open
      * @param fileObj   {{savePath:String, isReadonly:boolean, isReviseMode:boolean, callback:function(fileObj)}}
-     * @param flags     {josn=}
+     * @param flags     {json=}
      *
      */
     open: function (fileObj, flags) {
