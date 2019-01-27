@@ -217,14 +217,15 @@ var xwin = appcan.xwin = {
      * @param   {Object}    value
      */
     set param(value) {
-        istore.set("xwin.param", JSON.stringify(value));
+        if (value === undefined || value === null) istore.remove("xwin.param");
+        else istore.set("xwin.param", JSON.stringify(value));
     },
     /**@preserve
      * param 窗口间传递参数
      * @return  {Object}
      */
     get param() {
-        if (this._internals.param === null) this._internals.param = this.originalParam();
+        if (this._internals.param === '<qweNODATA>') this._internals.param = this.originalParam();
         return this._internals.param;
     },
     /**@preserve
@@ -232,10 +233,10 @@ var xwin = appcan.xwin = {
      * @returns  {Object}
      */
     originalParam: function () {
-        if (this._internals.paramstr === null) return {};
+        if (this._internals.paramstr === null) return null;
         else {
             var value = JSON.parse(this._internals.paramstr);
-            if (value === undefined || value === null) value = {};
+            if (value === undefined) value = null;
             return value;
         }
     },
@@ -257,7 +258,7 @@ var xwin = appcan.xwin = {
         var s = this._internals.query;
         var arr = s.match(new RegExp("(^|&)" + name + "=([^&]*)(&|$)"));
         if (arr != null) return decodeURIComponent(arr[2]);
-        if (defaultValue === undefined) return null;
+        if (arguments.length <= 1) return null;
         return defaultValue;
     },
 
@@ -519,7 +520,7 @@ var xwin = appcan.xwin = {
 
     _internals: {
         onCloseFunc: null,
-        param: null,
+        param: '<qweNODATA>',
         paramstr: null,
         query: null,
         isAndroid: null,

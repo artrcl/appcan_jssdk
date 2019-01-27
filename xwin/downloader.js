@@ -13,12 +13,12 @@
 appcan.downloader = {
 
     /**@preserve
-     * download 下载文件
-     * @param serverURL   {String}    下载地址
-     * @param savePath    {String}    本地保存地址
-     * @param mode        {Integer}   是否支持断点续传,0:不支持,1:支持
-     * @param headers     {json=}     请求头
-     * @param callback    {function(fileSize, percent, status)}  回调函数
+     * 下载文件
+     * @param   {String}    serverURL   - 下载地址
+     * @param   {String}    savePath    - 本地保存地址
+     * @param   {Integer}   mode        - 是否支持断点续传, 0=不支持, 1=支持
+     * @param   {json=}     headers     - 请求头
+     * @param   {function(fileSize, percent, status)}   callback  - 回调函数
      */
     download: function (serverURL, savePath, mode, headers, callback) {
         if (arguments.length === 1 && appcan.isPlainObject(serverURL)) {
@@ -43,8 +43,8 @@ appcan.downloader = {
     },
 
     /**@preserve
-     * cancel 取消指定下载地址的下载任务
-     * @param serverURL {String}    下载地址
+     * 取消指定下载地址的下载任务
+     * @param   {String}    serverURL   - 下载地址
      */
     cancel: function (serverURL) {
         uexDownloaderMgr.cancelDownload(serverURL, 1);
