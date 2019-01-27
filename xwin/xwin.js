@@ -225,7 +225,7 @@ var xwin = appcan.xwin = {
      * @return  {Object}
      */
     get param() {
-        if (this._internals.param === '<qweNODATA>') this._internals.param = this.originalParam();
+        if (this._internals.param === undefined) this._internals.param = this.originalParam();
         return this._internals.param;
     },
     /**@preserve
@@ -520,7 +520,7 @@ var xwin = appcan.xwin = {
 
     _internals: {
         onCloseFunc: null,
-        param: '<qweNODATA>',
+        param: undefined,
         paramstr: null,
         query: null,
         isAndroid: null,
