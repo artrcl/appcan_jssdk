@@ -9,8 +9,12 @@ var istore = {
     set: function (key, value) {
         try {
             if (window.localStorage) {
-                if (Object.prototype.toString.call(value) !== '[object String]') value = JSON.stringify(value);
-                window.localStorage.setItem(key, value);
+                if (value === null || value === undefined) {
+                    window.localStorage.removeItem(key);
+                } else {
+                    if (Object.prototype.toString.call(value) !== '[object String]') value = JSON.stringify(value);
+                    window.localStorage.setItem(key, value);
+                }
             }
         } catch (e) {
         }
@@ -30,7 +34,7 @@ var istore = {
                 var s = window.localStorage.getItem(key);
 
                 if (arguments.length > 1) {
-                    if (s == null) return defaultValue;
+                    if (s === null) return defaultValue;
                     try {
                         if (Object.prototype.toString.call(defaultValue) !== '[object String]') return JSON.parse(s);
                     } catch (e) {
