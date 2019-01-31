@@ -217,9 +217,9 @@ var xio = appcan.xio = {
             }
         };
         options.error = function (xhr, errorType, error, msg) {
-            if (erroType === "timeout") Toast.show(msg_err_timeout);
-            else if (erroType === "request error") Toast.show(msg_error);
-            else Toast.show(erroType);
+            if (errorType === "timeout") Toast.show(msg_err_timeout);
+            else if (errorType === "request error") Toast.show(msg_error);
+            else Toast.show(errorType);
         };
         options.progress = function (progress, xhr) {
             Toast.show((progressText || '') + progress + '%');
