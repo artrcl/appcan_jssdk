@@ -213,6 +213,18 @@ var xwin = appcan.xwin = {
     },
 
     /**@preserve
+     * 重新加载窗口;
+     */
+    reload: function () {
+        istore.set("xwin.opener.wndName", this.openerWndName);
+        istore.set("xwin.current.wndName", this.wndName);
+        if (this._internals.paramstr !== null) istore.set("xwin.param", this._internals.paramstr);
+        if (this._internals.query !== null) istore.set("temp." + this.wndName + ".query", this._internals.query);
+
+        window.location.reload();
+    },
+
+    /**@preserve
      * param 窗口间传递参数，保存的数据在新窗口才可用
      * @param   {Object}    value
      */
