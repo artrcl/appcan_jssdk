@@ -275,6 +275,25 @@ var xwin = appcan.xwin = {
     },
 
     /**@preserve
+     * 获取指定url 的 query string 的键值
+     * @param   {String}    url
+     * @param   {String}    name
+     * @param   {String=}   defaultValue
+     * @returns {String}
+     */
+    queryValueFromUrl: function (url, name, defaultValue) {
+        var k = url.indexOf('?');
+        if (k >= 0) {
+            var s = url.substring(k + 1);
+            var arr = s.match(new RegExp("(^|&)" + name + "=([^&]*)(&|$)"));
+            if (arr != null) return decodeURIComponent(arr[2]);
+        }
+
+        if (arguments.length <= 2) return null;
+        return defaultValue;
+    },
+
+    /**@preserve
      * 执行窗口初始化操作
      */
     prepare: function () {

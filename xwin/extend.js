@@ -198,3 +198,14 @@ function ifThen(value, valueN, returnN, defaultValue) {
     return "";
 }
 
+/**@preserve
+ * 显示数量，大于99显示...
+ * @param   {Integer}   value
+ * @returns {String}
+ */
+function shortenNumber(value) {
+    value = eval(value);
+    if (value > 99) return '...';
+    if (value > 0) return '' + value;
+    return '';
+}
