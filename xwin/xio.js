@@ -179,10 +179,9 @@ var xio = appcan.xio = {
      * @param   {function(data) | function(result, errcode) | function(resStr, status, xhr)=}  callback
      */
     post: function (url, data, progressText, callback) {
-        var msg_timeout = "操作超时, 请重新登录"; // 会话超时了
-        var msg_failed = "请求数据失败了";  // 服务端获取数据出现了问题，没有得到数据
-        var msg_error = "请求数据发生错误了"; // 一般是网络故障或服务端物理故障不能完成请求
-        var msg_err_timeout = "服务器访问超时, 请检查网络"; // 访问超时，一般是由于网络线路不够好
+        var msg_idle_timeout = "操作超时, 请重新登录"; // 会话超时了
+        var msg_request_timeout = "服务器访问超时, 请检查网络"; // 访问超时，一般是由于网络线路不够好
+        var msg_request_error = "数据请求失败"; // 一般是网络故障或服务端物理故障不能完成请求
 
         if ($.type(data) === "function") {
             callback = data;
@@ -200,7 +199,7 @@ var xio = appcan.xio = {
             Toast.hide();
             var result = JSON.parse(resStr);
             if (result.code === Result.TIMEOUT) {
-                Toast.show(msg_timeout);
+                Toast.show(msg_idle_timeout);
                 window.setTimeout(function () {
                     appcan.xwin.closeAll(); // 关闭所有窗口
                 }, 1500);
@@ -217,8 +216,8 @@ var xio = appcan.xio = {
             }
         };
         options.error = function (xhr, errorType, error, msg) {
-            if (errorType === "timeout") Toast.show(msg_err_timeout);
-            else if (errorType === "request error") Toast.show(msg_error);
+            if (errorType === "timeout") Toast.show(msg_request_timeout);
+            else if (errorType === "request error") Toast.show(msg_request_error);
             else Toast.show(errorType);
         };
         options.progress = function (progress, xhr) {
@@ -247,10 +246,9 @@ var xio = appcan.xio = {
      * @param   {function(data) | function(result, errcode) | function(resStr, status, xhr)=}  callback
      */
     post2: function (url, data, progressText, callback) {
-        var msg_timeout = "操作超时, 请重新登录"; // 会话超时了
-        var msg_failed = "请求数据失败了";  // 服务端获取数据出现了问题，没有得到数据
-        var msg_error = "请求数据发生错误了"; // 一般是网络故障或服务端物理故障不能完成请求
-        var msg_err_timeout = "服务器访问超时, 请检查网络"; // 访问超时，一般是由于网络线路不够好
+        var msg_idle_timeout = "操作超时, 请重新登录"; // 会话超时了
+        var msg_request_timeout = "服务器访问超时, 请检查网络"; // 访问超时，一般是由于网络线路不够好
+        var msg_request_error = "数据请求失败"; // 一般是网络故障或服务端物理故障不能完成请求
 
         if ($.type(data) === "function") {
             callback = data;
@@ -303,7 +301,7 @@ var xio = appcan.xio = {
                 uexXmlHttpMgr.close(req);
 
                 if (status === -1) {
-                    Toast.show(msg_error);
+                    Toast.show(msg_request_error);
                     return;
                 }
 
@@ -314,7 +312,7 @@ var xio = appcan.xio = {
                     result = JSON.parse(resStr);
                 }
                 if (result.code === Result.TIMEOUT) {
-                    Toast.show(msg_timeout);
+                    Toast.show(msg_idle_timeout);
                     window.setTimeout(function () {
                         appcan.xwin.closeAll(); // 关闭所有窗口
                     }, 1500);
