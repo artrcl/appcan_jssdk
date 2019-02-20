@@ -39,11 +39,7 @@ var appLog = (function () {
         var ret = "";
         if (sa) {
             for (var i = 0; i < sa.length; i++) {
-                var s = sa[i];
-                if (s !== undefined) {
-                    if (Object.prototype.toString.call(s) === '[object String]') ret += ", " + s;
-                    else ret += ", " + JSON.stringify(s);
-                }
+                ret += ", " + JSON.stringify(sa[i]);
             }
 
             if (ret !== "") ret = ret.substring(2);
