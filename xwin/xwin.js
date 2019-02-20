@@ -54,6 +54,13 @@ var xwin = appcan.xwin = {
      * @param   {function=} callback        - 提供新窗口回调数据的函数
      */
     open: function (wnd, url, param, aniId, type, animDuration, callback) {
+        var curTime = new Date().getTime();
+        if ((curTime < this._internals.lastOpenTime + 5000) && (istore.get('xwin.wnd.opening', '0') === '1'))
+            return;
+
+        istore.set('xwin.wnd.opening', '1');
+        this._internals.lastOpenTime = curTime;
+
         if (arguments.length === 1 && $.type(wnd) === "object") {
             var argObj = wnd;
             wnd = argObj.wnd;
@@ -297,6 +304,9 @@ var xwin = appcan.xwin = {
      * 执行窗口初始化操作
      */
     prepare: function () {
+        // reset the wnd opening flag
+        istore.set('xwin.wnd.opening', '0');
+
         var wgtPath = istore.get("xwin.wgtPath");
         var sdcardPath = istore.get("xwin.sdcardPath");
         if (!wgtPath) {
@@ -557,6 +567,7 @@ var xwin = appcan.xwin = {
         isAndroid: null,
         mapFileName: {},
         fileGen: 1,
+        lastOpenTime: 0,
     }
 
 };
