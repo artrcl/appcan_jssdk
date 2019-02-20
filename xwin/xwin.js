@@ -163,6 +163,9 @@ var xwin = appcan.xwin = {
             // remove the temp settings
             istore.remove("temp." + wnd + ".callBack");
 
+            // reset the wnd opening flag
+            istore.set('xwin.wnd.opening', '0');
+
             if (wnd === "root") {
                 appcan.window.evaluateScript(wnd, 'location.reload()');
             } else {
@@ -304,9 +307,6 @@ var xwin = appcan.xwin = {
      * 执行窗口初始化操作
      */
     prepare: function () {
-        // reset the wnd opening flag
-        istore.set('xwin.wnd.opening', '0');
-
         var wgtPath = istore.get("xwin.wgtPath");
         var sdcardPath = istore.get("xwin.sdcardPath");
         if (!wgtPath) {
