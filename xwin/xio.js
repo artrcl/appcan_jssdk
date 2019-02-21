@@ -19,7 +19,7 @@ var xio = appcan.xio = {
         tokenType: 'JSESSIONID',  //  会话维持的方式: JSESSIONID, param 或 header    {String|Object}
         loginUrl: 'login',  //  login url   {String=}
         logoutUrl: 'logout',  //  logout url {String=}
-        isDebug: false,  // uexXmlHttpMgr 提交是否打开日志输出
+        isDebug: false,  // post 提交是否打开日志输出
         debugTokenId: ''  //  用于appcan编辑调试    {String=}
     },
 
@@ -183,6 +183,8 @@ var xio = appcan.xio = {
         var msg_request_timeout = "服务器访问超时, 请检查网络"; // 访问超时，一般是由于网络线路不够好
         var msg_request_error = "数据请求失败"; // 一般是网络故障或服务端物理故障不能完成请求
 
+        var isDebug = (!!window.uexLog) && (window.serverConfig || this.serverConfig).isDebug;
+
         if ($.type(data) === "function") {
             callback = data;
             data = progressText = null;
@@ -198,6 +200,11 @@ var xio = appcan.xio = {
         options.success = function (resStr, status, requestCode, response, xhr) {
             Toast.hide();
             var result = JSON.parse(resStr);
+
+            if (isDebug) {
+                appLog.log(result);
+            }
+
             if (result.code === Result.TIMEOUT) {
                 Toast.show(msg_idle_timeout);
                 window.setTimeout(function () {
@@ -216,6 +223,10 @@ var xio = appcan.xio = {
             }
         };
         options.error = function (xhr, errorType, error, msg) {
+            if (isDebug) {
+                appLog.error(errorType, error, msg);
+            }
+
             if (errorType === "timeout") Toast.show(msg_request_timeout);
             else if (errorType === "request error") Toast.show(msg_request_error);
             else Toast.show(errorType);
@@ -234,6 +245,10 @@ var xio = appcan.xio = {
             }
         }
 
+        if (isDebug) {
+            appLog.log(options.url, options.data);
+        }
+
         if (progressText) Toast.show(progressText);
         appcan.ajax(options);
     },
@@ -250,6 +265,8 @@ var xio = appcan.xio = {
         var msg_request_timeout = "服务器访问超时, 请检查网络"; // 访问超时，一般是由于网络线路不够好
         var msg_request_error = "数据请求失败"; // 一般是网络故障或服务端物理故障不能完成请求
 
+        var isDebug = (!!window.uexLog) && (window.serverConfig || this.serverConfig).isDebug;
+
         if ($.type(data) === "function") {
             callback = data;
             data = progressText = null;
@@ -258,9 +275,10 @@ var xio = appcan.xio = {
             progressText = null;
         }
 
+        url = this.httpUrl(url);
         var req = uexXmlHttpMgr.create({
             method: "POST",
-            url: this.httpUrl(url)
+            url: url
         });
 
         uexXmlHttpMgr.setAppVerify(req, 1);
@@ -293,14 +311,22 @@ var xio = appcan.xio = {
             }
         }
 
+        if (isDebug) {
+            appLog.log(url, data);
+        }
+
         if (progressText) Toast.show(progressText);
 
-        uexXmlHttpMgr.send(req, ((window.serverConfig || this.serverConfig).isDebug) ? 3 : 0,
+        uexXmlHttpMgr.send(req, (isDebug) ? 3 : 0,
             function (status, resStr, resCode, resInfo) {
                 if (status === 0) return; // -1=error 0=receive 1=finish
                 uexXmlHttpMgr.close(req);
 
                 if (status === -1) {
+                    if (isDebug) {
+                        appLog.error(status, resStr, resCode, resInfo);
+                    }
+
                     Toast.show(msg_request_error);
                     return;
                 }
@@ -311,6 +337,11 @@ var xio = appcan.xio = {
                     resStr = result;
                     result = JSON.parse(resStr);
                 }
+
+                if (isDebug) {
+                    appLog.log(result);
+                }
+
                 if (result.code === Result.TIMEOUT) {
                     Toast.show(msg_idle_timeout);
                     window.setTimeout(function () {
