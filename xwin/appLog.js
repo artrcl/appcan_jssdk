@@ -70,8 +70,15 @@ var appLog = (function () {
                         ret += "\n" + (j++) + ") ";
                     }
 
-                    if (!jsonstrigify && Object.prototype.toString.call(s) === '[object String]') ret += s;
-                    else ret += JSON.stringify(s);
+                    if (!jsonstrigify && Object.prototype.toString.call(s) === '[object String]') {
+                        ret += s;
+                    } else {
+                        if (window.appLogPrettyPrint) { // 美化输出
+                            ret += JSON.stringify(s, null, 4).replace(/"(\w+)":/g, "$1:");
+                        } else {
+                            ret += JSON.stringify(s).replace(/"(\w+)":/g, "$1:");
+                        }
+                    }
                 }
             }
         }

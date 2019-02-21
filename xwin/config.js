@@ -11,6 +11,8 @@ window.serverConfig = {
     debugTokenId: ''  //  用于appcan编辑调试    {String=}
 };
 
+window.appLogPrettyPrint = true; // appLog 日志输出 JSON 数据时 美化输出
+
 var reqJS = {
     absUrl: function (baseUrl, url) {
         if (/^\//.test(url)) return url;
