@@ -184,6 +184,7 @@ var xio = appcan.xio = {
         var msg_request_error = "数据请求失败"; // 一般是网络故障或服务端物理故障不能完成请求
 
         var isDebug = (!!window.uexLog) && (window.serverConfig || this.serverConfig).isDebug;
+        var reqId = appcan.xwin.getGlobalUID();
 
         if ($.type(data) === "function") {
             callback = data;
@@ -202,7 +203,7 @@ var xio = appcan.xio = {
             var result = JSON.parse(resStr);
 
             if (isDebug) {
-                appLog.log(result);
+                appLog.log("req " + reqId + " success", result);
             }
 
             if (result.code === Result.TIMEOUT) {
@@ -224,7 +225,7 @@ var xio = appcan.xio = {
         };
         options.error = function (xhr, errorType, error, msg) {
             if (isDebug) {
-                appLog.error(errorType, error, msg);
+                appLog.error("req " + reqId + " error", '\u0001', errorType, error, msg);
             }
 
             if (errorType === "timeout") Toast.show(msg_request_timeout);
@@ -246,7 +247,7 @@ var xio = appcan.xio = {
         }
 
         if (isDebug) {
-            appLog.log(options.url, options.data);
+            appLog.log('\u0000', "req " + reqId, options.url, options.data);
         }
 
         if (progressText) Toast.show(progressText);
@@ -266,6 +267,7 @@ var xio = appcan.xio = {
         var msg_request_error = "数据请求失败"; // 一般是网络故障或服务端物理故障不能完成请求
 
         var isDebug = (!!window.uexLog) && (window.serverConfig || this.serverConfig).isDebug;
+        var reqId = appcan.xwin.getGlobalUID();
 
         if ($.type(data) === "function") {
             callback = data;
@@ -312,7 +314,7 @@ var xio = appcan.xio = {
         }
 
         if (isDebug) {
-            appLog.log(url, data);
+            appLog.log('\u0000', "req " + reqId, url, data);
         }
 
         if (progressText) Toast.show(progressText);
@@ -324,7 +326,7 @@ var xio = appcan.xio = {
 
                 if (status === -1) {
                     if (isDebug) {
-                        appLog.error(status, resStr, resCode, resInfo);
+                        appLog.error("req " + reqId + " error", '\u0001', status, resStr, resCode, resInfo);
                     }
 
                     Toast.show(msg_request_error);
@@ -339,7 +341,7 @@ var xio = appcan.xio = {
                 }
 
                 if (isDebug) {
-                    appLog.log(result);
+                    appLog.log("req " + reqId + " success", result);
                 }
 
                 if (result.code === Result.TIMEOUT) {

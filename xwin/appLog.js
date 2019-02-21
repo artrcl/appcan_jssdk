@@ -28,23 +28,50 @@ var appLog = (function () {
 
     function send(t, sa) {
         var err;
+        var k;
+
+        if (sa.length > 0 && sa[0] === '\u0000') {
+            k = 1;
+            sa.splice(0, 1);
+        } else {
+            k = 0;
+        }
+
         try {
             eval("KuwGRowI8;")
         } catch (e) {
             var stack = e.stack.split("\n");
-            var line = stack[4];
+            var line = stack[4 + k];
             err = line.match(/.*[ \/](.+):(\d+):(\d+)/);
         }
 
         var ret = "";
+        var jsonstrigify = false;
         if (sa) {
             if (sa.length === 0) {
                 ret = ""
             } else if (sa.length === 1) {
                 ret = "\n" + JSON.stringify(sa[0]);
             } else {
+                var j = 1;
                 for (var i = 0; i < sa.length; i++) {
-                    ret += "\n" + (i + 1) + ") " + JSON.stringify(sa[i]);
+                    var s = sa[i];
+                    if (s === '\u0001') {
+                        jsonstrigify = true;
+                        continue;
+                    } else if (s === '\u0002') {
+                        jsonstrigify = false;
+                        continue;
+                    }
+
+                    if (j === 1 && i === sa.length - 1) { // 第1个也是最后1个
+                        ret += "\n";
+                    } else {
+                        ret += "\n" + (j++) + ") ";
+                    }
+
+                    if (!jsonstrigify && Object.prototype.toString.call(s) === '[object String]') ret += s;
+                    else ret += JSON.stringify(s);
                 }
             }
         }
