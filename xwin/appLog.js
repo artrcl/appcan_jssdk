@@ -38,14 +38,18 @@ var appLog = (function () {
 
         var ret = "";
         if (sa) {
-            for (var i = 0; i < sa.length; i++) {
-                ret += ", " + JSON.stringify(sa[i]);
+            if (sa.length === 0) {
+                ret = ""
+            } else if (sa.length === 1) {
+                ret = "\n" + JSON.stringify(sa[0]);
+            } else {
+                for (var i = 0; i < sa.length; i++) {
+                    ret += "\n" + (i + 1) + ") " + JSON.stringify(sa[i]);
+                }
             }
-
-            if (ret !== "") ret = ret.substring(2);
         }
 
-        sendlog("[ " + err[1] + " line : " + err[2] + "," + err[3] + " " + t + " ] " + ret);
+        sendlog("[ " + err[1] + " line : " + err[2] + "," + err[3] + " " + t + " ] " + ret + "\n");
     }
 
     function sendlog(s) {
