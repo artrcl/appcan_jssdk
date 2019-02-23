@@ -37,7 +37,7 @@ appcan.downloader = {
         var reqId;
         if (isDebug) {
             reqId = xwin.getGlobalUID();
-            appLog.log("download req " + reqId, serverURL, savePath);
+            appLog.log('\u0000', "download req " + reqId, serverURL, savePath);
         }
 
         // downloader,serverURL,savePath,mode,cb
