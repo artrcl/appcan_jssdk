@@ -31,7 +31,7 @@ var appLog = (function () {
 
         if (sa.length > 0 && sa[0] === '\u0000') {
             k = 1;
-            sa.splice(0, 1);
+            sa.shift();
         } else {
             k = 0;
         }
@@ -85,11 +85,24 @@ var appLog = (function () {
                     }
                 }
 
-                ret += s.substring(0, 2000); // 限制长度，否则 uexLog.sendLog() 会出错
+                ret += s;
             }
         }
 
-        sendlog("[ " + err[1] + " line : " + err[2] + "," + err[3] + " " + t + " ] " + ret + "\n");
+        ret = "[ " + err[1] + " line : " + err[2] + "," + err[3] + " " + t + " ] " + ret + "\n";
+
+        if (ret.length <= 2000) {
+            sendlog(ret);
+        } else {
+            var pnum = Math.ceil(ret.length / 2000);
+            var pname = new Date().getTime().toString(36) + Math.random().toString(36).substring(2);
+
+            k = ret.length;
+            j = 1;
+            for (i = 0; i < k; i += 2000, j++) {
+                sendlog("(part " + j + "-" + pnum + " " + pname + ")" + ret.substr(i, 2000));
+            }
+        }
     }
 
     function sendlog(s) {
