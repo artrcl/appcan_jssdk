@@ -90,6 +90,8 @@ var appLog = (function () {
         }
 
         ret = "[ " + err[1] + " line : " + err[2] + "," + err[3] + " " + t + " ] " + ret + "\n";
+        if (!window.appLogMaxLength) ret = ret.substring(0, 2000);
+        else if (window.appLogMaxLength > 0) ret = ret.substring(0, window.appLogMaxLength);
 
         if (ret.length <= 2000) {
             sendlog(ret);

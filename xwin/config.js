@@ -12,7 +12,8 @@ window.serverConfig = {
 };
 
 // appLog 输出JSON数据时 美化输出, {Boolean | Integer}
-window.appLogPrettyPrint = 4; //  值为整数表示缩进的空格数, 为 true 时默认缩进4个空格，false或0 不美化输出
+window.appLogPrettyPrint = 4; // 值为整数表示缩进的空格数, 为 true 时默认缩进4个空格，false或0 不美化输出
+window.appLogMaxLength = 0; // 日志输出的最大长度，默认值2000, 为 0 时会使用默认值, 为 -1 时不限制长度
 
 var reqJS = {
     absUrl: function (baseUrl, url) {
