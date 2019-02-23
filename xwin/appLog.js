@@ -27,7 +27,6 @@ var appLog = (function () {
     }
 
     function send(t, sa) {
-        var err;
         var k;
 
         if (sa.length > 0 && sa[0] === '\u0000') {
@@ -37,49 +36,56 @@ var appLog = (function () {
             k = 0;
         }
 
+        var stack;
+
         try {
-            eval("KuwGRowI8;")
+            if (window.Error) {
+                stack = new Error().stack;
+            } else {
+                var dummy = 1;
+                dummy.a.b = 0;
+            }
         } catch (e) {
-            var stack = e.stack.split("\n");
-            var line = stack[4 + k];
-            err = line.match(/.*[ \/](.+):(\d+):(\d+)/);
+            stack = e.stack;
         }
+
+        var lines = stack.split("\n");
+        var err = lines[4 + k].match(/.*[ \/](.+):(\d+):(\d+)/);
 
         var ret = "";
         var jsonstrigify = false;
         if (sa) {
-            if (sa.length === 0) {
-                ret = ""
-            } else if (sa.length === 1) {
-                ret = "\n" + JSON.stringify(sa[0]);
-            } else {
-                var j = 1;
-                for (var i = 0; i < sa.length; i++) {
-                    var s = sa[i];
-                    if (s === '\u0001') {
-                        jsonstrigify = true;
-                        continue;
-                    } else if (s === '\u0002') {
-                        jsonstrigify = false;
-                        continue;
-                    }
+            var j = 1;
+            for (var i = 0; i < sa.length; i++) {
+                var s = sa[i];
+                if (s === '\u0001') {
+                    jsonstrigify = true;
+                    continue;
+                } else if (s === '\u0002') {
+                    jsonstrigify = false;
+                    continue;
+                }
 
-                    if (j === 1 && i === sa.length - 1) { // 第1个也是最后1个
-                        ret += "\n";
-                    } else {
-                        ret += "\n" + (j++) + ") ";
-                    }
+                if (j === 1 && i === sa.length - 1) { // 第1个也是最后1个
+                    ret += "\n";
+                } else {
+                    ret += "\n" + (j++) + ") ";
+                }
 
-                    if (!jsonstrigify && Object.prototype.toString.call(s) === '[object String]') {
-                        ret += s;
+                if (jsonstrigify || typeof s !== "string") {
+                    if (window.appLogPrettyPrint) { // 美化输出
+                        s = JSON.stringify(s, null, (typeof window.appLogPrettyPrint === "number") ? window.appLogPrettyPrint : 4);
                     } else {
-                        if (window.appLogPrettyPrint) { // 美化输出
-                            ret += JSON.stringify(s, null, 4).replace(/"(\w+)":/g, "$1:");
-                        } else {
-                            ret += JSON.stringify(s).replace(/"(\w+)":/g, "$1:");
-                        }
+                        s = JSON.stringify(s);
+                    }
+                    if (typeof s === "string") {
+                        s = s.replace(/"(\w+)":/g, "$1:");
+                    } else {
+                        s = "" + s;
                     }
                 }
+
+                ret += s.substring(0, 2000); // 限制长度，否则 uexLog.sendLog() 会出错
             }
         }
 
