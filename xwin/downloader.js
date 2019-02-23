@@ -46,9 +46,9 @@ appcan.downloader = {
                 uexDownloaderMgr.closeDownloader(optId);
                 if (isDebug) {
                     if (status === 1) {
-                        appLog.log("download req " + reqId + ": download completed", fileSize);
+                        appLog.log("download req " + reqId + " success", status, fileSize);
                     } else {
-                        appLog.error("download req " + reqId + ": download failed");
+                        appLog.error("download req " + reqId + " error", status);
                     }
                 }
             }
