@@ -33,9 +33,26 @@ appcan.downloader = {
         var optId = uexDownloaderMgr.create();
         if (headers) uexDownloaderMgr.setHeaders(optId, headers);
 
+        var isDebug = (!!window.uexLog) && (window.serverConfig || appcan.xio.serverConfig).isDebug;
+        var reqId;
+        if (isDebug) {
+            reqId = xwin.getGlobalUID();
+            appLog.log("download req " + reqId, serverURL, savePath);
+        }
+
         // downloader,serverURL,savePath,mode,cb
         uexDownloaderMgr.download(optId, serverURL, savePath, mode, function (fileSize, percent, status) {
-            if (status === 1 || status === 2) uexDownloaderMgr.closeDownloader(optId); // 下载完成 或 下载失败
+            if (status === 1 || status === 2) { // 下载完成 或 下载失败
+                uexDownloaderMgr.closeDownloader(optId);
+                if (isDebug) {
+                    if (status === 1) {
+                        appLog.log("download req " + reqId + ": download completed", fileSize);
+                    } else {
+                        appLog.error("download req " + reqId + ": download failed");
+                    }
+                }
+            }
+
             if (appcan.isFunction(callback)) {
                 callback(fileSize, percent, status);
             }

@@ -184,7 +184,8 @@ var xio = appcan.xio = {
         var msg_request_error = "数据请求失败"; // 一般是网络故障或服务端物理故障不能完成请求
 
         var isDebug = (!!window.uexLog) && (window.serverConfig || this.serverConfig).isDebug;
-        var reqId = appcan.xwin.getGlobalUID();
+        var reqId;
+        if (isDebug) reqId = appcan.xwin.getGlobalUID();
 
         if ($.type(data) === "function") {
             callback = data;
@@ -267,7 +268,8 @@ var xio = appcan.xio = {
         var msg_request_error = "数据请求失败"; // 一般是网络故障或服务端物理故障不能完成请求
 
         var isDebug = (!!window.uexLog) && (window.serverConfig || this.serverConfig).isDebug;
-        var reqId = appcan.xwin.getGlobalUID();
+        var reqId;
+        if (isDebug) reqId = appcan.xwin.getGlobalUID();
 
         if ($.type(data) === "function") {
             callback = data;
