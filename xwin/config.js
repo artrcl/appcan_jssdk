@@ -11,7 +11,8 @@ window.serverConfig = {
     debugTokenId: ''  //  用于appcan编辑调试    {String=}
 };
 
-window.appLogPrettyPrint = true; // appLog 日志输出 JSON 数据时 美化输出
+// appLog 输出JSON数据时 美化输出, {Boolean | Integer}
+window.appLogPrettyPrint = 4; //  值为整数表示缩进的空格数, 为 true 时默认缩进4个空格，false或0 不美化输出
 
 var reqJS = {
     absUrl: function (baseUrl, url) {
