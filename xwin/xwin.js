@@ -18,6 +18,7 @@ var xwin = appcan.xwin = {
     wgtPath: null, // wgt:// 对应的地址, 包括最后的 /
     sdcardPath: null, // file:///sdcard/, 包括最后的 /
     tempDir: appcan.file.wgtPath + "temp/dummyTempdir/",
+    nextWndCallbackFunc: null,
 
     /**@preserve
      * 返回一个序列值
@@ -115,7 +116,7 @@ var xwin = appcan.xwin = {
 
         if (param !== undefined && param !== null) this.param = param; // xwin.param 可能提前被设置了，在这里对 undefined / null 值不处理
         if ($.type(callback) === "function") {
-            appcan.xwin.nextWndCallbackFunc = callback;
+            this.nextWndCallbackFunc = callback;
             istore.set("temp." + wnd + ".callBack", "qwe");
         }
 
@@ -368,7 +369,7 @@ var xwin = appcan.xwin = {
                         }, 2000);
                     }
                 } else {
-                    appcan.xwin.close();
+                    thiz.close();
                 }
             }
         };
@@ -456,7 +457,7 @@ var xwin = appcan.xwin = {
      */
     fileProviderPath: function (wgtUrl) {
         var s = this.realPath(wgtUrl);
-        if (s.substr(0, appcan.xwin.sdcardPath.length) === appcan.xwin.sdcardPath) s = s.substring(appcan.xwin.sdcardPath.length);
+        if (s.substr(0, this.sdcardPath.length) === this.sdcardPath) s = s.substring(this.sdcardPath.length);
         return s;
     },
 
