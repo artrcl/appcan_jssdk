@@ -97,7 +97,7 @@ var appLog = (function () {
             sendlog(ret);
         } else {
             var pnum = Math.ceil(ret.length / 2000);
-            var pname = new Date().getTime().toString(36) + Math.random().toString(36).substring(2);
+            var pname = new Date().getTime().toString(36) + Math.floor(Math.random() * 4294967296).toString(36);
 
             k = ret.length;
             j = 1;
