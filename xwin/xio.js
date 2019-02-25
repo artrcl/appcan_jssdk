@@ -375,8 +375,6 @@ var xio = appcan.xio = {
      */
     logout: function (url) {
         this.post(url || (window.serverConfig || this.serverConfig).logoutUrl || "logout");
-        appcan.xwin.clearLocStorageAndTempFiles();
-        uexWidgetOne.exit(0);
     },
 
     /**@preserve

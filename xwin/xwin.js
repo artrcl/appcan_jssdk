@@ -224,6 +224,17 @@ var xwin = appcan.xwin = {
     },
 
     /**@preserve
+     * 退出应用
+     */
+    exit: function () {
+        if (appcan.xio.tokenId) appcan.xio.logout();
+        this.clearLocStorageAndTempFiles();
+        window.setTimeout(function () {
+            uexWidgetOne.exit(0);
+        }, 500);
+    },
+
+    /**@preserve
      * 重新加载窗口;
      */
     reload: function () {
@@ -356,11 +367,10 @@ var xwin = appcan.xwin = {
             if (keyCode === 0 /*back key*/) {
                 var thiz = appcan.xwin;
                 if (thiz.wndName === "root") {
-                    thiz.clearLocStorageAndTempFiles();
-                    uexWidgetOne.exit(0);
+                    thiz.exit();
                 } else if (thiz.wndName === "index") {
                     if (window.logoutClickCount && window.logoutClickCount > 0) {
-                        appcan.xio.logout();
+                        thiz.exit();
                     } else {
                         Toast.show('再按一次退出应用', 2000);
                         window.logoutClickCount = 1;
