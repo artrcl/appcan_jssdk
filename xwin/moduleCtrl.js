@@ -1,21 +1,11 @@
 "use strict";
 
 var moduleCtrl = (function () {
-    var modules = [
-        {
-            isShow: true,
-            name: "notice",
-            title: "Notice",
-            ico: 'ico_01',
-            wnd: "notice",
-            url: 'notice/notice_list.html',
-            getCountFunc: "getCount"
-        },
-    ];
+    var modules = {value: []};
 
     function validatePerms() {
         var perms = istore.get("sys.perms", []);
-        modules.forEach(function (m, i) {
+        modules.value.forEach(function (m, i) {
             if (m.isShow && (perms.indexOf(m.name) < 0)) {
                 m.isShow = false;
             }
@@ -24,7 +14,7 @@ var moduleCtrl = (function () {
 
     function validateHidden(loginName, setChecked) {
         var hiddens = istore.get("persist.modules.hide." + loginName, []);
-        modules.forEach(function (m, i) {
+        modules.value.forEach(function (m, i) {
             if (m.isShow && (hiddens.indexOf(m.name) >= 0)) {
                 if (setChecked) m.notChecked = true;
                 else m.isShow = false;
@@ -37,7 +27,7 @@ var moduleCtrl = (function () {
     function initFuncList() {
         if (funcList.init === false) {
             delete funcList.init;
-            modules.forEach(function (value, index) {
+            modules.value.forEach(function (value, index) {
                 if (value.getCountFunc) {
                     var ss = funcList[value.getCountFunc];
                     if (ss) {
@@ -91,7 +81,7 @@ var moduleCtrl = (function () {
 
     function moduleClick(thiz) {
         var i = eval($(thiz).attr("data-index"));
-        var m = modules[i];
+        var m = modules.value[i];
         xwin.open(m.wnd, m.url);
     }
 
