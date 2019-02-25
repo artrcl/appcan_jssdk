@@ -50,7 +50,7 @@ var appLog = (function () {
         }
 
         var lines = stack.split("\n");
-        var err = lines[4 + k].match(/.*[ \/](.+):(\d+):(\d+)/);
+        var err = lines[3 + k].replace(/(\w+:\/\/|\w*\/)(.*\/|)/, "").trim();
 
         var ret = "";
         var jsonstrigify = false;
@@ -89,7 +89,7 @@ var appLog = (function () {
             }
         }
 
-        ret = "[ " + err[1] + " line : " + err[2] + "," + err[3] + " " + t + " ] " + ret + "\n";
+        ret = "[ " + err + " " + t + " ] " + ret + "\n";
         if (!window.appLogMaxLength) ret = ret.substring(0, 2000);
         else if (window.appLogMaxLength > 0) ret = ret.substring(0, window.appLogMaxLength);
 
