@@ -170,7 +170,12 @@ var xwin = appcan.xwin = {
             if (wnd === "root") {
                 appcan.window.evaluateScript(wnd, 'location.reload()');
             } else {
-                appcan.window.close(-1);
+                if (appcan.isFunction(this._internals.onCloseFunc)) {
+                    try {
+                        this._internals.onCloseFunc();
+                    } catch (e) {
+                    }
+                }
                 if (wnd) {
                     wndList = istore.get("xwin.wndList", []);
                     var i = $.inArray(wnd, wndList);
@@ -179,12 +184,7 @@ var xwin = appcan.xwin = {
                         istore.set("xwin.wndList", wndList);
                     }
                 }
-                if (appcan.isFunction(this._internals.onCloseFunc)) {
-                    try {
-                        this._internals.onCloseFunc();
-                    } catch (e) {
-                    }
-                }
+                appcan.window.close(-1);
             }
         } else if (wnd === "_opener_") {
             wnd = this.openerWndName;
@@ -194,7 +194,7 @@ var xwin = appcan.xwin = {
 
             for (; wndList.length > 0;) {
                 wnd = wndList.pop();
-                appcan.window.evaluateScript(wnd, 'appcan.xwin.close()');
+                appcan.window.evaluateScript(wnd, 'appcan.xwin.bindAndClose(null)');
             }
         } else {
             appcan.window.evaluateScript(wnd, 'appcan.xwin.close()');
@@ -221,6 +221,15 @@ var xwin = appcan.xwin = {
      */
     bindClose: function (func) {
         this._internals.onCloseFunc = func;
+    },
+
+    /**@preserve
+     * 设置关闭回调事件, 并关闭当前窗口
+     * @param   {function=} func
+     */
+    bindAndClose: function (func) {
+        this._internals.onCloseFunc = func;
+        this.close();
     },
 
     /**@preserve
