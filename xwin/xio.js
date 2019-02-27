@@ -207,7 +207,7 @@ var xio = appcan.xio = {
                 appLog.log("req " + reqId + " success", result);
             }
 
-            if (result.code === Result.TIMEOUT) {
+            if (result.isLogin === false || result.code === Result.TIMEOUT) {
                 Toast.show(msg_idle_timeout);
                 window.setTimeout(function () {
                     appcan.xwin.closeAll(); // 关闭所有窗口
