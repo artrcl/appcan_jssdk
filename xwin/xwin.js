@@ -229,9 +229,7 @@ var xwin = appcan.xwin = {
     exit: function () {
         if (appcan.xio.tokenId) appcan.xio.logout();
         this.clearLocStorageAndTempFiles();
-        window.setTimeout(function () {
-            uexWidgetOne.exit(0);
-        }, 500);
+        uexWidgetOne.exit(0);
     },
 
     /**@preserve
