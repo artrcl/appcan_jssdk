@@ -88,8 +88,14 @@ var istore = {
                 if (arguments.length === 0) {
                     window.localStorage.clear();
                 } else {
-                    this.keys().forEach(function (value) {
-                        if (!value.match(reg)) window.localStorage.removeItem(value);
+                    var keys = [];
+                    for (var i = 0, len = window.localStorage.length; i < len; i++) {
+                        var key = window.localStorage.key(i);
+                        if (!key.match(reg)) keys.push(key);
+                    }
+
+                    keys.forEach(function (value) {
+                        window.localStorage.removeItem(value);
                     });
                 }
             }
