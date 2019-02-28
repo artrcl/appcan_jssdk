@@ -28,7 +28,7 @@
             return exp((_ || '') + config.open + types + config.close + (__ || ''));
         },
         escape: function (html) {
-            return String(((html === 0) ? '0' : html) || '').replace(/&(?!#?[a-zA-Z0-9]+;)/g, '&amp;')
+            return String((html === 0) ? '0' : (html === false) ? 'false' : (html || '')).replace(/&(?!#?[a-zA-Z0-9]+;)/g, '&amp;')
                 .replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/'/g, '&#39;').replace(/"/g, '&quot;');
         },
         error: function (e, tplog) {
