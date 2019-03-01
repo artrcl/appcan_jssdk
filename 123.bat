@@ -7,3 +7,6 @@ uglifyjs.cmd extend.js --comments -o 1\extend.js
 uglifyjs.cmd cxdate.js --comments -o 1\cxdate.js
 uglifyjs.cmd appcan.xwin.js --comments -o 1\appcan.xwin.js
 uglifyjs.cmd appcan.downloader.js --comments -o 1\appcan.downloader.js
+
+-m
+uglifyjs.cmd laytpl.js --comments -m -o 1\laytpl.js

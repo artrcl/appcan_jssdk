@@ -199,6 +199,19 @@ function ifThen(value, valueN, returnN, defaultValue) {
 }
 
 /**@preserve
+ * 返回组合的数值
+ * @param   {String|Array}  title
+ * @param   {Object}        value
+ * @returns {String}
+ */
+function conjunct(title, value) {
+    if (typeof title === "string") title = [title, ""];
+    else if (title.length === 1) title.push("");
+    if (value) return title[0] + value;
+    else return title[1];
+}
+
+/**@preserve
  * 显示数量，大于99显示...
  * @param   {Integer}   value
  * @returns {String}

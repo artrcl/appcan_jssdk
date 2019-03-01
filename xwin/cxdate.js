@@ -143,7 +143,7 @@
 
     cxDate.decode = function (style, time) {
         if (typeof style !== 'string') {
-            return false;
+            return '';
         }
 
         if (typeof time === 'string') {
@@ -159,7 +159,7 @@
         }
 
         if (isNaN(time)) {
-            return false;
+            return '';
         }
 
         var date = new Date();
@@ -167,7 +167,7 @@
         date.setTime(time);
 
         if (isNaN(date.getFullYear())) {
-            return false;
+            return '';
         }
 
         var attr = this.getAttr(date);
