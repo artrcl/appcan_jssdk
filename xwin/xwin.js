@@ -237,8 +237,12 @@ var xwin = appcan.xwin = {
      */
     exit: function () {
         if (appcan.xio.tokenId) appcan.xio.logout();
-        this.clearLocStorageAndTempFiles();
-        uexWidgetOne.exit(0);
+        if (this.getPlatform() === 2) { // ide
+            this.closeAll();
+        } else {
+            this.clearLocStorageAndTempFiles();
+            uexWidgetOne.exit(0);
+        }
     },
 
     /**@preserve
@@ -517,11 +521,22 @@ var xwin = appcan.xwin = {
     },
 
     /**@preserve
+     * 获取 platform 0=ios, 1=android 2=ide
+     * @return  {Integer}
+     */
+    getPlatform: function () {
+        if (this._internals.platform === null) {
+            this._internals.platform = uexWidgetOne.getPlatform();
+        }
+        return this._internals.platform;
+    },
+
+    /**@preserve
      * 获取device OS
      * @return  {String}
      */
     deviceOs: function () {
-        var platform = uexWidgetOne.getPlatform();
+        var platform = this.getPlatform();
         if (platform === 0) return "ios";
         else if (platform === 1) return "android";
         else return "ide"; // 2
@@ -532,10 +547,7 @@ var xwin = appcan.xwin = {
      * @return  {Boolean}
      */
     isAndroid: function () {
-        if (this._internals.isAndroid === null) {
-            this._internals.isAndroid = uexWidgetOne.getPlatform() === 1;
-        }
-        return this._internals.isAndroid;
+        return this.getPlatform() === 1;
     },
 
     /**@preserve
@@ -582,7 +594,7 @@ var xwin = appcan.xwin = {
         param: undefined,
         paramstr: null,
         query: null,
-        isAndroid: null,
+        platform: null,
         mapFileName: {},
         fileGen: 1,
         lastOpenTime: 0,
