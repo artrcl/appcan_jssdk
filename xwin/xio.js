@@ -176,10 +176,10 @@ var xio = appcan.xio = {
      * @param   {String}    url
      * @param   {Object=}   data    - 上传文件的话，指定参数值为 object, 如 {path:'/path/file.jpg'}
      * @param   {String=}   progressText
-     * @param   {function(data) | function(result, errcode) | function(resStr, status, xhr)=}  callback
-     * @param   {boolean=}  ignoreError 是否忽略error，默认不忽略
+     * @param   {function(data) | function(result, errcode) | function(resStr, status, xhr)=}  success
+     * @param   {function(errorType, error, msg)=}  error
      */
-    post: function (url, data, progressText, callback, ignoreError) {
+    post: function (url, data, progressText, success, error) {
         var msg_idle_timeout = "操作超时, 请重新登录"; // 会话超时了
         var msg_request_timeout = "服务器访问超时, 请检查网络"; // 访问超时，一般是由于网络线路不够好
         var msg_request_error = "数据请求失败"; // 一般是网络故障或服务端物理故障不能完成请求
@@ -189,12 +189,12 @@ var xio = appcan.xio = {
         if (isDebug) reqId = appcan.xwin.getGlobalUID();
 
         if ($.type(data) === "function") {
-            ignoreError = progressText;
-            callback = data;
+            error = progressText;
+            success = data;
             data = progressText = null;
         } else if ($.type(progressText) === "function") {
-            ignoreError = callback;
-            callback = progressText;
+            error = success;
+            success = progressText;
             progressText = null;
         }
 
@@ -217,22 +217,24 @@ var xio = appcan.xio = {
                 }, 1500);
                 return;
             }
-            if ($.type(callback) === "function") {
-                if (callback.length <= 1) {
-                    if (result.code === Result.SUCCEED) callback(result.data);
-                } else if (callback.length === 2) {
-                    callback(result, result.code);
+            if ($.type(success) === "function") {
+                if (success.length <= 1) {
+                    if (result.code === Result.SUCCEED) success(result.data);
+                } else if (success.length === 2) {
+                    success(result, result.code);
                 } else {
-                    callback(resStr, status, xhr); // 兼容appcan.request.post 的success 方法
+                    success(resStr, status, xhr); // 兼容appcan.request.post 的success 方法
                 }
             }
         };
-        options.error = function (xhr, errorType, error, msg) {
+        options.error = function (xhr, errorType, err, msg) {
             if (isDebug) {
-                appLog.error("req " + reqId + " error", '\u0001', errorType, error, msg);
+                appLog.error("req " + reqId + " error", '\u0001', errorType, err, msg);
             }
 
-            if (ignoreError !== true) {
+            if ($.type(error) === "function") {
+                error(errorType, err, msg);
+            } else {
                 if (errorType === "timeout") Toast.show(msg_request_timeout);
                 else if (errorType === "request error") Toast.show(msg_request_error);
                 else Toast.show(errorType);
@@ -265,10 +267,10 @@ var xio = appcan.xio = {
      * @param   {String}    url
      * @param   {Object=}   data    - 上传文件的话，指定参数值为 object, 如 {path:'/path/file.jpg'
      * @param   {String=}   progressText
-     * @param   {function(data) | function(result, errcode) | function(resStr, status, xhr)=}  callback
-     * @param   {boolean=}  ignoreError 是否忽略error，默认不忽略
+     * @param   {function(data) | function(result, errcode) | function(resStr, status, xhr)=}  success
+     * @param   {function(errorType, resCode, resInfo)=}  error
      */
-    post2: function (url, data, progressText, callback, ignoreError) {
+    post2: function (url, data, progressText, success, error) {
         var msg_idle_timeout = "操作超时, 请重新登录"; // 会话超时了
         var msg_request_timeout = "服务器访问超时, 请检查网络"; // 访问超时，一般是由于网络线路不够好
         var msg_request_error = "数据请求失败"; // 一般是网络故障或服务端物理故障不能完成请求
@@ -278,12 +280,12 @@ var xio = appcan.xio = {
         if (isDebug) reqId = appcan.xwin.getGlobalUID();
 
         if ($.type(data) === "function") {
-            ignoreError = progressText;
-            callback = data;
+            error = progressText;
+            success = data;
             data = progressText = null;
         } else if ($.type(progressText) === "function") {
-            ignoreError = callback;
-            callback = progressText;
+            error = success;
+            success = progressText;
             progressText = null;
         }
 
@@ -339,7 +341,9 @@ var xio = appcan.xio = {
                         appLog.error("req " + reqId + " error", '\u0001', status, resStr, resCode, resInfo);
                     }
 
-                    if (ignoreError !== true) {
+                    if ($.type(error) === "function") {
+                        error('request error', resCode, resInfo);
+                    } else {
                         Toast.show(msg_request_error);
                     }
                     return;
@@ -363,13 +367,13 @@ var xio = appcan.xio = {
                     }, 1500);
                     return;
                 }
-                if ($.type(callback) === "function") {
-                    if (callback.length <= 1) {
-                        if (result.code === Result.SUCCEED) callback(result.data);
-                    } else if (callback.length === 2) {
-                        callback(result, result.code);
+                if ($.type(success) === "function") {
+                    if (success.length <= 1) {
+                        if (result.code === Result.SUCCEED) success(result.data);
+                    } else if (success.length === 2) {
+                        success(result, result.code);
                     } else {
-                        callback(resStr, status, resInfo); // 兼容appcan.request.post 的success 方法
+                        success(resStr, status, resInfo); // 兼容appcan.request.post 的success 方法
                     }
                 }
             },
